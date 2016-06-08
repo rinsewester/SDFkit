@@ -1,0 +1,50 @@
+{ 
+	"name": "simple SDF",
+
+	"nodes" : [
+		{
+			"name" : "Pr",
+			"function" : "lambda clockcount, firecount: [firecount]",
+			"pos" : [100, 100]
+		},
+
+		{
+			"name" : "Int",
+			"function" : "lambda x, y, clockcount, firecount: [x[0] + y[0]]",
+			"pos" : [300, 100]
+		},
+		{
+			"name" : "Cr",
+			"function" : "lambda x, clockcount, firecount: []",
+			"pos" : [500, 100]
+		}
+	],
+
+	"edges": [
+		{
+			"src" : "Pr",
+			"dst" : "Int",
+			"argnr" : 0,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		},
+		{
+			"src" : "Int",
+			"dst" : "Int",
+			"argnr" : 1,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : [0],
+			"angle" : 4.71
+		},
+		{
+			"src" : "Int",
+			"dst" : "Cr",
+			"argnr" : 0,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		}
+	]
+}
