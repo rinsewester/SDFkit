@@ -1,0 +1,53 @@
+{ 
+	"name": "Alternating merge",
+
+	"nodes" : [
+		{
+			"name" : "P1",
+			"function" : "lambda clockcount, firecount: [firecount] if (firecount % 2 == 1) else []",
+			"pos" : [100, 100]
+		},
+		{
+			"name" : "P2",
+			"function" : "lambda clockcount, firecount: [firecount] if (firecount % 2 == 0) else []",
+			"pos" : [100, 300]
+		},
+		{
+			"name" : "F",
+			"function" : "lambda xs, ys, clockcount, firecount: xs if (firecount % 2 == 0) else ys",
+			"pos" : [300, 200]
+		},
+		{
+			"name" : "C",
+			"function" : "lambda xs, clockcount, firecount: []",
+			"pos" : [500, 200]
+		}
+	],
+
+	"edges": [
+		{
+			"src" : "P1",
+			"dst" : "F",
+			"argnr" : 0,
+			"prates" : [0,1],
+			"crates" : [1,0],
+			"tkns" : []
+		},
+		{
+			"src" : "P2",
+			"dst" : "F",
+			"argnr" : 1,
+			"prates" : [1,0],
+			"crates" : [0,1],
+			"tkns" : []
+		},
+		{
+			"src" : "F",
+			"dst" : "C",
+			"argnr" : 0,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		}
+	]
+}
