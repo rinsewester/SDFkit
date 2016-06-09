@@ -8,8 +8,6 @@ author: Rinse Wester
 
 """
 
-# TODO add proper safe counters _storestate as well for proper backtracking
-
 import networkx as nx
 import json
 from copy import deepcopy
@@ -23,8 +21,9 @@ class SDFGraph(nx.DiGraph):
 
         self.name = name
 
-        # state sorage for backtracking in simulations
-        self.states = {}
+        # state sorage for backtracking in simulations (tokens and counters)
+        self.edgestates = {}
+        self.nodestates = {}
 
         # counter to count number of clockcycles: accessable from node
         # functions
@@ -38,7 +37,7 @@ class SDFGraph(nx.DiGraph):
         self.edge[src][dst]['crates'] = crates
         self.edge[src][dst]['tkns'] = tkns
         self.edge[src][dst]['itkns'] = []
-        self.states[(src, dst)] = [tkns]
+        self.edgestates[(src, dst)] = [tkns]
 
     def add_self_edge(self, n, argnr, prates, crates, tkns=[], angle=0.6):
 
@@ -50,6 +49,7 @@ class SDFGraph(nx.DiGraph):
         super(SDFGraph, self).add_node(n)
         self.updateNodeFunction(n, f)
         self.node[n]['firecount'] = 0
+        self.nodestates[n] = [0]
         self.node[n]['pos'] = pos
 
     def add_nodes_from(self, ns):
@@ -64,30 +64,38 @@ class SDFGraph(nx.DiGraph):
 
     def reset(self):
 
-        for (src, dst), edgeStates in self.states.items():
-            self[src][dst]['tkns'] = edgeStates[0]
-            del self.states[(src, dst)][1:]
+        for (src, dst), states in self.edgestates.items():
+            self[src][dst]['tkns'] = states[0]
+            del self.edgestates[(src, dst)][1:]
 
         # reset clcok and firing counters
         for n in self.nodes():
             self.node[n]['firecount'] = 0
+            self.nodestates[n] = [0]
         self.clockcount = 0
 
     def _storestate(self):
 
-        for (src, dst), edgeStates in self.states.items():
-            edgeStates.append(self[src][dst]['tkns'])
+        for (src, dst), states in self.edgestates.items():
+            states.append(self[src][dst]['tkns'])
+
+        for n, states in self.nodestates.items():
+            states.append(self.node[n]['firecount'])
 
     def stateCount(self):
 
-        e0 = list(self.states.keys())[0]
-        return len(self.states[e0])
+        e0 = list(self.edgestates.keys())[0]
+        return len(self.edgestates[e0])
 
     def back(self):
 
-        for (src, dst), edgeStates in self.states.items():
-            self[src][dst]['tkns'] = edgeStates[-2]
-            edgeStates.pop()
+        for (src, dst), states in self.edgestates.items():
+            self[src][dst]['tkns'] = states[-2]
+            states.pop()
+
+        for n, states in self.nodestates.items():
+            self.node[n]['firecount'] = states[-2]
+            states.pop()
 
     def step(self):
 
@@ -109,8 +117,11 @@ class SDFGraph(nx.DiGraph):
                     phase = self.node[n]['firecount'] % len(
                         self[src][n]['crates'])
                     crate = self[src][n]['crates'][phase]
-                    args.append(self[src][n]['tkns'][-crate:])
-                    self[src][n]['tkns'] = self[src][n]['tkns'][:-crate]
+                    if crate > 0:
+                        args.append(self[src][n]['tkns'][-crate:])
+                        self[src][n]['tkns'] = self[src][n]['tkns'][:-crate]
+                    else:
+                        args.append([])
                 # order arguments
                 args_sorted = [0] * len(args)
                 for i, v in zip(arg_inds, args):
@@ -207,13 +218,25 @@ class SDFGraph(nx.DiGraph):
 
     def test(self):
 
-        initState = deepcopy(self.states)
+        # Check wether the edges state store and restore works properly
+        initEdgeState = deepcopy(self.edgestates)
         self.step()
         self.step()
         self.reset()
         print(
-            'Simulation of', self.name,
-            'correct: ', initState == self.states)
+            'Reset check of', self.name,
+            'correct: ', initEdgeState == self.edgestates)
+
+        # Check wether the node state store and restore works properly
+        self.step()
+        secondCntrState = deepcopy(self.nodestates)
+        self.step()
+        self.step()
+        self.back()
+        self.back()
+        print(
+            'Firecount check of', self.name,
+            'correct: ', secondCntrState == self.nodestates)
 
 
 # Create a simple SDF graph
@@ -236,14 +259,14 @@ G2.test()
 # intgr = 'lambda x, y: [x[0]+y[0]]'
 
 # G0.add_nodes_from([
-# 	('n0', cpy,  (100, 100)),
-# 	('n1', addm, (100, 300)),
-# 	('n2', forw,  (300, 300)),
-# 	('n3', intgr,  (300, 100))])
+#   ('n0', cpy,  (100, 100)),
+#   ('n1', addm, (100, 300)),
+#   ('n2', forw,  (300, 300)),
+#   ('n3', intgr,  (300, 100))])
 # G0.add_edges_from([
-# 	('n0','n1', 0, [2], [2], []),
-# 	('n1','n2', 0, [1], [1], []),
-# 	('n2','n1', 1, [1], [1], [1]),
-# 	('n2','n3', 0, [1], [1], []),
-# 	('n3','n0', 0, [1], [1], [1])])
+#   ('n0','n1', 0, [2], [2], []),
+#   ('n1','n2', 0, [1], [1], []),
+#   ('n2','n1', 1, [1], [1], [1]),
+#   ('n2','n3', 0, [1], [1], []),
+#   ('n3','n0', 0, [1], [1], [1])])
 # G0.add_self_edge('n3', 1, [1], [1], [0], 7/8*2*math.pi)

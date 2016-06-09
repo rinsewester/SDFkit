@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
         self.logWindow.setMinimumHeight(250)
         edgeNames = []
         edgeData = []
-        for (src, dst), edata in G0.states.items():
+        for (src, dst), edata in G0.edgestates.items():
             edgeNames.append(src + ' → ' + dst)
             edgeData.append(edata)
         self.logWindow.setEdgeLabels(edgeNames)
