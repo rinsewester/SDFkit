@@ -1,0 +1,71 @@
+{ 
+	"name": "Distinct outputs",
+
+	"nodes" : [
+		{
+			"name" : "P1",
+			"function" : "lambda clockcount, firecount: [firecount]",
+			"pos" : [100, 100]
+		},
+		{
+			"name" : "P2",
+			"function" : "lambda clockcount, firecount: [firecount * 2]",
+			"pos" : [100, 300]
+		},
+		{
+			"name" : "Op",
+			"function" : "lambda xs, ys, clockcount, firecount: ([xs[0] + 3], [ys[0] + 5])",
+			"pos" : [300, 200]
+		},
+		{
+			"name" : "C1",
+			"function" : "lambda xs, clockcount, firecount: []",
+			"pos" : [500, 100]
+		},
+		{
+			"name" : "C2",
+			"function" : "lambda xs, clockcount, firecount: []",
+			"pos" : [500, 300]
+		}
+
+	],
+
+	"edges": [
+		{
+			"src" : "P1",
+			"dst" : "Op",
+			"resnr" : 0,
+			"argnr" : 0,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		},
+		{
+			"src" : "P2",
+			"dst" : "Op",
+			"resnr" : 0,
+			"argnr" : 1,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		},
+		{
+			"src" : "Op",
+			"dst" : "C1",
+			"resnr" : 0,
+			"argnr" : 0,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		},
+		{
+			"src" : "Op",
+			"dst" : "C2",
+			"resnr" : 1,
+			"argnr" : 0,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		}
+	]
+}
