@@ -29,9 +29,10 @@ class SDFGraph(nx.DiGraph):
         # functions
         self.clockcount = 0
 
-    def add_edge(self, src, dst, argnr, prates, crates, tkns=[]):
+    def add_edge(self, src, dst, resnr, argnr, prates, crates, tkns=[]):
 
         super(SDFGraph, self).add_edge(src, dst)
+        self.edge[src][dst]['res'] = resnr
         self.edge[src][dst]['arg'] = argnr
         self.edge[src][dst]['prates'] = prates
         self.edge[src][dst]['crates'] = crates
@@ -39,9 +40,9 @@ class SDFGraph(nx.DiGraph):
         self.edge[src][dst]['itkns'] = []
         self.edgestates[(src, dst)] = [tkns]
 
-    def add_self_edge(self, n, argnr, prates, crates, tkns=[], angle=0.6):
+    def add_self_edge(self, n, resnr, argnr, prates, crates, tkns=[], angle=0.6):
 
-        self.add_edge(n, n, argnr, prates, crates, tkns)
+        self.add_edge(n, n, resnr, argnr, prates, crates, tkns)
         self.edge[n][n]['angle'] = angle
 
     def add_node(self, n, f, pos):
@@ -59,8 +60,8 @@ class SDFGraph(nx.DiGraph):
 
     def add_edges_from(self, es):
 
-        for src, dst, argnr, prates, crates, tkns in es:
-            self.add_edge(src, dst, argnr, prates, crates, tkns)
+        for src, dst, resnr, argnr, prates, crates, tkns in es:
+            self.add_edge(src, dst, resnr, argnr, prates, crates, tkns)
 
     def reset(self):
 
@@ -132,6 +133,8 @@ class SDFGraph(nx.DiGraph):
                 res = self.node[n]['func'](
                     *args_sorted, clockcount=self.clockcount,
                     firecount=self.node[n]['firecount'])
+                if type(res) is tuple:
+                    res = res[0] # TODO split result tuple and send to proper edge
                 self.node[n]['firecount'] += 1
 
                 # add result to intermediate buffers connected to succeeding
@@ -189,6 +192,7 @@ class SDFGraph(nx.DiGraph):
                     edgeName = jsedge['name']
                 else:
                     edgeName = edgeSource + ' → ' + edgeDestination
+                edgeResNumber = jsedge['resnr']
                 edgeArgNumber = jsedge['argnr']
                 edgePRates = SDFGraph._flattenRateList(jsedge['prates'])
                 edgeCRates = SDFGraph._flattenRateList(jsedge['crates'])
@@ -196,11 +200,11 @@ class SDFGraph(nx.DiGraph):
                 if edgeSource == edgeDestination:
                     edgeAngle = jsedge['angle']
                     self.add_self_edge(
-                        edgeSource, edgeArgNumber, edgePRates,
+                        edgeSource, edgeResNumber, edgeArgNumber, edgePRates,
                         edgeCRates, edgeTokens, edgeAngle)
                 else:
                     self.add_edge(
-                        edgeSource, edgeDestination, edgeArgNumber,
+                        edgeSource, edgeDestination, edgeResNumber, edgeArgNumber,
                         edgePRates, edgeCRates, edgeTokens)
         except Exception as e:
             print("Error occurred: ", e)
@@ -241,16 +245,9 @@ class SDFGraph(nx.DiGraph):
 
 # Create a simple SDF graph
 G0 = SDFGraph()
-G0.loadFromFile('examples/alternating merge.json')
+G0.loadFromFile('examples/distinct outputs.json')
 G0.test()
 
-G1 = SDFGraph()
-G1.loadFromFile('examples/producer consumer.json')
-G1.test()
-
-G2 = SDFGraph()
-G2.loadFromFile('examples/simple graph.json')
-G2.test()
 
 # Functions for nodes
 # cpy = 'lambda xs: [xs[0], xs[0]]'
