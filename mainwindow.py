@@ -56,14 +56,7 @@ class MainWindow(QMainWindow):
         self.dwLogWindow = QDockWidget('Edge log', self)
         self.logWindow = LogWidget()
         self.logWindow.setMinimumHeight(250)
-        edgeNames = []
-        edgeData = []
-        if self.graph is not None:
-            for (src, dst), edata in self.graph.edgestates.items():
-                edgeNames.append(src + ' → ' + dst)
-                edgeData.append(edata)
-        self.logWindow.setEdgeLabels(edgeNames)
-        self.logWindow.setEdgeData(edgeData)
+        self._updateLogWindow()
         self.dwLogWindow.setAllowedAreas(Qt.BottomDockWidgetArea)
         self.dwLogWindow.setWidget(self.logWindow)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dwLogWindow)
@@ -85,11 +78,29 @@ class MainWindow(QMainWindow):
         self.setGeometry(300, 300, 1000, 750)
         self.show()
 
+    def _updateLogWindow(self):
+
+        edgeNames = []
+        edgeData = []
+        if self.graph is not None:
+            for (src, dst), edata in self.graph.edgestates.items():
+                edgeNames.append(src + ' → ' + dst)
+                edgeData.append(edata)
+        self.logWindow.setEdgeLabels(edgeNames)
+        self.logWindow.setEdgeData(edgeData)
+
+
     def openActionTriggered(self):
 
-        graphfile, _ = QFileDialog.getOpenFileName(self, 'Open graph')
+        graphfile, _ = QFileDialog.getOpenFileName(self, 'Open graph', './examples')
         if graphfile != '':
-            print('lets open ', graphfile)
+            self.graph = SDFGraph()
+            self.graph.loadFromFile(graphfile) # TODO add exception handling here when file is not valid
+        else:
+            self.graph = None
+        self.runWindow.setGraph(self.graph)
+        self.graphWidget.setGraph(self.graph)
+        self._updateLogWindow()
 
 
 if __name__ == '__main__':

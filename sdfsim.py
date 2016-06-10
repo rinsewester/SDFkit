@@ -173,7 +173,10 @@ class SDFGraph(nx.DiGraph):
         return res
 
     def loadFromFile(self, filename):
-
+        # TODO add some proper validation here:
+        #  at least two nodes and one edge, proper connections
+        #  and check wether all edges are connected consistenly
+        #  to nodearguments and results
         try:
             with open(filename, 'r') as f:
                 jsonstr = f.read()
