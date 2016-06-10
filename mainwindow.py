@@ -11,6 +11,7 @@ author: Rinse Wester
 import sys
 from PyQt5.QtWidgets import QDockWidget, QApplication, QMainWindow, QAction, QFileDialog, qApp
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 
 from sdfsim import *
 from runwindow import *
@@ -26,19 +27,49 @@ class MainWindow(QMainWindow):
 
     def initUI(self):
 
-        openAction = QAction('&Open', self)
+        openAction = QAction(QIcon('images/open.png'), '&Open', self)
         openAction.setShortcut('Ctrl+O')
         openAction.setStatusTip('Open graph')
         openAction.triggered.connect(self.openActionTriggered)
 
-        exitAction = QAction('&Exit', self)
+        exitAction = QAction(QIcon('images/exit.png'),'&Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(qApp.quit)
 
-        menu = self.menuBar().addMenu('&File')
-        menu.addAction(openAction)
-        menu.addAction(exitAction)
+        filemenu = self.menuBar().addMenu('&File')
+        filemenu.addAction(openAction)
+        filemenu.addAction(exitAction)
+
+        clashcodegenAction = QAction(QIcon('images/hardware.png'), '&Generate CLaSH code', self)
+        clashcodegenAction.setShortcut('Ctrl+G')
+        clashcodegenAction.setStatusTip('Generate CLaSH code')
+        clashcodegenAction.triggered.connect(self.clashcodegenActionTriggered)
+
+        softcodegenAction = QAction(QIcon('images/software.png'), 'Generate &software', self)
+        softcodegenAction.setShortcut('Ctrl+W')
+        softcodegenAction.setStatusTip('Generate C code')
+        softcodegenAction.triggered.connect(self.softcodegenActionTriggered)
+
+        gpucodegenAction = QAction(QIcon('images/gpu.png'), '&Generate OpenCL code', self)
+        gpucodegenAction.setShortcut('Ctrl+L')
+        gpucodegenAction.setStatusTip('Generate OpenCL code')
+        gpucodegenAction.triggered.connect(self.gpucodegenActionTriggered)
+
+        codegenmenu = self.menuBar().addMenu('&Code generation')
+        codegenmenu.addAction(clashcodegenAction)
+        codegenmenu.addAction(softcodegenAction)
+        codegenmenu.addAction(gpucodegenAction)
+
+
+        self.toolbar = self.addToolBar('Exit')
+        self.toolbar.addAction(openAction)
+        self.toolbar.addAction(clashcodegenAction)
+        self.toolbar.addAction(softcodegenAction)
+        self.toolbar.addAction(gpucodegenAction)
+        self.toolbar.addAction(exitAction)
+
+
 
         self.sbar = self.statusBar()
 
@@ -101,6 +132,15 @@ class MainWindow(QMainWindow):
         self.runWindow.setGraph(self.graph)
         self.graphWidget.setGraph(self.graph)
         self._updateLogWindow()
+
+    def clashcodegenActionTriggered(self):
+        print('Generating CLaSH code to be implemented....')
+
+    def softcodegenActionTriggered(self):
+        print('Generating C code to be implemented....')
+
+    def gpucodegenActionTriggered(self):
+        print('Generating OpenCL code to be implemented....')
 
 
 if __name__ == '__main__':
