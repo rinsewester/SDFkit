@@ -101,16 +101,18 @@ class GraphWidget(QWidget):
         self.update()
 
         self.node_hovered = None
-        for n in self.graph.nodes():
-            if self._aboveNode(mpos, n):
-                self.node_hovered = n
-                break
-
         self.edge_hovered = None
-        for e in self.graph.edges():
-            if self._aboveEdge(mpos, e):
-                self.edge_hovered = e
-                break
+
+        if self.graph is not None:
+            for n in self.graph.nodes():
+                if self._aboveNode(mpos, n):
+                    self.node_hovered = n
+                    break
+
+            for e in self.graph.edges():
+                if self._aboveEdge(mpos, e):
+                    self.edge_hovered = e
+                    break
 
         # Give indication of link with nodes and edges
         if self.node_hovered is not None or self.edge_hovered is not None:
@@ -149,18 +151,24 @@ class GraphWidget(QWidget):
         self.graph = graph
 
         # set widget size based on min/max positions of nodes
-        minX, minY = sys.maxsize, sys.maxsize
-        maxX, maxY = 0, 0
+        if not self.graph is None:
+            minX, minY = sys.maxsize, sys.maxsize
+            maxX, maxY = 0, 0
 
-        for n in self.graph.nodes():
-            x, y = self.graph.node[n]['pos']
-            minX = min(minX, x)
-            minY = min(minY, y)
-            maxX = max(maxX, x)
-            maxY = max(maxY, y)
+            for n in self.graph.nodes():
+                x, y = self.graph.node[n]['pos']
+                minX = min(minX, x)
+                minY = min(minY, y)
+                maxX = max(maxX, x)
+                maxY = max(maxY, y)
 
-        self.setMinimumWidth(maxX + 128)
-        self.setMinimumHeight(maxY + 128)
+            self.setMinimumWidth(maxX + 128)
+            self.setMinimumHeight(maxY + 128)
+        else:
+            self.setMinimumWidth(128)
+            self.setMinimumHeight(128)
+
+        self.update()
 
     # Determine a point inbetween two points according to ratio
     def _relPoints(p1, p2, rat):
@@ -363,11 +371,12 @@ class GraphWidget(QWidget):
 
     def paintEvent(self, e):
 
-        qp = QPainter()
-        qp.begin(self)
-        qp.setRenderHint(QPainter.Antialiasing)
-        self.drawGraph(qp)
-        qp.end()
+        if not self.graph is None:
+            qp = QPainter()
+            qp.begin(self)
+            qp.setRenderHint(QPainter.Antialiasing)
+            self.drawGraph(qp)
+            qp.end()
 
     def drawGraph(self, qp):
 

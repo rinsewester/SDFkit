@@ -9,7 +9,7 @@ author: Rinse Wester
 """
 
 import sys
-from PyQt5.QtWidgets import QDockWidget, QApplication, QMainWindow, QAction
+from PyQt5.QtWidgets import QDockWidget, QApplication, QMainWindow, QAction, QFileDialog, qApp
 from PyQt5.QtCore import Qt
 
 from sdfsim import *
@@ -26,15 +26,29 @@ class MainWindow(QMainWindow):
 
     def initUI(self):
 
+        openAction = QAction('&Open', self)
+        openAction.setShortcut('Ctrl+O')
+        openAction.setStatusTip('Open graph')
+        openAction.triggered.connect(self.openActionTriggered)
+
+        exitAction = QAction('&Exit', self)
+        exitAction.setShortcut('Ctrl+Q')
+        exitAction.setStatusTip('Exit application')
+        exitAction.triggered.connect(qApp.quit)
+
         menu = self.menuBar().addMenu('&File')
-        menu.addAction(QAction('&Open', self))
-        menu.addAction(QAction('Close', self))
+        menu.addAction(openAction)
+        menu.addAction(exitAction)
 
         self.sbar = self.statusBar()
 
+
+        self.graph = G0
+
+
         self.dwRunWindow = QDockWidget('Simulate graph', self)
         self.runWindow = RunWindow()
-        self.runWindow.setGraph(G0)
+        self.runWindow.setGraph(self.graph)
         self.dwRunWindow.setAllowedAreas(Qt.LeftDockWidgetArea)
         self.dwRunWindow.setWidget(self.runWindow)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dwRunWindow)
@@ -44,9 +58,10 @@ class MainWindow(QMainWindow):
         self.logWindow.setMinimumHeight(250)
         edgeNames = []
         edgeData = []
-        for (src, dst), edata in G0.edgestates.items():
-            edgeNames.append(src + ' → ' + dst)
-            edgeData.append(edata)
+        if self.graph is not None:
+            for (src, dst), edata in self.graph.edgestates.items():
+                edgeNames.append(src + ' → ' + dst)
+                edgeData.append(edata)
         self.logWindow.setEdgeLabels(edgeNames)
         self.logWindow.setEdgeData(edgeData)
         self.dwLogWindow.setAllowedAreas(Qt.BottomDockWidgetArea)
@@ -55,7 +70,7 @@ class MainWindow(QMainWindow):
         self.runWindow.setLogWidget(self.logWindow)
 
         self.graphWidget = GraphWidget()
-        self.graphWidget.setGraph(G0)
+        self.graphWidget.setGraph(self.graph)
         self.runWindow.setGraphWidget(self.graphWidget)
 
         self.scrlarea = QScrollArea(self)
@@ -69,6 +84,12 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('SDFkit')
         self.setGeometry(300, 300, 1000, 750)
         self.show()
+
+    def openActionTriggered(self):
+
+        graphfile, _ = QFileDialog.getOpenFileName(self, 'Open graph')
+        if graphfile != '':
+            print('lets open ', graphfile)
 
 
 if __name__ == '__main__':

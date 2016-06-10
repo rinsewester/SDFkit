@@ -123,8 +123,12 @@ class RunWindow(QWidget):
 
         self.graph = graph
         self.cmbEdges.clear()
-        for src, dst in self.graph.edges():
-            self.cmbEdges.addItem(src + ' → ' + dst)
+
+        if self.graph is not None:
+            for src, dst in self.graph.edges():
+                self.cmbEdges.addItem(src + ' → ' + dst)
+        else:
+            self.setEnabled(False)
 
 
 if __name__ == '__main__':

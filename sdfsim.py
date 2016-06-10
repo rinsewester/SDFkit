@@ -243,6 +243,7 @@ class SDFGraph(nx.DiGraph):
         print(
             'Firecount check of', self.name,
             'correct: ', secondCntrState == self.nodestates)
+        self.back()
 
 
 # Create a simple SDF graph
