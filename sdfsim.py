@@ -134,13 +134,15 @@ class SDFGraph(nx.DiGraph):
                     *args_sorted, clockcount=self.clockcount,
                     firecount=self.node[n]['firecount'])
                 if type(res) is tuple:
-                    res = res[0] # TODO split result tuple and send to proper edge
+                    results = list(res)
+                else:
+                    results = [res]
                 self.node[n]['firecount'] += 1
 
                 # add result to intermediate buffers connected to succeeding
                 # nodes
                 for dest in self.successors(n):
-                    self[n][dest]['itkns'] = res
+                    self[n][dest]['itkns'] = results[self[n][dest]['res']]
         # add all the intermediate buffers to buffers
         for src, dst in self.edges():
             itkns = self[src][dst]['itkns']
@@ -247,6 +249,18 @@ class SDFGraph(nx.DiGraph):
 G0 = SDFGraph()
 G0.loadFromFile('examples/distinct outputs.json')
 G0.test()
+
+G1 = SDFGraph()
+G1.loadFromFile('examples/producer consumer.json')
+G1.test()
+
+G2 = SDFGraph()
+G2.loadFromFile('examples/alternating merge.json')
+G2.test()
+
+G3 = SDFGraph()
+G3.loadFromFile('examples/simple graph.json')
+G3.test()
 
 
 # Functions for nodes

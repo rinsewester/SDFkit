@@ -28,6 +28,7 @@
 		{
 			"src" : "P1",
 			"dst" : "F",
+			"resnr" : 0,
 			"argnr" : 0,
 			"prates" : [0,1],
 			"crates" : [1,0],
@@ -36,6 +37,7 @@
 		{
 			"src" : "P2",
 			"dst" : "F",
+			"resnr" : 0,
 			"argnr" : 1,
 			"prates" : [1,0],
 			"crates" : [0,1],
@@ -44,6 +46,7 @@
 		{
 			"src" : "F",
 			"dst" : "C",
+			"resnr" : 0,
 			"argnr" : 0,
 			"prates" : [1],
 			"crates" : [1],

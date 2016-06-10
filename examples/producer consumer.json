@@ -24,6 +24,7 @@
 		{
 			"src" : "Pr",
 			"dst" : "Int",
+			"resnr" : 0,
 			"argnr" : 0,
 			"prates" : [1],
 			"crates" : [1],
@@ -32,6 +33,7 @@
 		{
 			"src" : "Int",
 			"dst" : "Int",
+			"resnr" : 0,
 			"argnr" : 1,
 			"prates" : [1],
 			"crates" : [1],
@@ -41,6 +43,7 @@
 		{
 			"src" : "Int",
 			"dst" : "Cr",
+			"resnr" : 0,
 			"argnr" : 0,
 			"prates" : [1],
 			"crates" : [1],
