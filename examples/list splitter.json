@@ -1,0 +1,67 @@
+{ 
+	"name": "Splitter",
+
+	"nodes" : [
+		{
+			"name" : "Pr",
+			"function" : "lambda clockcount, firecount: [list(range(firecount,firecount+6))]",
+			"pos" : [100, 100]
+		},
+
+		{
+			"name" : "Spl",
+			"function" : "lambda xs, ys, clockcount, firecount: ([xs[0][0], xs[0][1]], ys)",
+			"pos" : [300, 100]
+		},
+		{
+			"name" : "Op",
+			"function" : "lambda xs, clockcount, firecount: [sum(xs)]",
+			"pos" : [500, 100]
+		},
+		{
+			"name" : "Cr",
+			"function" : "lambda x, clockcount, firecount: []",
+			"pos" : [700, 100]
+		}
+	],
+
+	"edges": [
+		{
+			"src" : "Pr",
+			"dst" : "Spl",
+			"resnr" : 0,
+			"argnr" : 0,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		},
+		{
+			"src" : "Spl",
+			"dst" : "Op",
+			"resnr" : 0,
+			"argnr" : 0,
+			"prates" : [2],
+			"crates" : [2],
+			"tkns" : []
+		},
+		{
+			"src" : "Op",
+			"dst" : "Cr",
+			"resnr" : 0,
+			"argnr" : 0,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		},
+		{
+			"src" : "Spl",
+			"dst" : "Spl",
+			"resnr" : 1,
+			"argnr" : 1,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : [0],
+			"angle" : 4.7
+		}
+	]
+}
