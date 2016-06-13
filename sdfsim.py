@@ -137,12 +137,21 @@ class SDFGraph(nx.DiGraph):
                     results = list(res)
                 else:
                     results = [res]
-                self.node[n]['firecount'] += 1
 
                 # add result to intermediate buffers connected to succeeding
                 # nodes
                 for dest in self.successors(n):
+                    phase = self.node[n]['firecount'] % len(self[n][dest]['prates'])
+                    prate = self[n][dest]['prates'][phase]
+                    resnr = self[n][dest]['res']
+                    if len(results[resnr]) != prate:
+                        # print('edge: ', (n, dest), 'prate: ', prate, 'rescount', len(results[resnr]) )
+                        raise ValueError('Mismatch between number of tokens produced and production rate: ', 'edge: ', (n, dest), 'prate: ', prate, 'rescount', len(results[resnr]) )
                     self[n][dest]['itkns'] = results[self[n][dest]['res']]
+
+                # Firing of node complete
+                self.node[n]['firecount'] += 1
+
         # add all the intermediate buffers to buffers
         for src, dst in self.edges():
             itkns = self[src][dst]['itkns']
@@ -248,23 +257,9 @@ class SDFGraph(nx.DiGraph):
             'correct: ', secondCntrState == self.nodestates)
         self.back()
 
-
-# Create a simple SDF graph
+# The default SDF graph
 G0 = SDFGraph()
-G0.loadFromFile('examples/distinct outputs.json')
-G0.test()
-
-G1 = SDFGraph()
-G1.loadFromFile('examples/producer consumer.json')
-G1.test()
-
-G2 = SDFGraph()
-G2.loadFromFile('examples/alternating merge.json')
-G2.test()
-
-G3 = SDFGraph()
-G3.loadFromFile('examples/simple graph.json')
-G3.test()
+G0.loadFromFile('examples/simple graph.json')
 
 
 # Functions for nodes
