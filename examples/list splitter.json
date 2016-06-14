@@ -4,13 +4,13 @@
 	"nodes" : [
 		{
 			"name" : "Pr",
-			"function" : "lambda clockcount, firecount: [list(range(firecount,firecount+6))]",
+			"function" : "lambda clockcount, firecount: [list(range(firecount,firecount+6))] if (firecount % 4) == 0 else []",
 			"pos" : [100, 100]
 		},
 
 		{
 			"name" : "Spl",
-			"function" : "lambda xs, ys, clockcount, firecount: ([xs[0][0], xs[0][1]], ys)",
+			"function" : "lambda xs, state, clockcount, firecount: (xs[0][:2] if (firecount % 3) == 0 else state[0][2*(firecount % 3):2*(firecount % 3) + 2], xs if (firecount % 3) == 0 else state if (firecount % 3) == 1 else [])",
 			"pos" : [300, 100]
 		},
 		{
@@ -23,7 +23,7 @@
 			"function" : "lambda x, clockcount, firecount: []",
 			"pos" : [700, 100]
 		}
-	],fdaf df af ag
+	],
 
 	"edges": [
 		{
@@ -31,8 +31,8 @@
 			"dst" : "Spl",
 			"resnr" : 0,
 			"argnr" : 0,
-			"prates" : [1],
-			"crates" : [1],
+			"prates" : [1,0,0,0],
+			"crates" : [1,0,0],
 			"tkns" : []
 		},
 		{
@@ -40,7 +40,7 @@
 			"dst" : "Op",
 			"resnr" : 0,
 			"argnr" : 0,
-			"prates" : [2],
+			"prates" : [2,2,2],
 			"crates" : [2],
 			"tkns" : []
 		},
@@ -58,9 +58,9 @@
 			"dst" : "Spl",
 			"resnr" : 1,
 			"argnr" : 1,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : [0],
+			"prates" : [1,1,0],
+			"crates" : [0,1,1],
+			"tkns" : [],
 			"angle" : 4.7
 		}
 	]
