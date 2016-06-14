@@ -127,8 +127,8 @@ class RunWindow(QWidget):
         if self.graph is not None:
             for src, dst in self.graph.edges():
                 self.cmbEdges.addItem(src + ' → ' + dst)
-        else:
-            self.setEnabled(False)
+
+        self.setEnabled(self.graph is not None)
 
 
 if __name__ == '__main__':

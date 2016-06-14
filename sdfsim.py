@@ -186,42 +186,39 @@ class SDFGraph(nx.DiGraph):
         #  at least two nodes and one edge, proper connections
         #  and check wether all edges are connected consistenly
         #  to nodearguments and results
-        try:
-            with open(filename, 'r') as f:
-                jsonstr = f.read()
+        with open(filename, 'r') as f:
+            jsonstr = f.read()
 
-            jsondata = json.loads(jsonstr)
-            self.name = jsondata['name']
+        jsondata = json.loads(jsonstr)
+        self.name = jsondata['name']
 
-            for jsnode in jsondata['nodes']:
-                nodeName = jsnode['name']
-                nodeFunction = jsnode['function']
-                nodePosition = jsnode['pos'][0], jsnode['pos'][1]
-                self.add_node(nodeName, nodeFunction, nodePosition)
+        for jsnode in jsondata['nodes']:
+            nodeName = jsnode['name']
+            nodeFunction = jsnode['function']
+            nodePosition = jsnode['pos'][0], jsnode['pos'][1]
+            self.add_node(nodeName, nodeFunction, nodePosition)
 
-            for jsedge in jsondata['edges']:
-                edgeSource = jsedge['src']
-                edgeDestination = jsedge['dst']
-                if 'name' in jsedge.keys():
-                    edgeName = jsedge['name']
-                else:
-                    edgeName = edgeSource + ' → ' + edgeDestination
-                edgeResNumber = jsedge['resnr']
-                edgeArgNumber = jsedge['argnr']
-                edgePRates = SDFGraph._flattenRateList(jsedge['prates'])
-                edgeCRates = SDFGraph._flattenRateList(jsedge['crates'])
-                edgeTokens = jsedge['tkns']
-                if edgeSource == edgeDestination:
-                    edgeAngle = jsedge['angle']
-                    self.add_self_edge(
-                        edgeSource, edgeResNumber, edgeArgNumber, edgePRates,
-                        edgeCRates, edgeTokens, edgeAngle)
-                else:
-                    self.add_edge(
-                        edgeSource, edgeDestination, edgeResNumber, edgeArgNumber,
-                        edgePRates, edgeCRates, edgeTokens)
-        except Exception as e:
-            print("Error occurred: ", e)
+        for jsedge in jsondata['edges']:
+            edgeSource = jsedge['src']
+            edgeDestination = jsedge['dst']
+            if 'name' in jsedge.keys():
+                edgeName = jsedge['name']
+            else:
+                edgeName = edgeSource + ' → ' + edgeDestination
+            edgeResNumber = jsedge['resnr']
+            edgeArgNumber = jsedge['argnr']
+            edgePRates = SDFGraph._flattenRateList(jsedge['prates'])
+            edgeCRates = SDFGraph._flattenRateList(jsedge['crates'])
+            edgeTokens = jsedge['tkns']
+            if edgeSource == edgeDestination:
+                edgeAngle = jsedge['angle']
+                self.add_self_edge(
+                    edgeSource, edgeResNumber, edgeArgNumber, edgePRates,
+                    edgeCRates, edgeTokens, edgeAngle)
+            else:
+                self.add_edge(
+                    edgeSource, edgeDestination, edgeResNumber, edgeArgNumber,
+                    edgePRates, edgeCRates, edgeTokens)
 
     def updateNodeFunction(self, nodename, funcstr):
 

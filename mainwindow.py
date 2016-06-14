@@ -9,7 +9,7 @@ author: Rinse Wester
 """
 
 import sys
-from PyQt5.QtWidgets import QDockWidget, QApplication, QMainWindow, QAction, QFileDialog, qApp
+from PyQt5.QtWidgets import QDockWidget, QApplication, QMainWindow, QAction, QFileDialog, QMessageBox, qApp
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
@@ -123,24 +123,35 @@ class MainWindow(QMainWindow):
 
     def openActionTriggered(self):
 
-        graphfile, _ = QFileDialog.getOpenFileName(self, 'Open graph', './examples')
-        if graphfile != '':
+        graphfile, _ = QFileDialog.getOpenFileName(
+            self, 'Open graph', './examples')
+        try:
             self.graph = SDFGraph()
-            self.graph.loadFromFile(graphfile) # TODO add exception handling here when file is not valid
-        else:
+            self.graph.loadFromFile(graphfile)
+        except (FileNotFoundError, ValueError, KeyError) as e:
+            QMessageBox.critical(
+                self, 'Error opening file',
+                '<b>Error opening file:</b>' + '\n\n' + str(e))
             self.graph = None
+
         self.runWindow.setGraph(self.graph)
         self.graphWidget.setGraph(self.graph)
         self._updateLogWindow()
 
     def clashcodegenActionTriggered(self):
-        print('Generating CLaSH code to be implemented....')
+        QMessageBox.warning(
+            self, 'Generate CLaSH code',
+            'Generation of CLaSH code not yet supported')
 
     def softcodegenActionTriggered(self):
-        print('Generating C code to be implemented....')
+        QMessageBox.warning(
+            self, 'Generate C code',
+            'Generation of C code not yet supported')
 
     def gpucodegenActionTriggered(self):
-        print('Generating OpenCL code to be implemented....')
+        QMessageBox.warning(
+            self, 'Generate OpenCL code',
+            'Generation of OpenCL code not yet supported')
 
 
 if __name__ == '__main__':
