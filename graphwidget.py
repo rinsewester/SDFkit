@@ -18,7 +18,7 @@ from PyQt5.QtGui import (
     QPainter, QFont, QColor, QPen, QBrush, QPainterPath, QPolygon,
     QMouseEvent, QCursor, QContextMenuEvent)
 
-from sdfsim import *
+from csdfgraph import *
 
 
 class GraphWidget(QWidget):

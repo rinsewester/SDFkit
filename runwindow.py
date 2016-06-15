@@ -11,7 +11,7 @@ author: Rinse Wester
 import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QComboBox, QLineEdit
 
-from sdfsim import *
+from csdfgraph import *
 
 
 class RunWindow(QWidget):

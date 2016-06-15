@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import QWidget, QDockWidget, QApplication, QLayout, QVBoxLa
 from PyQt5.QtCore import Qt, QRect, QPoint
 from PyQt5.QtGui import QPainter, QFont, QColor, QPen, QBrush, QPainterPath, QPolygon, QPalette
 
-from sdfsim import *
+from csdfgraph import *
 
 
 class LogWidget(QWidget):
