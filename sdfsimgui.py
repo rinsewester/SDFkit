@@ -270,15 +270,25 @@ class GraphWidget(QWidget):
                 QBrush(Qt.black), 12, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
             rect = QRect(
                 tknposx - 64, tknposy, 128, 2 * GraphWidget.NODE_RADIUS)
-            if len(tkns) > 1:
-                # Several tokens
+            # draw different amount of black dots depending on nr of tokens
+            if len(tkns) == 1:
+                qp.drawPoint(tknposx, tknposy)
+                qp.drawText(rect, Qt.AlignCenter, str(tkns[0]))
+            elif len(tkns) == 2:
                 qp.drawPoint(tknposx - 3, tknposy - 3)
                 qp.drawPoint(tknposx + 3, tknposy + 3)
                 qp.drawText(rect, Qt.AlignCenter, str(tkns)[1:-1])
+            elif len(tkns) == 3:
+                qp.drawPoint(tknposx - 3, tknposy - 3)
+                qp.drawPoint(tknposx - 3, tknposy + 3)
+                qp.drawPoint(tknposx + 3, tknposy - 3)
+                qp.drawText(rect, Qt.AlignCenter, str(tkns)[1:-1])
             else:
-                # Single tokens
-                qp.drawPoint(tknposx, tknposy)
-                qp.drawText(rect, Qt.AlignCenter, str(tkns[0]))
+                qp.drawPoint(tknposx - 3, tknposy - 3)
+                qp.drawPoint(tknposx - 3, tknposy + 3)
+                qp.drawPoint(tknposx + 3, tknposy - 3)
+                qp.drawPoint(tknposx + 3, tknposy + 3)
+                qp.drawText(rect, Qt.AlignCenter, str(tkns)[1:-1])
 
     def _drawSelfEdge(self, qp, n, prates, crates, tkns, angle, edge, hovering=False):
 
