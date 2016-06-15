@@ -15,7 +15,7 @@
 		},
 		{
 			"name" : "Op",
-			"function" : "lambda xs, clockcount, firecount: [sum(xs)]",
+			"function" : "lambda xs, clockcount, firecount: [sum(xs) / 3]",
 			"pos" : [500, 100]
 		},
 		{
