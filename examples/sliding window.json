@@ -1,0 +1,67 @@
+{ 
+	"name": "Sliding Window",
+
+	"nodes" : [
+		{
+			"name" : "Pr",
+			"function" : "lambda clockcount, firecount: [list(range(firecount,firecount+5))] if (firecount % 4) == 0 else []",
+			"pos" : [100, 100]
+		},
+
+		{
+			"name" : "Spl",
+			"function" : "lambda xs, state, clockcount, firecount: (xs[0][:3] if (firecount % 3) == 0 else state[0][(firecount % 3):(firecount % 3) + 3], xs if (firecount % 3) == 0 else state if (firecount % 3) == 1 else [])",
+			"pos" : [300, 100]
+		},
+		{
+			"name" : "Op",
+			"function" : "lambda xs, clockcount, firecount: [sum(xs)]",
+			"pos" : [500, 100]
+		},
+		{
+			"name" : "Cr",
+			"function" : "lambda x, clockcount, firecount: []",
+			"pos" : [700, 100]
+		}
+	],
+
+	"edges": [
+		{
+			"src" : "Pr",
+			"dst" : "Spl",
+			"resnr" : 0,
+			"argnr" : 0,
+			"prates" : [1,"3*0"],
+			"crates" : [1,0,0],
+			"tkns" : []
+		},
+		{
+			"src" : "Spl",
+			"dst" : "Op",
+			"resnr" : 0,
+			"argnr" : 0,
+			"prates" : ["3*3"],
+			"crates" : [3],
+			"tkns" : []
+		},
+		{
+			"src" : "Op",
+			"dst" : "Cr",
+			"resnr" : 0,
+			"argnr" : 0,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		},
+		{
+			"src" : "Spl",
+			"dst" : "Spl",
+			"resnr" : 1,
+			"argnr" : 1,
+			"prates" : [1,1,0],
+			"crates" : [0,1,1],
+			"tkns" : [],
+			"angle" : 4.7
+		}
+	]
+}
