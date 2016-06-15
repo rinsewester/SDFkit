@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Widget to display simulation data of SDF graph.
+Widget to display simulation data of a CSDF graph.
 
 author: Rinse Wester
 
@@ -16,7 +16,7 @@ from PyQt5.QtGui import QIcon
 from sdfsim import *
 from runwindow import *
 from logwindow import LogWidget
-from sdfsimgui import GraphWidget
+from graphwidget import GraphWidget
 
 
 class MainWindow(QMainWindow):
@@ -106,7 +106,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.scrlarea)
 
         self.setWindowTitle('SDFkit')
-        self.setGeometry(300, 300, 1000, 750)
+        self.setGeometry(300, 300, 1300, 750)
         self.show()
 
     def _updateLogWindow(self):
@@ -126,7 +126,7 @@ class MainWindow(QMainWindow):
         graphfile, _ = QFileDialog.getOpenFileName(
             self, 'Open graph', './examples')
         try:
-            self.graph = SDFGraph()
+            self.graph = CSDFGraph()
             self.graph.loadFromFile(graphfile)
         except (FileNotFoundError, ValueError, KeyError) as e:
             QMessageBox.critical(

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Widget to display simulation data of SDF graph.
+Widget to display simulation data of a CSDF graph.
 
 author: Rinse Wester
 

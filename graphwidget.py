@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-SDFsim
-
-SDF graph simulator
+Widget to visualize a CSDF graph
 
 author: Rinse Wester
 

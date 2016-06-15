@@ -13,7 +13,7 @@ import json
 from copy import deepcopy
 
 
-class SDFGraph(nx.DiGraph):
+class CSDFGraph(nx.DiGraph):
 
     def __init__(self, name=''):
 
@@ -31,7 +31,7 @@ class SDFGraph(nx.DiGraph):
 
     def add_edge(self, src, dst, resnr, argnr, prates, crates, tkns=[]):
 
-        super(SDFGraph, self).add_edge(src, dst)
+        super(CSDFGraph, self).add_edge(src, dst)
         self.edge[src][dst]['res'] = resnr
         self.edge[src][dst]['arg'] = argnr
         self.edge[src][dst]['prates'] = prates
@@ -47,7 +47,7 @@ class SDFGraph(nx.DiGraph):
 
     def add_node(self, n, f, pos):
 
-        super(SDFGraph, self).add_node(n)
+        super(CSDFGraph, self).add_node(n)
         self.updateNodeFunction(n, f)
         self.node[n]['firecount'] = 0
         self.nodestates[n] = [0]
@@ -207,8 +207,8 @@ class SDFGraph(nx.DiGraph):
                 edgeName = edgeSource + ' → ' + edgeDestination
             edgeResNumber = jsedge['resnr']
             edgeArgNumber = jsedge['argnr']
-            edgePRates = SDFGraph._flattenRateList(jsedge['prates'])
-            edgeCRates = SDFGraph._flattenRateList(jsedge['crates'])
+            edgePRates = CSDFGraph._flattenRateList(jsedge['prates'])
+            edgeCRates = CSDFGraph._flattenRateList(jsedge['crates'])
             edgeTokens = jsedge['tkns']
             if edgeSource == edgeDestination:
                 edgeAngle = jsedge['angle']
@@ -255,7 +255,7 @@ class SDFGraph(nx.DiGraph):
         self.back()
 
 # The default SDF graph
-G0 = SDFGraph()
+G0 = CSDFGraph()
 G0.loadFromFile('examples/simple graph.json')
 
 
