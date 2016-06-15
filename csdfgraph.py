@@ -63,6 +63,25 @@ class CSDFGraph(nx.DiGraph):
         for src, dst, resnr, argnr, prates, crates, tkns in es:
             self.add_edge(src, dst, resnr, argnr, prates, crates, tkns)
 
+    def isHSDF(self):
+        rates = []
+        for src, dst in self.edges():
+            rates.append(self[src][dst]['prates'])
+            rates.append(self[src][dst]['crates'])
+
+        return all(map(lambda rts: rts == [1], rates))
+
+    def isSDF(self):
+        rates = []
+        for src, dst in self.edges():
+            rates.append(self[src][dst]['prates'])
+            rates.append(self[src][dst]['crates'])
+
+        return all(map(lambda rts: len(rts) == 1, rates))
+
+    def isCSDF(self):
+        return not self.isSDF()
+
     def reset(self):
 
         for (src, dst), states in self.edgestates.items():
@@ -233,14 +252,20 @@ class CSDFGraph(nx.DiGraph):
 
     def test(self):
 
+        if self.isHSDF():
+            print('Test HSDF graph ', self.name)
+        elif self.isSDF():
+            print('Test SDF graph ', self.name)
+        else:
+            print('Test CSDF graph ', self.name)
+
         # Check wether the edges state store and restore works properly
         initEdgeState = deepcopy(self.edgestates)
         self.step()
         self.step()
         self.reset()
         print(
-            'Reset check of', self.name,
-            'correct: ', initEdgeState == self.edgestates)
+            'Reset check correct: ', initEdgeState == self.edgestates)
 
         # Check wether the node state store and restore works properly
         self.step()
@@ -250,13 +275,13 @@ class CSDFGraph(nx.DiGraph):
         self.back()
         self.back()
         print(
-            'Firecount check of', self.name,
-            'correct: ', secondCntrState == self.nodestates)
+            'Firecount check correct: ', secondCntrState == self.nodestates)
         self.back()
 
 # The default SDF graph
 G0 = CSDFGraph()
 G0.loadFromFile('examples/simple graph.json')
+G0.test()
 
 
 # Functions for nodes
