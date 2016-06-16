@@ -253,11 +253,12 @@ class CSDFGraph(nx.DiGraph):
     def test(self):
 
         if self.isHSDF():
-            print('Test HSDF graph ', self.name)
+            gtype = 'HSDF'
         elif self.isSDF():
-            print('Test SDF graph ', self.name)
+            gtype = 'SDF'
         else:
-            print('Test CSDF graph ', self.name)
+            gtype = 'CSDF'
+        print('Test ' + gtype + ' graph ', self.name)
 
         # Check wether the edges state store and restore works properly
         initEdgeState = deepcopy(self.edgestates)

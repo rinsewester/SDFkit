@@ -18,6 +18,10 @@ from runwindow import *
 from logwindow import LogWidget
 from graphwidget import GraphWidget
 
+from codegen.clashcodegen import *
+from codegen.ccodegen import *
+from codegen.openclcodegen import *
+
 
 class MainWindow(QMainWindow):
 
@@ -32,7 +36,7 @@ class MainWindow(QMainWindow):
         openAction.setStatusTip('Open graph')
         openAction.triggered.connect(self.openActionTriggered)
 
-        exitAction = QAction(QIcon('images/exit.png'),'&Exit', self)
+        exitAction = QAction(QIcon('images/exit.png'), '&Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(qApp.quit)
@@ -41,17 +45,20 @@ class MainWindow(QMainWindow):
         filemenu.addAction(openAction)
         filemenu.addAction(exitAction)
 
-        clashcodegenAction = QAction(QIcon('images/hardware.png'), '&Generate CLaSH code', self)
+        clashcodegenAction = QAction(
+            QIcon('images/hardware.png'), '&Generate CLaSH code', self)
         clashcodegenAction.setShortcut('Ctrl+G')
         clashcodegenAction.setStatusTip('Generate CLaSH code')
         clashcodegenAction.triggered.connect(self.clashcodegenActionTriggered)
 
-        softcodegenAction = QAction(QIcon('images/software.png'), 'Generate &software', self)
+        softcodegenAction = QAction(
+            QIcon('images/software.png'), 'Generate &software', self)
         softcodegenAction.setShortcut('Ctrl+W')
         softcodegenAction.setStatusTip('Generate C code')
         softcodegenAction.triggered.connect(self.softcodegenActionTriggered)
 
-        gpucodegenAction = QAction(QIcon('images/gpu.png'), '&Generate OpenCL code', self)
+        gpucodegenAction = QAction(
+            QIcon('images/gpu.png'), '&Generate OpenCL code', self)
         gpucodegenAction.setShortcut('Ctrl+L')
         gpucodegenAction.setStatusTip('Generate OpenCL code')
         gpucodegenAction.triggered.connect(self.gpucodegenActionTriggered)
@@ -61,7 +68,6 @@ class MainWindow(QMainWindow):
         codegenmenu.addAction(softcodegenAction)
         codegenmenu.addAction(gpucodegenAction)
 
-
         self.toolbar = self.addToolBar('Exit')
         self.toolbar.addAction(openAction)
         self.toolbar.addAction(clashcodegenAction)
@@ -69,13 +75,9 @@ class MainWindow(QMainWindow):
         self.toolbar.addAction(gpucodegenAction)
         self.toolbar.addAction(exitAction)
 
-
-
         self.sbar = self.statusBar()
 
-
         self.graph = G0
-
 
         self.dwRunWindow = QDockWidget('Simulate graph', self)
         self.runWindow = RunWindow()
@@ -120,7 +122,6 @@ class MainWindow(QMainWindow):
         self.logWindow.setEdgeLabels(edgeNames)
         self.logWindow.setEdgeData(edgeData)
 
-
     def openActionTriggered(self):
 
         graphfile, _ = QFileDialog.getOpenFileName(
@@ -139,19 +140,29 @@ class MainWindow(QMainWindow):
         self._updateLogWindow()
 
     def clashcodegenActionTriggered(self):
-        QMessageBox.warning(
-            self, 'Generate CLaSH code',
-            'Generation of CLaSH code not yet supported')
+        try:
+            ClashCodeGen.generateCode(self.graph, './output/' + self.graph.name)
+        except Exception as e:
+            QMessageBox.critical(
+                self, 'Generate CLaSH code',
+                '<b>Error generating CLaSH code:</b> ' + str(e))
 
     def softcodegenActionTriggered(self):
-        QMessageBox.warning(
-            self, 'Generate C code',
-            'Generation of C code not yet supported')
+        try:
+            CCodeGen.generateCode(self.graph, './output/' + self.graph.name)
+        except Exception as e:
+            QMessageBox.critical(
+                self, 'Generate C code',
+                '<b>Error generating C code:</b> ' + str(e))        
 
     def gpucodegenActionTriggered(self):
-        QMessageBox.warning(
-            self, 'Generate OpenCL code',
-            'Generation of OpenCL code not yet supported')
+        try:
+            OpenCLCodeGen.generateCode(self.graph, './output/' + self.graph.name)
+        except Exception as e:
+            QMessageBox.critical(
+                self, 'Generate OpenCL code',
+                '<b>Error generating OpenCL code:</b> ' + str(e))
+        
 
 
 if __name__ == '__main__':
