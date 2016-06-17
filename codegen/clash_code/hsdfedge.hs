@@ -17,5 +17,5 @@ hsdfedge s i = (s', o)
 
 hsdfedgeL = mealy hsdfedge 0
 
-
+hsdfedgeLsim = simulate hsdfedgeL [1,2,3,4,5]
 
