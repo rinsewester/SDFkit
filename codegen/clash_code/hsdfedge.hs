@@ -20,8 +20,8 @@ hsdfedge :: (ElmVec, Ptr, Ptr) -> (Elm, Bool, Bool) -> ((ElmVec, Ptr, Ptr), (Elm
 hsdfedge (elms, rptr, wptr) (datain, prod, cons) = ((elms', rptr', wptr'), (dataout, empty, full, elms'))
     where
         elms' = if cons then replace (ptr2ind wptr) datain elms else elms
-        rptr' = if cons then rptr + 1 else rptr
-        wptr' = if prod then wptr + 1 else wptr
+        rptr' = if prod then rptr + 1 else rptr
+        wptr' = if cons then wptr + 1 else wptr
         dataout = elms !! (ptr2ind rptr)
         empty = rptr == wptr
         full = (msb rptr /= msb wptr) && (ptr2ind rptr == ptr2ind wptr)
