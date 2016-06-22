@@ -24,7 +24,3 @@ func = id :: Byte -> Byte
 hsdfnodeL = mealy (hsdfnode func) (0, 0)
 
 
-
-
---topEntity = 
-
