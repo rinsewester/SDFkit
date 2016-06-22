@@ -7,10 +7,7 @@ import CLaSH.Prelude
 import Debug.Trace
 import qualified Data.List as L
 
---type definitions
-type Cntr = Unsigned 16
-type Byte = Unsigned 8
-
+import HSDFTypes
 
 
 hsdfnode :: (a -> b) -> (Cntr, Cntr) -> (a, Bool, Bool) -> ((Cntr, Cntr), (b, Bool, Bool))

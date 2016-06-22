@@ -7,13 +7,7 @@ import CLaSH.Prelude
 import Debug.Trace
 import qualified Data.List as L
 
---type definitions
-type Byte = Unsigned 8
-type Nibble = Unsigned 4
-type Ptr = Unsigned 4
-type Vec8 a = Vec 8 a
-
-
+import HSDFTypes
 
 -- ignore the most significant bit by shifting up and down
 ptr2ind ptr = shiftR (shiftL ptr 1) 1
