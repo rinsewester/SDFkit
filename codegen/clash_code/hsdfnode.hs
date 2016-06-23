@@ -10,16 +10,32 @@ import qualified Data.List as L
 import HSDFTypes
 
 
-hsdfnode :: (a -> b) -> (Cntr, Cntr) -> (a, Bool, Bool) -> ((Cntr, Cntr), (b, Bool))
-hsdfnode f (firecounter, phase) (datain, empty, full) = ((firecounter', phase'), (dataout, fire))
+hsdfnode_1_1 :: (a -> b) -> (Cntr, Cntr) -> (a, Bool, Bool) -> ((Cntr, Cntr), (b, Bool))
+hsdfnode_1_1 f (firecounter, phase) (datain, empty, full) = ((firecounter', phase'), (dataout, fire))
     where
         fire = not empty && not full
         firecounter' = if fire then firecounter + 1 else firecounter
-        phase' = phase
+        phase_max = 0
+        phase' = if fire then (if phase<phase_max then phase + 1 else 0) else phase_max
         dataout = f datain
 
 func = id :: Byte -> Byte
 
-hsdfnodeL = mealy (hsdfnode func) (0, 0)
+hsdfnodeL = mealy (hsdfnode_1_1 func) (0, 0)
+
+
+
+
+
+hsdfnode_0_1 :: (Cntr -> Cntr -> b) -> (Cntr, Cntr) -> (Bool) -> ((Cntr, Cntr), (b, Bool))
+hsdfnode_0_1 f (firecounter, phase) (full) = ((firecounter', phase'), (dataout, fire))
+    where
+        fire = not full
+        firecounter' = if fire then firecounter + 1 else firecounter
+        phase_max = 0
+        phase' = if fire then (if phase<phase_max then phase + 1 else 0) else phase_max
+        dataout = f firecounter phase
+
+
 
 

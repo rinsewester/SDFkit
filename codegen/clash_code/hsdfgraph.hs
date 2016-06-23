@@ -20,8 +20,8 @@ g x = x + 1
 
 
 -- NodeL: (datain, empty, full) -> (dataout, fire)
-node1L = mealy (hsdfnode f) (0, 0)
-node2L = mealy (hsdfnode g) (0, 0)
+node1L = mealy (hsdfnode_1_1 f) (0, 0)
+node2L = mealy (hsdfnode_1_1 g) (0, 0)
 
 -- EdgeL: (datain, rd, wrt) -> (dataout, empty, full)
 edge12L = mealy hsdfedge8 (repeat 0 :: ByteVec, 0 :: RdPtr, 1 :: WrPtr)
