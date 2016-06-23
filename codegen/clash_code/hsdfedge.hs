@@ -13,12 +13,12 @@ import HSDFTypes
 ptr2ind ptr = shiftR (shiftL ptr 1) 1
 
 
-hsdfedge8 :: (Vec8 a, Ptr, Ptr) -> (a, Bool, Bool) -> ((Vec8 a, Ptr, Ptr), (a, Bool, Bool))
-hsdfedge8 (elms, rptr, wptr) (datain, prod, cons) = ((elms', rptr', wptr'), (dataout, empty, full))
+hsdfedge8 :: (Vec8 a, RdPtr, WrPtr) -> (a, Bool, Bool) -> ((Vec8 a, RdPtr, WrPtr), (a, Bool, Bool))
+hsdfedge8 (elms, rptr, wptr) (datain, rd, wrt) = ((elms', rptr', wptr'), (dataout, empty, full))
     where
-        elms' = if cons then replace (ptr2ind wptr) datain elms else elms
-        rptr' = if prod then rptr + 1 else rptr
-        wptr' = if cons then wptr + 1 else wptr
+        elms' = if wrt then replace (ptr2ind wptr) datain elms else elms
+        rptr' = if rd then rptr + 1 else rptr
+        wptr' = if wrt then wptr + 1 else wptr
         dataout = elms !! (ptr2ind rptr)
         empty = rptr == wptr
         full = (msb rptr /= msb wptr) && (ptr2ind rptr == ptr2ind wptr)
@@ -49,7 +49,7 @@ allSimsCorrect = write_sim_correct && write_read_sim_correct && write8_sim_corre
 
 
 main = do
-    putStrLn $ "All tests correct: " L.++ (show allSimsCorrect)
+    putStrLn $ "All HSDF Edge tests correct: " L.++ (show allSimsCorrect)
 
 topEntity = hsdfedge8byteL
 

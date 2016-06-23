@@ -11,7 +11,8 @@ import qualified Data.List as L
 type Byte = Unsigned 8
 type Cntr = Unsigned 16
 type Nibble = Unsigned 4
-type Ptr = Unsigned 4
+type RdPtr = Unsigned 4
+type WrPtr = Unsigned 4
 
 
 -- Vector types

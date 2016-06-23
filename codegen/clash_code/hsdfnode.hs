@@ -10,14 +10,13 @@ import qualified Data.List as L
 import HSDFTypes
 
 
-hsdfnode :: (a -> b) -> (Cntr, Cntr) -> (a, Bool, Bool) -> ((Cntr, Cntr), (b, Bool, Bool))
-hsdfnode f (firecounter, phase) (datain, empty, full) = ((firecounter', phase'), (dataout, cons, prod))
+hsdfnode :: (a -> b) -> (Cntr, Cntr) -> (a, Bool, Bool) -> ((Cntr, Cntr), (b, Bool))
+hsdfnode f (firecounter, phase) (datain, empty, full) = ((firecounter', phase'), (dataout, fire))
     where
         fire = not empty && not full
         firecounter' = if fire then firecounter + 1 else firecounter
         phase' = phase
         dataout = f datain
-        (cons, prod) = (fire, fire)
 
 func = id :: Byte -> Byte
 
