@@ -12,7 +12,7 @@ import sys
 import math
 from PyQt5.QtWidgets import (
     QWidget, QApplication, QVBoxLayout, QHBoxLayout, QPushButton,
-    QLabel, QScrollArea, QMenu, QAction)
+    QLabel, QScrollArea, QMenu, QAction, QInputDialog)
 from PyQt5.QtCore import (Qt, QRect, QPoint, pyqtSignal, QObject)
 from PyQt5.QtGui import (
     QPainter, QFont, QColor, QPen, QBrush, QPainterPath, QPolygon,
@@ -145,7 +145,13 @@ class GraphWidget(QWidget):
             self.edgemenu.exec(event.globalPos())
 
     def ednodefuncActionTriggered(self):
-        print('change function for node:', self.node_right_clicked)
+        node = self.node_right_clicked
+        codestr = self.graph.node[node]['funcstr']
+        newcode, ok = QInputDialog.getText(self, 'Code for ' + node, 'Python code:', text=codestr)
+        if ok:
+            # TODO add validation of code
+            self.graph.updateNodeFunction(node, newcode)
+
 
     def ededgetokensActionTriggered(self):
         print('change tokens for edge:', self.edge_right_clicked)        
