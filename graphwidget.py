@@ -12,7 +12,7 @@ import sys
 import math
 from PyQt5.QtWidgets import (
     QWidget, QApplication, QVBoxLayout, QHBoxLayout, QPushButton,
-    QLabel, QScrollArea, QMenu)
+    QLabel, QScrollArea, QMenu, QAction)
 from PyQt5.QtCore import (Qt, QRect, QPoint, pyqtSignal, QObject)
 from PyQt5.QtGui import (
     QPainter, QFont, QColor, QPen, QBrush, QPainterPath, QPolygon,
@@ -30,10 +30,10 @@ class GraphWidget(QWidget):
     node_hovered = None
     edge_hovered = None
 
-    tokens_pos = {}
+    node_right_clicked = None
+    edge_right_clicked = None
 
-    nodeRightClicked = pyqtSignal(str, int, int)
-    edgeRightClicked = pyqtSignal(str, str, int, int)
+    tokens_pos = {}
 
     def __init__(self):
         super().__init__()
@@ -45,16 +45,24 @@ class GraphWidget(QWidget):
 
         self.setMouseTracking(True)
 
-        self.nodeRightClicked.connect(self.nodeRightClickedHandler)
-        self.edgeRightClicked.connect(self.edgeRightClickedHandler)
+        self.ednodefuncAction = QAction('Edit node function', self)
+        self.ednodefuncAction.triggered.connect(self.ednodefuncActionTriggered)
 
-    def nodeRightClickedHandler(self, name, x, y):
+        self.ededgetokensAction = QAction('Edit tokens', self)
+        self.ededgetokensAction.triggered.connect(self.ededgetokensActionTriggered)
+        self.edpratessAction = QAction('Edit production rates', self)
+        self.edpratessAction.triggered.connect(self.edpratessActionTriggered)
+        self.edcratessAction = QAction('Edit consumption rates', self)
+        self.edcratessAction.triggered.connect(self.edcratessActionTriggered)
 
-        print('Slot triggered:', name, x, y)
+        self.nodemenu = QMenu(self)
+        self.nodemenu.addAction(self.ednodefuncAction)
 
-    def edgeRightClickedHandler(self, src, dst, x, y):
-
-        print('Edge triggered:', src, dst, x, y)
+        self.edgemenu = QMenu(self)
+        self.edgemenu.addAction(self.ededgetokensAction)
+        self.edgemenu.addAction(self.edpratessAction)
+        self.edgemenu.addAction(self.edcratessAction)
+        
 
     def _rotate(pos, theta):
 
@@ -129,21 +137,25 @@ class GraphWidget(QWidget):
 
     def contextMenuEvent(self, event):
 
-        menu = QMenu(self)
-        menu.addAction('Info')
-        showMenu = False
         if self.node_hovered is not None:
-            menu.addAction('Space/Time tradeoff')
-            showMenu = True
-            self.nodeRightClicked.emit(self.node_hovered, event.x(), event.y())
+            self.node_right_clicked = self.node_hovered
+            self.nodemenu.exec(event.globalPos())
         if self.edge_hovered is not None:
-            menu.addAction('Add to log')
-            showMenu = True
-            self.edgeRightClicked.emit(
-                self.edge_hovered[0], self.edge_hovered[1],
-                event.x(), event.y())
-        if showMenu:
-            menu.exec(event.globalPos())
+            self.edge_right_clicked = self.edge_hovered
+            self.edgemenu.exec(event.globalPos())
+
+    def ednodefuncActionTriggered(self):
+        print('change function for node:', self.node_right_clicked)
+
+    def ededgetokensActionTriggered(self):
+        print('change tokens for edge:', self.edge_right_clicked)        
+
+    def edpratessActionTriggered(self):
+        print('change prates for edge:', self.edge_right_clicked)
+
+    def edcratessActionTriggered(self):
+        print('change crates for edge:', self.edge_right_clicked)
+
 
     def setGraph(self, graph):
         self.graph = graph
