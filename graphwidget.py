@@ -154,13 +154,29 @@ class GraphWidget(QWidget):
 
 
     def ededgetokensActionTriggered(self):
-        print('change tokens for edge:', self.edge_right_clicked)        
+        src, dst = self.edge_right_clicked
+        tokensstr = str(self.graph[src][dst]['tkns'])
+        newtokensstr, ok = QInputDialog.getText(self, 'Edit tokens', 'Tokens:', text=tokensstr)
+        if ok:
+            # TODO add code for updating tokens on edge
+            self.update()
+        
 
     def edpratessActionTriggered(self):
-        print('change prates for edge:', self.edge_right_clicked)
+        src, dst = self.edge_right_clicked
+        pratesstr = str(self.graph[src][dst]['prates'])
+        newpratesstr, ok = QInputDialog.getText(self, 'Edit production rates', 'Production rates:', text=pratesstr)
+        if ok:
+            # TODO add code for updating prates on edge
+            self.update()
 
     def edcratessActionTriggered(self):
-        print('change crates for edge:', self.edge_right_clicked)
+        src, dst = self.edge_right_clicked
+        cratesstr = str(self.graph[src][dst]['crates'])
+        newcratesstr, ok = QInputDialog.getText(self, 'Edit consumption rates', 'Consumption rates:', text=cratesstr)
+        if ok:
+            # TODO add code for updating prates on edge
+            self.update()
 
 
     def setGraph(self, graph):
