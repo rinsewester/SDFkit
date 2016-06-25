@@ -244,6 +244,11 @@ class CSDFGraph(nx.DiGraph):
         self.node[nodename]['funcstr'] = funcstr
         self.node[nodename]['func'] = eval(funcstr)
 
+    def updateTokens(self, edge, tokenstr):
+        src, dst = edge
+        newtokens = eval(tokenstr)
+        self[src][dst]['tkns'] = newtokens
+
     def print_state(self):
 
         for src, dst in self.edges():

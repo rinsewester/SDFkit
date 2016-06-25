@@ -159,6 +159,7 @@ class GraphWidget(QWidget):
         newtokensstr, ok = QInputDialog.getText(self, 'Edit tokens', 'Tokens:', text=tokensstr)
         if ok:
             # TODO add code for updating tokens on edge
+            self.graph.updateTokens((src, dst), newtokensstr)
             self.update()
         
 
