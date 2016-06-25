@@ -249,6 +249,16 @@ class CSDFGraph(nx.DiGraph):
         newtokens = eval(tokenstr)
         self[src][dst]['tkns'] = newtokens
 
+    def updatePRates(self, edge, pratesstr):
+        src, dst = edge
+        newprates = eval(pratesstr)
+        self[src][dst]['prates'] = newprates
+
+    def updateCRates(self, edge, cratesstr):
+        src, dst = edge
+        newcrates = eval(cratesstr)
+        self[src][dst]['crates'] = newcrates
+
     def print_state(self):
 
         for src, dst in self.edges():

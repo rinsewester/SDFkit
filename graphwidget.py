@@ -145,6 +145,7 @@ class GraphWidget(QWidget):
             self.edgemenu.exec(event.globalPos())
 
     def ednodefuncActionTriggered(self):
+
         node = self.node_right_clicked
         codestr = self.graph.node[node]['funcstr']
         newcode, ok = QInputDialog.getText(self, 'Code for ' + node, 'Python code:', text=codestr)
@@ -154,29 +155,34 @@ class GraphWidget(QWidget):
 
 
     def ededgetokensActionTriggered(self):
+
         src, dst = self.edge_right_clicked
         tokensstr = str(self.graph[src][dst]['tkns'])
         newtokensstr, ok = QInputDialog.getText(self, 'Edit tokens', 'Tokens:', text=tokensstr)
         if ok:
-            # TODO add code for updating tokens on edge
+            # TODO add validation of token data
             self.graph.updateTokens((src, dst), newtokensstr)
             self.update()
         
 
     def edpratessActionTriggered(self):
+
         src, dst = self.edge_right_clicked
         pratesstr = str(self.graph[src][dst]['prates'])
         newpratesstr, ok = QInputDialog.getText(self, 'Edit production rates', 'Production rates:', text=pratesstr)
         if ok:
-            # TODO add code for updating prates on edge
+            # TODO add validation
+            self.graph.updatePRates((src, dst), newpratesstr)
             self.update()
 
     def edcratessActionTriggered(self):
+
         src, dst = self.edge_right_clicked
         cratesstr = str(self.graph[src][dst]['crates'])
         newcratesstr, ok = QInputDialog.getText(self, 'Edit consumption rates', 'Consumption rates:', text=cratesstr)
         if ok:
-            # TODO add code for updating prates on edge
+            # TODO add validation
+            self.graph.updateCRates((src, dst), newcratesstr)
             self.update()
 
 
