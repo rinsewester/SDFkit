@@ -49,6 +49,7 @@ class CSDFGraph(nx.DiGraph):
 
         super(CSDFGraph, self).add_node(n)
         self.updateNodeFunction(n, f)
+        self.node[n]['clashcode'] = 'ADD code support'
         self.node[n]['firecount'] = 0
         self.nodestates[n] = [0]
         self.node[n]['pos'] = pos
