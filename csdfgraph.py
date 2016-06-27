@@ -45,11 +45,11 @@ class CSDFGraph(nx.DiGraph):
         self.add_edge(n, n, resnr, argnr, prates, crates, tkns)
         self.edge[n][n]['angle'] = angle
 
-    def add_node(self, n, f, pos):
+    def add_node(self, n, f, pos, clashcode=''):
 
         super(CSDFGraph, self).add_node(n)
         self.updateNodeFunction(n, f)
-        self.node[n]['clashcode'] = 'ADD code support'
+        self.node[n]['clashcode'] = clashcode
         self.node[n]['firecount'] = 0
         self.nodestates[n] = [0]
         self.node[n]['pos'] = pos
@@ -215,16 +215,15 @@ class CSDFGraph(nx.DiGraph):
         for jsnode in jsondata['nodes']:
             nodeName = jsnode['name']
             nodeFunction = jsnode['function']
+            nodeClashCode = ''
+            if 'clashcode' in jsnode.keys():
+                nodeClashCode = jsnode['clashcode']
             nodePosition = jsnode['pos'][0], jsnode['pos'][1]
-            self.add_node(nodeName, nodeFunction, nodePosition)
+            self.add_node(nodeName, nodeFunction, nodePosition, clashcode=nodeClashCode)
 
         for jsedge in jsondata['edges']:
             edgeSource = jsedge['src']
             edgeDestination = jsedge['dst']
-            if 'name' in jsedge.keys():
-                edgeName = jsedge['name']
-            else:
-                edgeName = edgeSource + ' → ' + edgeDestination
             edgeResNumber = jsedge['resnr']
             edgeArgNumber = jsedge['argnr']
             edgePRates = CSDFGraph._flattenRateList(jsedge['prates'])

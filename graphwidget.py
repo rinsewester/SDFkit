@@ -47,6 +47,8 @@ class GraphWidget(QWidget):
 
         self.ednodefuncAction = QAction('Edit node function', self)
         self.ednodefuncAction.triggered.connect(self.ednodefuncActionTriggered)
+        self.edclashcodeAction = QAction('Edit CLaSH code', self)
+        self.edclashcodeAction.triggered.connect(self.edclashcodeActionTriggered)
 
         self.ededgetokensAction = QAction('Edit tokens', self)
         self.ededgetokensAction.triggered.connect(self.ededgetokensActionTriggered)
@@ -57,6 +59,7 @@ class GraphWidget(QWidget):
 
         self.nodemenu = QMenu(self)
         self.nodemenu.addAction(self.ednodefuncAction)
+        self.nodemenu.addAction(self.edclashcodeAction)
 
         self.edgemenu = QMenu(self)
         self.edgemenu.addAction(self.ededgetokensAction)
@@ -152,6 +155,14 @@ class GraphWidget(QWidget):
         if ok:
             # TODO add validation of code
             self.graph.updateNodeFunction(node, newcode)
+
+    def edclashcodeActionTriggered(self):
+        node = self.node_right_clicked
+        clashcodestr = self.graph.node[node]['clashcode']
+        newclashcode, ok = QInputDialog.getMultiLineText(self, 'CLaSH code for ' + node, 'CLaSH code:', text=clashcodestr)
+        if ok:
+            # TODO add validation of code
+            self.graph.node[node]['clashcode'] = newclashcode
 
 
     def ededgetokensActionTriggered(self):

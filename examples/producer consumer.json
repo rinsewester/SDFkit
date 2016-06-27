@@ -5,17 +5,20 @@
 		{
 			"name" : "Pr",
 			"function" : "lambda clockcount, firecount: [firecount]",
+			"clashcode" : "func_Pr clockcount firecount = res\n  where\n    res = firecount",
 			"pos" : [100, 100]
 		},
 
 		{
 			"name" : "Int",
 			"function" : "lambda x, y, clockcount, firecount: [x[0] + y[0]]",
+			"clashcode" : "func_Int x y clockcount firecount = res\n  where\n    res = x + y",
 			"pos" : [300, 100]
 		},
 		{
 			"name" : "Cr",
 			"function" : "lambda x, clockcount, firecount: []",
+			"clashcode" : "func_Cr x clockcount firecount = res\n  where\n    res = ()",
 			"pos" : [500, 100]
 		}
 	],
