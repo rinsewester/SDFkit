@@ -57,7 +57,7 @@ hsdfnode_1_2 f (firecounter, phase) (datain0, empty0, full0, full1) = ((firecoun
         (dataout0, dataout1) = f datain0 firecounter phase
 
 func3 :: Cntr -> Cntr -> Cntr -> (Cntr, Cntr)
-func3 datain0 firecounter phase = (datain0, datain0)
+func3 datain0 firecounter phase = (datain0 * 2, datain0 * 2 + 1)
 
 hsdfnode_1_2L = mealy (hsdfnode_1_2 func3) (0, 0)
 
