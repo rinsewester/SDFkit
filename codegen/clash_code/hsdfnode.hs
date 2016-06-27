@@ -37,7 +37,9 @@ hsdfnode_0_1 f (firecounter, phase) (full) = ((firecounter', phase'), (dataout, 
         dataout = f firecounter phase
 
 func2 :: Cntr -> Cntr -> Cntr
-func2 firecounter phase = firecounter
+func2 firecounter phase = res
+    where
+        res = firecounter
 
 hsdfnode_0_1L = mealy (hsdfnode_0_1 func2) (0, 0)
 
@@ -69,7 +71,7 @@ hsdfnode_2_0 f (firecounter, phase) (datain0, datain1, empty0, empty1) = ((firec
         firecounter' = if fire then firecounter + 1 else firecounter
         phase_max = 0
         phase' = if fire then (if phase < phase_max then phase + 1 else 0) else phase_max
-        res = f datain0 datain1 firecounter phase
+        _ = f datain0 datain1 firecounter phase
 
 func4 :: Cntr -> Cntr -> Cntr -> Cntr -> ()
 func4 datain0 datain1 firecounter phase = ()
