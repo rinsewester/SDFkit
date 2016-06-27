@@ -269,7 +269,10 @@ class GraphWidget(QWidget):
             100, 2 * GraphWidget.NODE_RADIUS)
         phase = self.graph.node[src]['firecount'] % len(prates)
         if len(prates) == 1:
-            pratestr = str(prates[0])
+            if prates == [1]:
+                pratestr = ''
+            else:
+                pratestr = str(prates[0])
         elif phase == 0:
             pratestr = str(prates[phase]) + ',..'
         elif phase == len(prates) - 1:
@@ -284,7 +287,10 @@ class GraphWidget(QWidget):
             100, 2 * GraphWidget.NODE_RADIUS)
         phase = self.graph.node[dst]['firecount'] % len(crates)
         if len(crates) == 1:
-            cratestr = str(crates[0])
+            if crates == [1]:
+                cratestr = ''
+            else:
+                cratestr = str(crates[0])
         elif phase == 0:
             cratestr = str(crates[phase]) + ',..'
         elif phase == len(crates) - 1:
