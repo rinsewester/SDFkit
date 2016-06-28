@@ -20,5 +20,15 @@ class ClashCodeGen(object):
         self.arg = arg
 
     def generateCode(graph, targetdir):
-        raise NotImplementedError(
-            'CLaSH codegen not implemented yet (target :' + targetdir + ')')
+        if not graph.isHSDF():
+            raise NotImplementedError(
+                'CLaSH codegen only supported for HSDF graphs')
+        else:
+            print(ClashCodeGen._generateNodeFuncs(graph))
+
+    def _generateNodeFuncs(graph):
+        functions = ''
+        for n in graph.nodes():
+            functions += graph.node[n]['clashcode']
+            functions += '\n\n'
+        return functions
