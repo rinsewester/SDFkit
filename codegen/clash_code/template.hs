@@ -27,10 +27,10 @@ graph inputs = outputs
         -- Instantiations of nodes
         <NODE_INSTANCES>
 
-        ---- Define the edges
+        -- Define the edges
         <EDGE_INSTANCES>
         
-        ---- Connect the node and edge signals
+        -- Connect the node and edge signals
         <GRAPH_CONNECTIONS>
 
         -- Output for debugging
