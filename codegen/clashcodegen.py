@@ -55,14 +55,13 @@ class ClashCodeGen(object):
         for n in graph.nodes():
 
             nname = 'n_' + n
+            inputcount = len(graph.predecessors(n))
+            outputcount = len(graph.successors(n))
 
             # create the type def of the node function
             typenames = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
                 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
                 'u', 'v', 'w', 'x', 'y', 'z']
-            inputcount = len(graph.predecessors(n))
-            outputcount = len(graph.successors(n))
-
             finptypes = typenames[:inputcount]
             foutptypes = typenames[inputcount:inputcount + outputcount]
 
@@ -90,7 +89,63 @@ class ClashCodeGen(object):
 
             # And now the final string with the type definition of a node
             ntypedef = nname + ' :: ' + ftypestr + ' -> (Cntr, Cntr) -> ' + ninptypesstr + ' -> ((Cntr, Cntr), ' + noutptypesstr + ')'
-            print(ntypedef)
+
+            # Create the list of inputs
+            ninputs = []
+            for i in range(inputcount):
+                ninputs.append('datain' + str(i))
+            for i in range(inputcount):
+                ninputs.append('empty' + str(i))
+            for i in range(outputcount):
+                ninputs.append('full' + str(i))
+            ninputsstr = '(' + (', '.join(ninputs)) + ')'
+
+            # Create the list of outputs
+            noutputs = []
+            for i in range(outputcount):
+                noutputs.append('dataout' + str(i))
+            noutputs.append('fire')
+            noutputsstr = '(' + (', '.join(noutputs)) + ')'
+
+            nfuncline = nname + ' f (firecounter, phase) ' + ninputsstr + " = ((firecounter', phase'), " + noutputsstr + ')'
+
+            # Create the line expressing the firing condition
+            nfireconds = []
+            for i in range(inputcount):
+                nfireconds.append('not empty' + str(i))
+            for i in range(outputcount):
+                nfireconds.append('not full' + str(i))
+            nfirecondsstr = 'fire = ' + (' && '.join(nfireconds))
+
+
+            # Create the use of the node function
+            if outputcount == 0:
+                funcresltsstr = '_'
+            else:
+                nodefuncresults = []
+                for i in range(outputcount):
+                    nodefuncresults.append('dataout' + str(i))
+                funcresltsstr = '(' + (', '.join(nodefuncresults)) + ')'
+
+            nodefuncargsstr = ''
+            for i in range(inputcount):
+                nodefuncargsstr += 'datain' + str(i) + ' '
+
+            nodefuncstr = funcresltsstr + ' = f ' + nodefuncargsstr + 'firecounter phase'
+
+            # Bring it all together, create a complete definition of a node:
+            nodedefs += ntypedef + '\n'
+            nodedefs += nfuncline + '\n'
+            nodedefs += '    where\n'
+            nodedefs += '        ' + nfirecondsstr + '\n'
+            nodedefs += "        firecounter' = if fire then firecounter + 1 else firecounter" + '\n'
+            nodedefs += "        phase_max = 0" + '\n'
+            nodedefs += "        phase' = if fire then (if phase < phase_max then phase + 1 else 0) else phase_max" + '\n'
+            nodedefs += '        ' + nodefuncstr + '\n\n'
+            nodedefs += nname + 'L = mealy (' + nname + ' f_' + n + ') (0, 0)'
+
+        return nodedefs
+
 
 # hsdfnode_1_2 :: (a -> Cntr -> Cntr ->(b, c)) -> (Cntr, Cntr) -> (a, Bool, Bool, Bool) -> ((Cntr, Cntr), (b, c, Bool))
 # hsdfnode_1_2 f (firecounter, phase) (datain0, empty0, full0, full1) = ((firecounter', phase'), (dataout0, dataout1, fire))
