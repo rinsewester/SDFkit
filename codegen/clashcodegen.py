@@ -25,10 +25,33 @@ class ClashCodeGen(object):
             raise NotImplementedError(
                 'CLaSH codegen only supported for HSDF graphs')
         else:
-            print(ClashCodeGen._generateNodeFuncDefs(graph))
-            print(ClashCodeGen._generateEdgeDefs(graph))
-            print(ClashCodeGen._generateEdgeInstances(graph))
-            print(ClashCodeGen._generateNodeDefs(graph))
+            nodeFuncDefs = ClashCodeGen._generateNodeFuncDefs(graph)
+            nodeDefs = ClashCodeGen._generateNodeDefs(graph)
+            edgeDefs = ClashCodeGen._generateEdgeDefs(graph)
+            nodeInstances = ClashCodeGen._generateNodeInstances(graph)
+            edgeInstances = ClashCodeGen._generateEdgeInstances(graph)
+            graphConnections = ''
+            graphOutputs = ''
+
+            # Open the template file
+            with open('codegen/clash_code/template.hs', 'r') as f:
+                templatestr = f.read()
+
+            # Now replace the variables in the code template
+            templatestr = templatestr.replace('<NODE_FUNC_DEFS>', nodeFuncDefs)
+            templatestr = templatestr.replace('<NODE_DEFS>', nodeDefs)
+            templatestr = templatestr.replace('<EDGE_DEFS>', edgeDefs)
+            templatestr = templatestr.replace('<NODE_INSTANCES>', nodeInstances)
+            templatestr = templatestr.replace('<EDGE_INSTANCES>', edgeInstances)
+            templatestr = templatestr.replace('<GRAPH_CONNECTIONS>', graphConnections)
+            templatestr = templatestr.replace('<GRAPH_OUTPUTS>', graphOutputs)
+
+            # TODO safe in target directory
+            print(templatestr)
+            
+    def _generateNodeInstances(graph):
+
+        return 'Nodeinstances in raph, still TODO'
 
     def _generateEdgeInstances(graph):
 
@@ -36,7 +59,7 @@ class ClashCodeGen(object):
 
         for src, dst in graph.edges():
             ename = 'e_' + src + '_' + dst
-            edgeInstances += "({0}_dataout, {0}_empty, {0}_full) = unbundle $ {0}L $ bundle ({0}_datain, {0}_rd, {0}_wrt)\n".format(ename)
+            edgeInstances += "        ({0}_dataout, {0}_empty, {0}_full) = unbundle $ {0}L $ bundle ({0}_datain, {0}_rd, {0}_wrt)\n".format(ename)
         return edgeInstances
 
     def _generateNodeFuncDefs(graph):
@@ -142,21 +165,9 @@ class ClashCodeGen(object):
             nodedefs += "        phase_max = 0" + '\n'
             nodedefs += "        phase' = if fire then (if phase < phase_max then phase + 1 else 0) else phase_max" + '\n'
             nodedefs += '        ' + nodefuncstr + '\n\n'
-            nodedefs += nname + 'L = mealy (' + nname + ' f_' + n + ') (0, 0)'
+            nodedefs += nname + 'L = mealy (' + nname + ' f_' + n + ') (0, 0)\n\n'
 
         return nodedefs
-
-
-# hsdfnode_1_2 :: (a -> Cntr -> Cntr ->(b, c)) -> (Cntr, Cntr) -> (a, Bool, Bool, Bool) -> ((Cntr, Cntr), (b, c, Bool))
-# hsdfnode_1_2 f (firecounter, phase) (datain0, empty0, full0, full1) = ((firecounter', phase'), (dataout0, dataout1, fire))
-#     where
-#         fire = not empty0 && not full0 && not full1
-#         firecounter' = if fire then firecounter + 1 else firecounter
-#         phase_max = 0
-#         phase' = if fire then (if phase < phase_max then phase + 1 else 0) else phase_max
-#         (dataout0, dataout1) = f datain0 firecounter phase
-
-
 
     def _generateEdgeDefs(graph):
         edgedefs = ''

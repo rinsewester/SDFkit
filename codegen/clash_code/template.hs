@@ -25,13 +25,13 @@ graph :: <GRAPH_TYPE>
 graph inputs = outputs
     where
         -- Instantiations of nodes
-        <NODE_INSTANCES>
+<NODE_INSTANCES>
 
         -- Define the edges
-        <EDGE_INSTANCES>
+<EDGE_INSTANCES>
         
         -- Connect the node and edge signals
-        <GRAPH_CONNECTIONS>
+<GRAPH_CONNECTIONS>
 
         -- Output for debugging
         output = bundle <GRAPH_OUTPUTS>
