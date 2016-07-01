@@ -189,4 +189,8 @@ class ClashCodeGen(object):
         return ''
 
     def _generateGraphOutputs(graph):
-        return ''        
+        graphOutputs = []
+        for src, dst in graph.edges():
+            graphOutputs.append('e_' + src + '_' + dst + '_rd, e_' + src + '_' + dst + '_rd')
+        graphOutputsStr = '(' + (', '.join(graphOutputs)) + ')'
+        return graphOutputsStr
