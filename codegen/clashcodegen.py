@@ -30,8 +30,8 @@ class ClashCodeGen(object):
             edgeDefs = ClashCodeGen._generateEdgeDefs(graph)
             nodeInstances = ClashCodeGen._generateNodeInstances(graph)
             edgeInstances = ClashCodeGen._generateEdgeInstances(graph)
-            graphConnections = ''
-            graphOutputs = ''
+            graphConnections = ClashCodeGen._generateGraphConnections(graph)
+            graphOutputs = ClashCodeGen._generateGraphOutputs(graph)
 
             # Open the template file
             with open('codegen/clash_code/template.hs', 'r') as f:
@@ -173,7 +173,8 @@ class ClashCodeGen(object):
         edgedefs = ''
 
         for src, dst in graph.edges():
-            tokens = graph[src][dst]['tkns']
+            tokens = graph[src][dst]['tkns'][:]
+            tokens.reverse()
             tokensexp = (tokens + [0,0,0,0,0,0,0,0])[:8]
             tokensstr = ''
             for tkn in tokensexp:
@@ -183,3 +184,9 @@ class ClashCodeGen(object):
             edgedefs += 'e_' + src + '_' + dst +'L = mealy hsdfedge8 (' + tokensstr + ' :: Vec8 Cntr, 0 :: RdPtr, ' + str(len(tokens)) + ' :: WrPtr)\n' 
 
         return edgedefs
+
+    def _generateGraphConnections(graph):
+        return ''
+
+    def _generateGraphOutputs(graph):
+        return ''        
