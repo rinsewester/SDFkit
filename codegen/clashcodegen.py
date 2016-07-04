@@ -46,12 +46,52 @@ class ClashCodeGen(object):
             templatestr = templatestr.replace('<GRAPH_CONNECTIONS>', graphConnections)
             templatestr = templatestr.replace('<GRAPH_OUTPUTS>', graphOutputs)
 
-            # TODO safe in target directory
+            # TODO save in target directory
             print(templatestr)
             
     def _generateNodeInstances(graph):
 
-        return 'Nodeinstances in raph, still TODO'
+        nodeinstancesstr = ''
+
+        for n in graph.nodes():
+
+            nname = 'n_' + n
+            inputcount = len(graph.predecessors(n))
+            outputcount = len(graph.successors(n))
+
+            # Create the string for the output tuple
+            nodeinstanceoutputs = []
+            for i in range(outputcount):
+                nodeinstanceoutputs.append(nname + '_dataout' + str(i))
+            nodeinstanceoutputs.append(nname + '_fire')
+
+            if len(nodeinstanceoutputs) == 1:
+                nodeinstanceoutputsstr = nodeinstanceoutputs[0]
+            else:
+                nodeinstanceoutputsstr = '(' + (', '.join(nodeinstanceoutputs)) + ')'
+
+            # Create the string for the input tuple
+            nodeinstanceinputs = []
+            for i in range(inputcount):
+                nodeinstanceinputs.append(nname + '_datain' + str(i))
+            for i in range(inputcount):
+                nodeinstanceinputs.append(nname + '_empty' + str(i))
+            for i in range(outputcount):
+                nodeinstanceinputs.append(nname + '_full' + str(i))
+
+            if len(nodeinstanceinputs) == 1:
+                nodeinstanceinputsstr = nodeinstanceinputs[0]
+            else:
+                nodeinstanceinputsstr = '(' + (', '.join(nodeinstanceinputs)) + ')'
+
+            # Now create th actual string of the instance
+            nodeinstancesstr += '        ' + nodeinstanceoutputsstr + ' ='
+            nodeinstancesstr += '' if (inputcount == 1 and outputcount == 0) else ' unbundle $'
+            nodeinstancesstr += ' ' + nname + 'L'
+            nodeinstancesstr += '' if (inputcount == 0 and outputcount == 1) else ' $ bundle'
+            nodeinstancesstr += ' ' + nodeinstanceinputsstr + '\n'
+
+        return nodeinstancesstr
 
     def _generateEdgeInstances(graph):
 
