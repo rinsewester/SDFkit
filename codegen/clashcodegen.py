@@ -226,7 +226,44 @@ class ClashCodeGen(object):
         return edgedefs
 
     def _generateGraphConnections(graph):
-        return ''
+        graphconnectionsstr = ''
+
+        for n in graph.nodes():
+
+            nname = 'n_' + n
+            inputcount = len(graph.predecessors(n))
+            outputcount = len(graph.successors(n))
+
+            # Create the string for the input tuples of the nodes
+            nodeinstanceinputs = []
+            for i in range(inputcount):
+                nodeinstanceinputs.append(nname + '_datain' + str(i))
+            for i in range(inputcount):
+                nodeinstanceinputs.append(nname + '_empty' + str(i))
+            for i in range(outputcount):
+                nodeinstanceinputs.append(nname + '_full' + str(i))
+
+            if len(nodeinstanceinputs) == 1:
+                nodeinstanceinputsstr = nodeinstanceinputs[0]
+            else:
+                nodeinstanceinputsstr = '(' + (', '.join(nodeinstanceinputs)) + ')'
+
+            # TODO: and now assign the correct other signals to them.....
+
+            graphconnectionsstr += '        ' + nodeinstanceinputsstr + ' = ......\n'
+
+        
+        # Create the string for the input tuples of the edges
+        for src, dst in graph.edges():
+
+            ename = 'e_' + src + '_' + dst
+            edgeinptuplestr = '(' + ename + '_datain, ' + ename + '_rd, ' + ename + '_wrt)'
+
+            graphconnectionsstr += '        ' + edgeinptuplestr + ' = ......\n'
+
+            # TODO fix the connections between edge tuple and other nodes
+
+        return graphconnectionsstr
 
     def _generateGraphOutputs(graph):
         graphOutputs = []
