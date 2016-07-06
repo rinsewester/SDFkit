@@ -1,0 +1,84 @@
+
+@inproceedings{Baaij10,
+          eprintid = {18376},
+             month = {September},
+      official_url = {http://dx.doi.org/10.1109/DSD.2010.21},
+            author = {C. P. R. {Baaij} and M. {Kooijman} and J. {Kuper} and W. A. {Boeijink} and M. E. T. {Gerards}},
+         num_pages = {8},
+        pres_types = {Talk},
+       ispublished = {Published},
+           address = {USA},
+         publisher = {IEEE Computer Society},
+         id_number = {10.1109/DSD.2010.21},
+           isbn_13 = {978-0-7695-4171-6},
+      howpublished = {http://eprints.eemcs.utwente.nl/18376/},
+          location = {Lille, France},
+       event_dates = {1-3 Sep 2010},
+        event_type = {Conference},
+   research_groups = {EWI-CAES: Computer Architecture for Embedded Systems},
+         booktitle = {Proceedings of the 13th EUROMICRO Conference on Digital System Design: Architectures, Methods and Tools, Lille, France},
+          refereed = {Yes},
+  research_programs = {CTIT-WiSe: Wireless and Sensor Systems},
+  research_projects = {SoOS: Service-oriented Operating Systems, EASY: Embedded Adaptive Streaming sYstems},
+             title = {{C\ensuremath{\lambda}aSH: Structural Descriptions of Synchronous Hardware using Haskell}},
+          abstract = {C\ensuremath{\lambda}aSH is a functional hardware description language that borrows both its syntax and semantics from the functional programming language Haskell. Polymorphism and higher-order functions provide a level of abstraction and generality that allow a circuit designer to describe circuits in a more natural way than possible with the language elements found in the traditional hardware description languages.
+
+Circuit descriptions can be translated to synthesizable VHDL using the prototype C\ensuremath{\lambda}aSH compiler. As the circuit descriptions, simulation code, and test input are also valid Haskell, complete simulations can be done by a Haskell compiler or interpreter, allowing high-speed simulation and analysis.},
+     international = {Yes},
+             pages = {714--721},
+              year = {2010}
+}
+
+
+@phdthesis{deGroote16,
+          volume = {15-382},
+           month = {February},
+          author = {Elibertus de {Groote}},
+          series = {CTIT Ph.D. thesis series},
+         address = {Enschede},
+           title = {On the analysis of synchronous dataflow graphs: a system-theoretic perspective},
+       publisher = {University of Twente},
+            year = {2016},
+             url = {http://doc.utwente.nl/99239/},
+        abstract = {Synchronous dataflow (SDF) is a graphical model of computation in which sequential process communicate through first-in-first-out (FIFO) channels, where the amount of data produced onto and consumed from each channel is known a priori. These models find their application in the analysis of stream processing systems, which operate in real-time: they must meet strict latency and/or throughput constraints. Temporal analysis of SDF models allows one to give guarantees on the performance characteristics of the system that is modelled. As such, temporal analysis may be used to verify whether the system meets the latency and throughput constraints.
+
+Existing approaches to temporal analysis are poorly scalable, and can be classified into two main schools of thought. The first approaches the analysis using exact semantics, and the other approximates these semantics. Exact semantics give rise to algorithms that require time exponential in the size of the graph. Approximations lead to polynomial time-complexity, but this comes at the expense of a loss in accuracy. Moreover, this loss in accuracy can not be assessed by current methods.
+
+A natural solution to the poor scalability of existing methods is to combine them into a method that balances computational complexity with accuracy. However, since existing methods operate on different levels of abstraction, their unification is far from trivial. This thesis presents a unification of these two existing approaches to temporal analysis, in the form of an incremental analysis of SDF graphs. In our approach, we start with a rough estimation derived from an approximation of the graph, and subsequently improve this estimation through a set of graph transformations. Underlying our approach is a fundamental characterisation of the temporal dynamics of an SDF graph, in max-plus algebra. We furthermore evaluate our method by comparing its results with existing state-of-the-art methods, on an extensive benchmark set. Results show that our approach successfully balances computational complexity with accuracy.}
+}
+
+
+@phdthesis{Wester15,
+          eprintid = {26125},
+            number = {CTIT Ph.D.-thesis series No. 05-365},
+             month = {July},
+      official_url = {http://dx.doi.org/10.3990/1.9789036538879},
+              issn = {1381-3617},
+            author = {R. {Wester}},
+         num_pages = {136},
+       supervisors = {G. J. M. {Smit} and J. {Kuper}},
+          keywords = {hardware design, transformations, higher-order functions },
+           funding = {STARS},
+           address = {Enschede},
+            school = {Univ. of Twente },
+         publisher = {Twente University Press},
+         id_number = {10.3990/1.9789036538879},
+           isbn_13 = {978-90-365-3887-9},
+      howpublished = {http://eprints.eemcs.utwente.nl/26125/},
+          phd_type = {A},
+   research_groups = {EWI-CAES: Computer Architecture for Embedded Systems},
+  research_programs = {CTIT-General},
+  research_projects = {STARS: Sensor Technology Applied in Reconfigurable systems for Sustainable Security},
+             title = {A transformation-based approach to hardware design using higher-order functions },
+          abstract = {The amount of resources available on reconfigurable logic devices like FPGAs has seen a tremendous growth over the last thirty years. During this period, the amount of programmable resources (CLBs and RAMs) has increased by more than three orders of magnitude.
+
+Programming these reconfigurable architectures has been dominated by the hardware description languages VHDL and Verilog. However, it has become generally accepted that these languages do not provide adequate abstraction mechanisms to deliver the design productivity for designing more and more complex applications. To raise the abstraction level, techniques to translate high-level languages to hardware have been developed based on imperative languages like C.
+
+Parallelism is achieved by parallelization of for-loops. Whether parallelization of loops is possible, is determined using dependency analysis which is a very hard problem. To mitigate this problem, other abstractions are needed to express parallelism. In this thesis, parallelism is expressed using higher-order functions, an abstraction commonly used in functional programming languages.
+
+The main contribution of this thesis is a design methodology based on exploiting regularity of higher-order functions. A mathematical formula, e.g., a DSP algorithm, is first formulated using higher-order functions. Then, transformation rules are applied to these higher-order functions to distribute computations over space and time. Using these transformations, an optimal trade-off can be made between space and time. Finally, hardware is generated using the CLaSH compiler by translating the result of the transformation to VHDL.
+
+In this thesis, we derive transformation rules for several higher-order functions and prove that the transformations are meaning-preserving. After transformation, a mathematically equivalent description is derived in which the computations are distributed over space and time. The designer can control the amount of parallelism using a parameter that is introduced by the transformation. Transformation rules for both one-dimensional higher-order functions and two-dimensional higher- order functions have been derived and applied to several case studies: a dot product, a particle filter and stencil computations.},
+              year = {2015}
+}
+

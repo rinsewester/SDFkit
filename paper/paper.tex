@@ -231,27 +231,38 @@
   A lot of analysis is therefore required to determine which computations are independent and ca therefore be performed in parallel.
 
   In this work-in-progress paper, we propose a more structural approach to computations.
-  method..... math description to CSDF graph/ transformations to make efficient hardware then HW generation
+  As input, a mathematical description of the application is given which is transformed into a CSDF graph.
+  Transformations to enhance performance are then applied to this graph.
+  A cycle accurate simulation gives insight into where the bottlenecks of the application are.
+  Finally, when the performance of the graph is sufficient, the graph is translated to hardware.
 
-  The current implementation: SDFkit, an interactive environment...
+  As a proof of concept to show the effectiveness of the approach, an interactive environment for simulation and hardware generation  is being developed named SDFkit.
+  Using SDFkit, CSDF graphs can be visualized and simulated in a cycle accurate manner.
+  Additionally, using the code can be generated for FPGAs.
 
-  Describe what is presented in remainder of paper..
+  The remainder of this paper is organized as follows:
+  First, the approach is covered in Section \ref{sec:approach} after which results are covered in Section \ref{sec:results}.
+  Finally, conclusion and future work are expressed in Section \ref{sec:conclusions}.
 
 
 \section{Approach}
+\label{sec:approach}
 
   Computational structures borrowed from functional programming languages so called higher-order functions.
   These functions are very suitable to express the structure in computations and therefore a good source of parallelism.
-  \todo{ref to thesis Rinse}
+  \todo{ref to thesis Rinse \cite{Wester15}}
   These computational structures are represented as a specific kind of dataflow graph, a cyclo static synchronous (CSDF) dataflow graph.
   Transformations are then applied to this graph to optimize performance.
-  \todo{ref naar thesis Robert}
+  \todo{ref naar thesis Robert \cite{deGroote16}}
   During the final step, the graph is mapped to hardware by translating each node to a combinational component and replacing the edges by a FIFO.
 
   \todo[inline]{elaborate a bit... big data programmers are already familiar with a structural approach to programming like hadoop}
+  
+  \todo[inline]{mention CLaSH \cite{Baaij10} as used for backend}
 
 
 \section{Results}
+\label{sec:results}
 
   \todo[inline]{Robert, kun je hier wat vertellen over de transformaties van computational structures naar CSDF graphs en bijbehorende transformaties.}
 
@@ -271,13 +282,17 @@
   \todo[inline]{describe the current status of the hardware generation process}
 
 
-\section{Conclusion}
+\section{Conclusions and future work}
+\label{sec:conclusions}
 
   In this paper we presented SDFkit, an interactive environment for designing applications using SDF graphs.
   In contrast to translating imperative programming constructs like for-loops to hardware, we use constructs to express the structure in a computation.
   Using these computational structures, the generation of highly parallel hardware is tremendously simplified.
   Applications are modeled using CSDF graphs which are a cycle-accurate model for the generated hardware.
+
   \todo[inline]{extend conclusion a bit with current state of project}
+
+  \todo[inline]{Future work: Complete support for CSDF, hierarchy is design environment, multicore and GPU code generation}
 
 
 % Can use something like this to put references on a page
@@ -310,13 +325,22 @@
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{1}
+% \begin{thebibliography}{1}
 
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+% \bibitem{IEEEhowto:kopka}
+% H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+%   0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
 
-\end{thebibliography}
+%   \bibliographystyle{unsrt}
+% {\small\bibliography{biblio}}
+
+
+% \end{thebibliography}
+
+% bibliography{IEEEabrv,biblio}
+
+\bibliographystyle{unsrt}
+\bibliography{biblio}
 
 % You can push biographies down or up by placing
 % a \vfill before or after them. The appropriate
