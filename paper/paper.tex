@@ -189,7 +189,7 @@
 %
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{An interactive environment for mapping comutational structures to FPGAs}
+\title{An interactive environment for mapping computational structures to FPGAs}
 %
 %
 % author names and IEEE memberships
@@ -210,14 +210,14 @@
 \begin{abstract}
   In this paper we propose a methodology to translate computational structures to hardware.
   Computational structures express both the computation and the ordering of computations.
-  These structures are expressed using datalfow graph from which hardware can be generated more direclty compared to imperative apporaches.
+  These structures are expressed using dataflow graph from which hardware can be generated more directly compared to imperative approaches.
   As a proof of concept, SDFkit is developed.
-  SDFkit is a cycle accurate simulation environment for these computational structures and has a backend to generate highliy parallel FPGA code.
+  SDFkit is a cycle accurate simulation environment for these computational structures and has a backend to generate highly parallel FPGA code.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
 \begin{IEEEkeywords}
-Strucutre, Computations, FPGA, SDFkit
+  Structure, Computations, FPGA, SDFkit
 \end{IEEEkeywords}
 
 
@@ -227,24 +227,26 @@ Strucutre, Computations, FPGA, SDFkit
   
   FPGAs have an enormous potential in terms of computational power.
   However, they still remain hard to program even though a lot of work has been performed on translating imperative languages to hardware.
-  By using a sequential language to descibe parallel hardware a structural mismatch emerges.
-  A lot of analysis is therefore requiered to determine which computations are independant and ca therefore be performed in parallel.
+  By using a sequential language to describe parallel hardware a structural mismatch emerges.
+  A lot of analysis is therefore required to determine which computations are independent and ca therefore be performed in parallel.
 
-  In this work-in-progress paper, we propose a more strucutral approach to computations.
-  method..... math descrition to CSDF graph/ transformations to make efficient hardware then HW generation
+  In this work-in-progress paper, we propose a more structural approach to computations.
+  method..... math description to CSDF graph/ transformations to make efficient hardware then HW generation
 
-  The cuccrent implementation: SFDkit, an interactive environment 
+  The current implementation: SDFkit, an interactive environment...
+
+  Describe what is presented in remainder of paper..
 
 
 \section{Approach}
 
-  Computational strucutres borrowed from functional porgramming languages so called higher-order functions.
-  These functions are very suitable to express the strucutre in computations and therefore a good source of parallelism.
+  Computational structures borrowed from functional programming languages so called higher-order functions.
+  These functions are very suitable to express the structure in computations and therefore a good source of parallelism.
   \todo{ref to thesis Rinse}
   These computational structures are represented as a specific kind of dataflow graph, a cyclo static synchronous (CSDF) dataflow graph.
   Transformations are then applied to this graph to optimize performance.
   \todo{ref naar thesis Robert}
-  During the final step, the graph is mapped to hardware by translating each node to a combinational component and repacing the edges by a FIFO.
+  During the final step, the graph is mapped to hardware by translating each node to a combinational component and replacing the edges by a FIFO.
 
   \todo[inline]{elaborate a bit... big data programmers are already familiar with a structural approach to programming like hadoop}
 
@@ -253,11 +255,11 @@ Strucutre, Computations, FPGA, SDFkit
 
   \todo[inline]{Robert, kun je hier wat vertellen over de transformaties van computational structures naar CSDF graphs en bijbehorende transformaties.}
 
-  \todo[inline]{decribe status of SDFkit}
+  \todo[inline]{describe status of SDFkit}
 
   Figure \ref{fig:screenshot} shows a screenshot of SDFkit.
-  The central widget shows a visualisation of a CSDF graph which can be simulated in a step-wise fashion using the control panel on the left.
-  For debugging purposes, the data contained in each token for each simulation step is visualised in the lower widget.
+  The central widget shows a visualization of a CSDF graph which can be simulated in a step-wise fashion using the control panel on the left.
+  For debugging purposes, the data contained in each token for each simulation step is visualized in the lower widget.
 
   \begin{figure}[h]
     \centering
@@ -272,10 +274,10 @@ Strucutre, Computations, FPGA, SDFkit
 \section{Conclusion}
 
   In this paper we presented SDFkit, an interactive environment for designing applications using SDF graphs.
-  In contrast to translating imperative programming constructs like for-loops to hardware, we use constructs to express the structure in a comptation.
-  Using these computational structures, the generation of highly parallel hardware is tremendously simplyfied.
+  In contrast to translating imperative programming constructs like for-loops to hardware, we use constructs to express the structure in a computation.
+  Using these computational structures, the generation of highly parallel hardware is tremendously simplified.
   Applications are modeled using CSDF graphs which are a cycle-accurate model for the generated hardware.
-  \todo[inline]{extend conslusion a bit with current state of project}
+  \todo[inline]{extend conclusion a bit with current state of project}
 
 
 % Can use something like this to put references on a page
