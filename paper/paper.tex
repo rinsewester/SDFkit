@@ -275,11 +275,11 @@
   Due to a specific mapping of the application graph to hardware, a cycle accurate simulation can be performed.
   Additionally, the tokens on the edges can be changed any time allowing the user to identify bottlenecks in the graph and to tweak performance.
   
-  \todo[inline]{hardware generation using \clash \cite{Baaij10}}
-  nodes become combinational components and edges are implemented as FIFOs.....
-  The code is generated using \clash, a functional hardware description language.
-  each node has a peace of \clash code that represents the functionality of the node.....
-  
+  During hardware generation, each node is implemented as a combinational circuit containing the functionality of the node and logic for producing and consuming data.
+  The edges, on the other hand, are implemented as FIFOs.
+  The code is generated using \clash, a functional hardware description language~\cite{Baaij10}.
+  Additional to the python code that can be put in a node for simulation, \clash\ code is added for the implementation on hardware.
+
 
 \section{Results}
 \label{sec:results}
