@@ -249,24 +249,35 @@
 \section{Approach}
 \label{sec:approach}
 
-  Computational structures borrowed from functional programming languages so called higher-order functions.
+  Computational structures are borrowed from functional programming languages so called higher-order functions.
   These functions are very suitable to express the structure in computations and therefore a good source of parallelism~\cite{Wester15}.
   These computational structures are represented as a specific kind of dataflow graph, a cyclo static synchronous (CSDF) dataflow graph.
   Transformations are then applied to this graph to optimize performance~\cite{deGroote16}.
   During the final step, the graph is mapped to hardware by translating each node to a combinational component and replacing the edges by a FIFO.
 
-  \begin{itemize}
-    \item computational structures: \todo[inline]{elaborate a bit... big data programmers are already familiar with a structural approach to programming like hadoop}
-    \item CSDF graphs and transformations
-    \item simulation
-    \item hardware generation using \clash \cite{Baaij10}
-  \end{itemize}
+  The main advantage of using computational structures is that there is no need to perform dependency analysis of for-loops.
+  Since all dependencies are known, computations can be distributed over space and time by mathematical transformation rules.
+  Even though no standard C for-loops are used to express repettive computations, this should not be a problem for programmers since similar patters are also used in map-reduce applications.
+  Figure XXXXXXX shows two examples of computational structures: the higher-order function \emph{zipWith} and \emph{foldl}.
+  Using \emph{zipWith} an operation is applied to pairs from two lists while \emph{foldl} reduces all elements in a list to one element.
 
+  \missingfigure{plaatje zipw en foldl hier}
+
+  \todo[inline]{Robert, kun je hier wat vertellen over de transformaties van computational structures naar CSDF graphs en bijbehorende transformaties, inclusief voorbeeld}
+  
+  In order to determine accuracte perfomance metric of an application, the simulation must be accurate.
+  In SDFkit, the simulation can be used to for verify functional correctness as wel as performance.
+  Due to a specific mapping of the application graph to hardware, a cycle accurate simulation can be performed.
+  Additionally, the tokens on the edges can be changed any time allowing the user to identify bottlenecks in the graph and to tweak performance.
+  
+  \todo[inline]{hardware generation using \clash \cite{Baaij10}}
+  nodes becaome combinational components and adges are implemented as FIFOs.....
+  The code is generated using \clash, a fundtional hardware description language.
+  each node has a peace of \clash code that represents the functionality of the node.....
+  
 
 \section{Results}
 \label{sec:results}
-
-  \todo[inline]{Robert, kun je hier wat vertellen over de transformaties van computational structures naar CSDF graphs en bijbehorende transformaties, inclusief voorbeeld}
 
   \todo[inline]{describe status of SDFkit}
 
@@ -287,7 +298,7 @@
 \section{Conclusions and future work}
 \label{sec:conclusions}
 
-  In this paper we presented SDFkit, an interactive environment for designing applications using SDF graphs.
+  In this paper we presented a methodology for designing hardware using a structured approach.
   In contrast to translating imperative programming constructs like for-loops to hardware, we use constructs to express the structure in a computation.
   Using these computational structures, the generation of highly parallel hardware is tremendously simplified.
   Applications are modeled using CSDF graphs which are a cycle-accurate model for the generated hardware.
