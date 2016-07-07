@@ -274,12 +274,26 @@
 dot\_product xs ys = fold (+) 0 (zipWith (*) xs ys)\todo{Use nice listing environment}
 
   The CSDF graph representation of this specification is depicted in Figure~\ref{fig:csdf-dotproduct}.
+  Each node in the graph represents a function, where function is to be interpreted in the widest sense: we regard values simply as functions that take no argument.
+  The node corresponding to the addition has a self-loop, which indicates that it is involved in a \emph{stateful} computation - the fold.
+  Note that neither of the two higher-order functions that appear in the specification (fold and zipWith) are represented by nodes in the CSDF graph.
+  Higher-order functions do not map to individual nodes, but rather to \emph{subgraphs}.
+  In general, the CSDF graphs derived from functional specifications are \emph{hierarchical}.
+  That is, one may collapse a subgraph into a single node, which makes the higher-order functions explicit.
   \begin{figure}[h!]
     \centering
     \input{csdf-dp}
     \caption{Cyclo-static dataflow graph representation of dot-product}
     \label{fig:csdf-dotproduct}
   \end{figure}
+
+  Each node in the CSDF graph represents a function that is computed at a particular \emph{place} - a location in space, such as a processing element, or an input port.
+  Performing the computation on actual values corresponds to \emph{executing} the CSDF graph.
+  During such an execution, each node may be invoked several times, at different time instants.
+
+  By applying an \emph{unfolding} transformation to the graph, a node is replaced by several copies, each representing a subset of the invocations of that node.
+  This increases the space allocatd to that function, and decreases the number of node invocations per place.
+  It furthermore explicitly exposes parallelism, which may be beneficial to performance.
   
   In order to determine accurate performance metric of an application, the simulation must be accurate.
   In SDFkit, the simulation can be used to for verify functional correctness as well as performance.
