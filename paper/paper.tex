@@ -258,10 +258,15 @@
   The main advantage of using computational structures is that there is no need to perform dependency analysis of for-loops.
   Since all dependencies are known, computations can be distributed over space and time by mathematical transformation rules.
   Even though no standard C for-loops are used to express repetitive computations, this should not be a problem for programmers since similar patters are also used in map-reduce applications.
-  Figure XXXXXXX shows two examples of computational structures: the higher-order function \emph{zipWith} and \emph{foldl}.
+  Figure \ref{fig:zipwthandfoldlstruct} shows two examples of computational structures: the higher-order function \emph{zipWith} and \emph{foldl}.
   Using \emph{zipWith} an operation is applied to pairs from two lists while \emph{foldl} reduces all elements in a list to one element.
 
-  \missingfigure{plaatje zipw en foldl hier}
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=3in]{HOFs}
+    \caption{Structure of \emph{zipWith} and \emph{foldl}}
+    \label{fig:zipwthandfoldlstruct}
+  \end{figure}
 
   \todo[inline]{Robert, kun je hier wat vertellen over de transformaties van computational structures naar CSDF graphs en bijbehorende transformaties, inclusief voorbeeld}
   
