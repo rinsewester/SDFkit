@@ -6,6 +6,7 @@
 \usepackage[cmex10]{amsmath}
 
 
+\newcommand{\clash}{C$\lambda$aSH}
 
 
 % *** ALIGNMENT PACKAGES ***
@@ -201,7 +202,7 @@
 % was not built to handle multiple paragraphs
 %
 
-\author{Rinse~Wester~and~Robert~de~Groote}
+\author{Rinse~Wester~and~Robert~de~Groote \\CAES group, EEMCS\\ University of Twente\\ \{r.wester, robert.degroote\}@utwente.nl}
 
 % make the title area
 \maketitle
@@ -249,22 +250,23 @@
 \label{sec:approach}
 
   Computational structures borrowed from functional programming languages so called higher-order functions.
-  These functions are very suitable to express the structure in computations and therefore a good source of parallelism.
-  \todo{ref to thesis Rinse \cite{Wester15}}
+  These functions are very suitable to express the structure in computations and therefore a good source of parallelism~\cite{Wester15}.
   These computational structures are represented as a specific kind of dataflow graph, a cyclo static synchronous (CSDF) dataflow graph.
-  Transformations are then applied to this graph to optimize performance.
-  \todo{ref naar thesis Robert \cite{deGroote16}}
+  Transformations are then applied to this graph to optimize performance~\cite{deGroote16}.
   During the final step, the graph is mapped to hardware by translating each node to a combinational component and replacing the edges by a FIFO.
 
-  \todo[inline]{elaborate a bit... big data programmers are already familiar with a structural approach to programming like hadoop}
-  
-  \todo[inline]{mention CLaSH \cite{Baaij10} as used for backend}
+  \begin{itemize}
+    \item computational structures: \todo[inline]{elaborate a bit... big data programmers are already familiar with a structural approach to programming like hadoop}
+    \item CSDF graphs and transformations
+    \item simulation
+    \item hardware generation using \clash \cite{Baaij10}
+  \end{itemize}
 
 
 \section{Results}
 \label{sec:results}
 
-  \todo[inline]{Robert, kun je hier wat vertellen over de transformaties van computational structures naar CSDF graphs en bijbehorende transformaties.}
+  \todo[inline]{Robert, kun je hier wat vertellen over de transformaties van computational structures naar CSDF graphs en bijbehorende transformaties, inclusief voorbeeld}
 
   \todo[inline]{describe status of SDFkit}
 
@@ -272,9 +274,9 @@
   The central widget shows a visualization of a CSDF graph which can be simulated in a step-wise fashion using the control panel on the left.
   For debugging purposes, the data contained in each token for each simulation step is visualized in the lower widget.
 
-  \begin{figure}[h]
+  \begin{figure}[h!]
     \centering
-    \includegraphics[width=2.5in]{screenshot.png}
+    \includegraphics[width=3in]{screenshot.png}
     \caption{Screenshot of SDFkit}
     \label{fig:screenshot}
   \end{figure}
@@ -290,11 +292,15 @@
   Using these computational structures, the generation of highly parallel hardware is tremendously simplified.
   Applications are modeled using CSDF graphs which are a cycle-accurate model for the generated hardware.
 
-  \todo[inline]{extend conclusion a bit with current state of project}
+  As a proof of concept, an interactive simulation and hardware generation environment named SDFkit is being developed.
+  Currently, SDFkit supports visualization and simulation of HSDF, SDF and CSDF graphs.
+  Additionally, \clash code can be generated for HSDF graphs.
 
-  \todo[inline]{Future work: Complete support for CSDF, hierarchy is design environment, multicore and GPU code generation}
-
-
+  The next step in development is to extend the hardware code generation with support for SDF and CSDF graphs.
+  Additionally, the transformations to make a tradeoff between space and time are now performed outside SDFkit.
+  Integration of these transformations into SDFkit is therefore an other important step forward.
+  Finally, Interesting opportunities lie in extending the backend with a wider range of supported platform like C code and OpenCL.
+  
 % Can use something like this to put references on a page
 % by themselves when using endfloat and the captionsoff option.
 \ifCLASSOPTIONcaptionsoff
