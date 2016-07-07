@@ -211,9 +211,9 @@
 \begin{abstract}
   In this paper we propose a methodology to translate computational structures to hardware.
   Computational structures express both the computation and the ordering of computations.
-  These structures are expressed using dataflow graph from which hardware can be generated more directly compared to imperative approaches.
+  These structures are expressed using dataflow graphs from which hardware can be generated more directly compared to imperative approaches.
   As a proof of concept, SDFkit is developed.
-  SDFkit is a cycle accurate simulation environment for these computational structures and has a backend to generate highly parallel FPGA code.
+  SDFkit is a cycle accurate simulation environment for these computational structures and has a backend to generate FPGA code.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -229,9 +229,9 @@
   FPGAs have an enormous potential in terms of computational power.
   However, they still remain hard to program even though a lot of work has been performed on translating imperative languages to hardware.
   Imperative languages have evolved around \emph{sequential} machines.
-  Using such a language to describe parallel hardware therefore causes a mismatch in \emph{structue}.
-  Rather than resolving this mismatch using complex dependency analyses, we propse, in this work-in-progress-paper, a \emph{structural} approach to computations.
-  In our approach, we take as input a mathematical\todo{Functional, declarative?} description of the application, and transform it into a \emph{cyclo-static dataflow} (CSDF) graph~\cite{bilsen1996}.
+  Using such a language to describe parallel hardware therefore causes a mismatch in \emph{structure}.
+  Rather than resolving this mismatch using complex dependency analyses, we propose, in this work-in-progress-paper, a \emph{structural} approach to computations.
+  In our approach, we take as input a declarative description of the application, and transform it into a \emph{cyclo-static dataflow} (CSDF) graph~\cite{bilsen1996}.
   Transformations to enhance performance are then applied to this graph.
   A cycle accurate simulation gives insight into where the bottlenecks of the application are.
   Finally, when the performance of the graph is sufficient, the graph is translated to hardware.
@@ -271,8 +271,7 @@
   As an example, consider the functional specification of a simple dot product of two vectors, written in the functional programming language Haskell:
 
 \begin{verbatim}
-  dotprod xs ys = 
-      fold (+) 0 (zipWith (*) xs ys)  
+dotp xs ys = fold (+) 0 (zipWith (*) xs ys)  
 \end{verbatim}
 
 
@@ -299,27 +298,26 @@
   It furthermore explicitly exposes parallelism, which may be beneficial to performance.
   
   In order to determine accurate performance metrics of an application, the simulation must be accurate.
-  In SDFkit, the simulation can be used to for verify functional correctness as well as performance.
+  In SDFkit, the simulation can be used to verify functional correctness as well as performance.
   Due to a specific mapping of the application graph to hardware, a cycle accurate simulation can be performed.
   Additionally, the tokens on the edges can be changed any time allowing the user to identify bottlenecks in the graph and to tweak performance.
   
   During hardware generation, each node is implemented as a combinational circuit containing the functionality of the node and logic for producing and consuming data.
   The edges, on the other hand, are implemented as FIFOs.
   The code is generated using \clash, a functional hardware description language~\cite{Baaij10}.
-  Additional to the python code that can be put in a node for simulation, \clash\ code is added for the implementation on hardware.
+  Additional to the python code in a node for simulation, \clash\ code is added for the implementation on hardware.
 
 
 \section{Results}
 \label{sec:results}
 
-  Currently, SDFkit can import graphs expressed in a JSON file format.
-  These files contain a list of nodes and edges.
+  Currently, SDFkit can import graphs expressed in a JSON file containing a list of nodes and edges.
   Additionally, each node contains a python lambda expression for the functional behavior of the node during simulation.
   After opening, both the functionality of the nodes and data on the edges can be altered using the GUI.
 
   Figure \ref{fig:screenshot} shows a screenshot of SDFkit.
   The central widget shows a visualization of a CSDF graph which can be simulated in a step-wise fashion using the control panel on the left.
-  For debugging purposes, the data contained in each token for each simulation step is visualized in the lower widget.
+  For debugging purposes, the data in tokens is visualized in the lower widget.
 
   \begin{figure}[h!]
     \centering
@@ -329,19 +327,16 @@
   \end{figure}
 
   Currently, the hardware generation backend only supports \emph{homogeneous} SDF (HSDF) graphs, which is the simplest type of SDF graph.
-  To add support for complete CSDF graphs, the edges have to support storing a variable amount of tokens each clock cycle.
-  This is in terms of hardware much more complicated.
+  To support CSDF graphs, the edges have to support storing a variable amount of tokens each clock cycle which results in more complicated hardware.
 
 \section{Conclusions and future work}
 \label{sec:conclusions}
 
-  In this paper we presented a methodology for designing hardware using a structured approach.
+  In this paper we presented a methodology and an application for designing hardware using a structured approach.
   In contrast to translating imperative programming constructs like for-loops to hardware, we use constructs to express the structure in a computation.
   Using these computational structures, the generation of highly parallel hardware is tremendously simplified.
   Applications are modeled using CSDF graphs which are a cycle-accurate model for the generated hardware.
-
-  As a proof of concept, an interactive simulation and hardware generation environment named SDFkit is being developed.
-  Currently, SDFkit supports visualization and simulation of HSDF, SDF and CSDF graphs.
+  This methodology is currently being implemented in SDFkit, an interactive simulation and hardware generation environment supporting visualization and simulation of CSDF graphs.
   Additionally, \clash code can be generated for HSDF graphs.
 
   The next step in development is to extend the hardware code generation with support for SDF and CSDF graphs.
