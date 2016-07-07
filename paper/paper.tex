@@ -228,11 +228,10 @@
   
   FPGAs have an enormous potential in terms of computational power.
   However, they still remain hard to program even though a lot of work has been performed on translating imperative languages to hardware.
-  By using a sequential language to describe parallel hardware a structural mismatch emerges.
-  A lot of analysis is therefore required to determine which computations are independent and can therefore be performed in parallel.
-
-  In this work-in-progress paper, we propose a more structural approach to computations.
-  As input, a mathematical description of the application is given which is transformed into a CSDF graph.
+  Imperative languages have evolved around \emph{sequential} machines.
+  Using such a language to describe parallel hardware therefore causes a mismatch in \emph{structue}.
+  Rather than resolving this mismatch using complex dependency analyses, we propse, in this work-in-progress-paper, a \emph{structural} approach to computations.
+  In our approach, we take as input a mathematical\todo{Functional, declarative?} description of the application, and transform it into a \emph{cyclo-static dataflow} (CSDF) graph~\cite{bilsen1996}.
   Transformations to enhance performance are then applied to this graph.
   A cycle accurate simulation gives insight into where the bottlenecks of the application are.
   Finally, when the performance of the graph is sufficient, the graph is translated to hardware.
@@ -251,7 +250,7 @@
 
   Computational structures are borrowed from functional programming languages so called higher-order functions.
   These functions are very suitable to express the structure in computations and therefore a good source of parallelism~\cite{Wester15}.
-  These computational structures are represented as a specific kind of dataflow graph, a cyclo static synchronous (CSDF) dataflow graph.
+  These computational structures are represented as a specific kind of dataflow graph, a cyclo-static dataflow (CSDF) graph.
   Transformations are then applied to this graph to optimize performance~\cite{deGroote16}.
   During the final step, the graph is mapped to hardware by translating each node to a combinational component and replacing the edges by a FIFO.
 
@@ -287,7 +286,7 @@
   \begin{figure}[h!]
     \centering
     \input{csdf-dp}
-    \caption{Cyclo-static dataflow graph representation of dot-product}
+    \caption{Cyclo-static dataflow graph representation of dot-product.}
     \label{fig:csdf-dotproduct}
   \end{figure}
 
@@ -329,8 +328,8 @@
     \label{fig:screenshot}
   \end{figure}
 
-  Currently, the hardware generation backend only supports HSDF graphs, i.e., the most simple type of SDF graph.
-  To add support for complete SDF and CSDF graphs, the edges have to support storing a variable amount of tokens each clock cycle.
+  Currently, the hardware generation backend only supports \emph{homogeneous} SDF (HSDF) graphs, which is the simplest type of SDF graph.
+  To add support for complete CSDF graphs, the edges have to support storing a variable amount of tokens each clock cycle.
   This is in terms of hardware much more complicated.
 
 \section{Conclusions and future work}
