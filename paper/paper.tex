@@ -238,11 +238,11 @@
 
   As a proof of concept to show the effectiveness of the approach, an interactive environment for simulation and hardware generation  is being developed named SDFkit.
   Using SDFkit, CSDF graphs can be visualized and simulated in a cycle accurate manner.
-  Additionally, using the code can be generated for FPGAs.
+  Additionally, code can be generated for FPGAs.
 
   The remainder of this paper is organized as follows:
   First, the approach is covered in Section \ref{sec:approach} after which results are covered in Section \ref{sec:results}.
-  Finally, conclusion and future work are expressed in Section \ref{sec:conclusions}.
+  Finally, conclusions and future work are expressed in Section \ref{sec:conclusions}.
 
 
 \section{Approach}
@@ -256,7 +256,7 @@
 
   The main advantage of using computational structures is that there is no need to perform dependency analysis of for-loops.
   Since all dependencies are known, computations can be distributed over space and time by mathematical transformation rules.
-  Even though no standard C for-loops are used to express repetitive computations, this should not be a problem for programmers since similar patters are also used in map-reduce applications.
+  Even though no for-loops are used to express repetitive computations, this should not be a problem for programmers since similar patters are also used in map-reduce applications.
   Figure \ref{fig:zipwthandfoldlstruct} shows two examples of computational structures: the higher-order function \emph{zipWith} and \emph{foldl}.
   Using \emph{zipWith} an operation is applied to pairs from two lists while \emph{foldl} reduces all elements in a list to one element.
 
@@ -282,6 +282,7 @@ dotp xs ys = fold (+) 0 (zipWith (*) xs ys)
   Higher-order functions do not map to individual nodes, but rather to \emph{subgraphs}.
   In general, the CSDF graphs derived from functional specifications are \emph{hierarchical}.
   That is, one may collapse a subgraph into a single node, which makes the higher-order functions explicit.
+
   \begin{figure}[h!]
     \centering
     \input{csdf-dp}
@@ -297,7 +298,7 @@ dotp xs ys = fold (+) 0 (zipWith (*) xs ys)
   This increases the space allocated to that function, and decreases the number of node invocations per place.
   It furthermore explicitly exposes parallelism, which may be beneficial to performance.
   
-  In order to determine accurate performance metrics of an application, the simulation must be accurate.
+  In order to determine performance metrics of an application, the simulation must be accurate.
   In SDFkit, the simulation can be used to verify functional correctness as well as performance.
   Due to a specific mapping of the application graph to hardware, a cycle accurate simulation can be performed.
   Additionally, the tokens on the edges can be changed any time allowing the user to identify bottlenecks in the graph and to tweak performance.
@@ -337,12 +338,12 @@ dotp xs ys = fold (+) 0 (zipWith (*) xs ys)
   Using these computational structures, the generation of highly parallel hardware is tremendously simplified.
   Applications are modeled using CSDF graphs which are a cycle-accurate model for the generated hardware.
   This methodology is currently being implemented in SDFkit, an interactive simulation and hardware generation environment supporting visualization and simulation of CSDF graphs.
-  Additionally, \clash code can be generated for HSDF graphs.
+  Additionally, \clash\ code can be generated for HSDF graphs.
 
-  The next step in development is to extend the hardware code generation with support for SDF and CSDF graphs.
+  The next step in development is to extend the hardware code generation with support for CSDF graphs.
   Additionally, the transformations to make a tradeoff between space and time are now performed outside SDFkit.
   Integration of these transformations into SDFkit is therefore an other important step forward.
-  Finally, Interesting opportunities lie in extending the backend with a wider range of supported platform like C code and OpenCL.
+  Finally, interesting opportunities lie in extending the code generation with a wider range of supported platform like C code and OpenCL.
   
 % Can use something like this to put references on a page
 % by themselves when using endfloat and the captionsoff option.
