@@ -257,7 +257,7 @@
 
   The main advantage of using computational structures is that there is no need to perform dependency analysis of for-loops.
   Since all dependencies are known, computations can be distributed over space and time by mathematical transformation rules.
-  Even though no standard C for-loops are used to express repettive computations, this should not be a problem for programmers since similar patters are also used in map-reduce applications.
+  Even though no standard C for-loops are used to express repetitive computations, this should not be a problem for programmers since similar patters are also used in map-reduce applications.
   Figure XXXXXXX shows two examples of computational structures: the higher-order function \emph{zipWith} and \emph{foldl}.
   Using \emph{zipWith} an operation is applied to pairs from two lists while \emph{foldl} reduces all elements in a list to one element.
 
@@ -265,14 +265,14 @@
 
   \todo[inline]{Robert, kun je hier wat vertellen over de transformaties van computational structures naar CSDF graphs en bijbehorende transformaties, inclusief voorbeeld}
   
-  In order to determine accuracte perfomance metric of an application, the simulation must be accurate.
-  In SDFkit, the simulation can be used to for verify functional correctness as wel as performance.
+  In order to determine accurate performance metric of an application, the simulation must be accurate.
+  In SDFkit, the simulation can be used to for verify functional correctness as well as performance.
   Due to a specific mapping of the application graph to hardware, a cycle accurate simulation can be performed.
   Additionally, the tokens on the edges can be changed any time allowing the user to identify bottlenecks in the graph and to tweak performance.
   
   \todo[inline]{hardware generation using \clash \cite{Baaij10}}
-  nodes becaome combinational components and adges are implemented as FIFOs.....
-  The code is generated using \clash, a fundtional hardware description language.
+  nodes become combinational components and edges are implemented as FIFOs.....
+  The code is generated using \clash, a functional hardware description language.
   each node has a peace of \clash code that represents the functionality of the node.....
   
 
