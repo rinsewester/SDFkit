@@ -4,7 +4,7 @@
 \usepackage{todonotes}
 \usepackage{cite}
 \usepackage[cmex10]{amsmath}
-
+\usetikzlibrary{calc,positioning}
 
 \newcommand{\clash}{C$\lambda$aSH}
 
@@ -268,7 +268,18 @@
     \label{fig:zipwthandfoldlstruct}
   \end{figure}
 
-  \todo[inline]{Robert, kun je hier wat vertellen over de transformaties van computational structures naar CSDF graphs en bijbehorende transformaties, inclusief voorbeeld}
+  Functional specifications of computations can be represented by CSDF graphs using a straightforward translation.
+  As an example, consider the functional specification of a simple dot product of two vectors, written in the functional programming language Haskell.
+
+dot\_product xs ys = fold (+) 0 (zipWith (*) xs ys)\todo{Use nice listing environment}
+
+  The CSDF graph representation of this specification is depicted in Figure~\ref{fig:csdf-dotproduct}.
+  \begin{figure}[h!]
+    \centering
+    \input{csdf-dp}
+    \caption{Cyclo-static dataflow graph representation of dot-product}
+    \label{fig:csdf-dotproduct}
+  \end{figure}
   
   In order to determine accurate performance metric of an application, the simulation must be accurate.
   In SDFkit, the simulation can be used to for verify functional correctness as well as performance.

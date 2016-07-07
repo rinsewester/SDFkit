@@ -1,0 +1,62 @@
+\begin{tikzpicture}[xscale=0.7]
+
+\tikzstyle{sdfgnode} = [circle,draw=black,draw opacity=0.7,fill=yellow!30,fill opacity=0.9,inner sep=0,minimum width=14pt,font=\scriptsize,text=black,text opacity=1]%
+\tikzstyle{sdfgdata} = [sdfgnode, inner sep=1pt,fill=blue!60!black,fill opacity=0.4]%
+\tikzstyle{sdfgmem} = [sdfgnode, rectangle, rounded corners=4pt, inner sep=2pt,fill=blue!60!black,fill opacity=0.1]%
+\tikzstyle{sdfgarc} = [->,minimum width=1pt,>=latex,sloped]%
+\tikzstyle{token} = [circle,inner sep=0,draw=black,fill=black,minimum size=5pt]%
+\tikzstyle{rate} = [inner sep=2pt,font=\footnotesize]%
+\tikzstyle{bb} = [rectangle, draw=black!20, dashed]%
+
+\node[sdfgdata] (xs) at (-1.5, 1) {$xs$};
+\node[sdfgdata] (ys) at (-1.5, -1) {$ys$};
+\node[sdfgnode] (mul) at (0.5, 0) {$\times$};
+
+\node[sdfgdata] (a) at (3.5, 1) {0};
+\node[sdfgnode] (f) at (6, 0) {$+$};
+\node[sdfgdata] (w) at (9, 0) {$dp$};
+%\node[sdfgdata] (x) at (2.5, 0) {$ps$};
+
+\draw[sdfgarc] (xs) --
+    node[pos=0.0,sloped,rate,anchor=south west] {$\langle n * 1 \rangle$}
+    +(1.5, 0) --
+    node[pos=0.4,sloped=false,rate,anchor=south west] {$\langle n * 1 \rangle$}
+    (mul);
+
+\draw[sdfgarc] (ys) --
+    node[pos=0.0,sloped,rate,anchor=south west] {$\langle n * 1 \rangle$}
+    +(1.5, 0) --
+    node[pos=0.4,sloped=false,rate,anchor=north west] {$\langle n * 1 \rangle$}
+    (mul);
+
+\draw[sdfgarc] (mul) --
+    node[pos=0.0,sloped,rate,anchor=south west] {$\langle n * 1 \rangle$}
+    node[pos=1.0,sloped=false,rate,anchor=south east] {$\langle n * 1 \rangle$}
+    (f);
+
+\draw[sdfgarc] (a) --
+    node[pos=0.0,sloped,rate,anchor=south west] {$1$}
+    +(2, 0) --
+    node[pos=0.4,sloped=false,rate,anchor=south west] {$\langle 1, n * 0 \rangle$}
+    (f);
+
+%\draw[sdfgarc] (x) --
+%    node[pos=0.0,sloped,rate,anchor=south west] {$\langle n * 1 \rangle$}
+%    node[pos=0.9,sloped=false,rate,anchor=south east] {$\langle 0, n * 1 \rangle$}
+%    (f);
+
+\draw[sdfgarc] (f) --
+    node[pos=0.0,rate,anchor=south west] {$\langle n * 0, 1 \rangle$}
+    node[pos=1.0,rate,anchor=south east] {$1$}
+    (w);
+
+\begin{scope}[scale=0.8]
+\draw[sdfgarc] (f)
+    .. controls ($(f) + (-50:1)$) and ($(f) + (0.5,-1)$) .. ($(f) + (0, -1)$)
+    node[pos=0.3, sloped=false, rate, anchor=south west, font=\tiny] {$ \langle n * 1, 0 \rangle $}
+    .. controls ($(f) + (-0.5,-1)$) and ($(f) + (-130:1)$) ..
+    node[pos=0.7, sloped=false, rate, anchor=south east, font=\tiny] {$ \langle 0, n * 1 \rangle $}
+    (f);
+\end{scope}
+
+\end{tikzpicture}
