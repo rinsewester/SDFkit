@@ -229,7 +229,7 @@
   FPGAs have an enormous potential in terms of computational power.
   However, they still remain hard to program even though a lot of work has been performed on translating imperative languages to hardware.
   By using a sequential language to describe parallel hardware a structural mismatch emerges.
-  A lot of analysis is therefore required to determine which computations are independent and ca therefore be performed in parallel.
+  A lot of analysis is therefore required to determine which computations are independent and can therefore be performed in parallel.
 
   In this work-in-progress paper, we propose a more structural approach to computations.
   As input, a mathematical description of the application is given which is transformed into a CSDF graph.
@@ -296,7 +296,7 @@
   During such an execution, each node may be invoked several times, at different time instants.
 
   By applying an \emph{unfolding} transformation to the graph, a node is replaced by several copies, each representing a subset of the invocations of that node.
-  This increases the space allocatd to that function, and decreases the number of node invocations per place.
+  This increases the space allocated to that function, and decreases the number of node invocations per place.
   It furthermore explicitly exposes parallelism, which may be beneficial to performance.
   
   In order to determine accurate performance metrics of an application, the simulation must be accurate.
