@@ -269,9 +269,13 @@
   \end{figure}
 
   Functional specifications of computations can be represented by CSDF graphs using a straightforward translation.
-  As an example, consider the functional specification of a simple dot product of two vectors, written in the functional programming language Haskell.
+  As an example, consider the functional specification of a simple dot product of two vectors, written in the functional programming language Haskell:
 
-dot\_product xs ys = fold (+) 0 (zipWith (*) xs ys)\todo{Use nice listing environment}
+\begin{verbatim}
+  dotprod xs ys = 
+      fold (+) 0 (zipWith (*) xs ys)  
+\end{verbatim}
+
 
   The CSDF graph representation of this specification is depicted in Figure~\ref{fig:csdf-dotproduct}.
   \begin{figure}[h!]
@@ -281,7 +285,7 @@ dot\_product xs ys = fold (+) 0 (zipWith (*) xs ys)\todo{Use nice listing enviro
     \label{fig:csdf-dotproduct}
   \end{figure}
   
-  In order to determine accurate performance metric of an application, the simulation must be accurate.
+  In order to determine accurate performance metrics of an application, the simulation must be accurate.
   In SDFkit, the simulation can be used to for verify functional correctness as well as performance.
   Due to a specific mapping of the application graph to hardware, a cycle accurate simulation can be performed.
   Additionally, the tokens on the edges can be changed any time allowing the user to identify bottlenecks in the graph and to tweak performance.
@@ -311,8 +315,9 @@ dot\_product xs ys = fold (+) 0 (zipWith (*) xs ys)\todo{Use nice listing enviro
     \label{fig:screenshot}
   \end{figure}
 
-  \todo[inline]{describe the current status of the hardware generation process}
-
+  Currently, the hardware generation backend only supports HSDF graphs, i.e., the most simple type of SDF graph.
+  To add support for complete SDF and CSDF graphs, the edges have to support storing a variable amount of tokens each clock cycle.
+  This is in terms of hardware much more complicated.
 
 \section{Conclusions and future work}
 \label{sec:conclusions}
