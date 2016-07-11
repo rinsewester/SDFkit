@@ -276,9 +276,10 @@ class ClashCodeGen(object):
             ename = 'e_' + src + '_' + dst
             edgeinptuplestr = '(' + ename + '_datain, ' + ename + '_rd, ' + ename + '_wrt)'
 
-            graphconnectionsstr += '        ' + edgeinptuplestr + ' = ......\n'
+            resnumber = graph[src][dst]['res']
+            edgeinptuplesourcesstr = '(n_' + src + '_dataout' + str(resnumber) + ', n_' + dst + '_fire, n_' + src + '_fire)' 
 
-            # TODO fix the connections between edge tuple and other nodes
+            graphconnectionsstr += '        ' + edgeinptuplestr + ' = ' + edgeinptuplesourcesstr + '\n'
 
         return graphconnectionsstr
 
