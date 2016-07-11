@@ -234,23 +234,40 @@ class ClashCodeGen(object):
             inputcount = len(graph.predecessors(n))
             outputcount = len(graph.successors(n))
 
-            # Create the string for the input tuples of the nodes
+            # Create the string connecting the input tuple of a node with other nodes
             nodeinstanceinputs = []
+            nodeinstanceinputsources = []
             for i in range(inputcount):
                 nodeinstanceinputs.append(nname + '_datain' + str(i))
+                # find source node that is connected to this datain(i) port
+                for src in graph.predecessors(n):
+                    if graph[src][n]['arg'] == i:
+                        nodeinstanceinputsources.append('e_' + src + '_' + n + '_dataout')
             for i in range(inputcount):
                 nodeinstanceinputs.append(nname + '_empty' + str(i))
+                # find source node that is connected to this empty port
+                for src in graph.predecessors(n):
+                    if graph[src][n]['arg'] == i:
+                        nodeinstanceinputsources.append('e_' + src + '_' + n + '_empty')
             for i in range(outputcount):
                 nodeinstanceinputs.append(nname + '_full' + str(i))
+                # find destination node that is connected to this full port
+                for dst in graph.successors(n):
+                    if graph[n][dst]['res'] == i:
+                        nodeinstanceinputsources.append('e_' + n + '_' + dst + '_full')
 
             if len(nodeinstanceinputs) == 1:
                 nodeinstanceinputsstr = nodeinstanceinputs[0]
             else:
                 nodeinstanceinputsstr = '(' + (', '.join(nodeinstanceinputs)) + ')'
 
-            # TODO: and now assign the correct other signals to them.....
+            if len(nodeinstanceinputsources) == 1:
+                nodeinstanceinputsourcesstr = nodeinstanceinputsources[0]
+            else:
+                nodeinstanceinputsourcesstr = '(' + (', '.join(nodeinstanceinputsources)) + ')'
 
-            graphconnectionsstr += '        ' + nodeinstanceinputsstr + ' = ......\n'
+            # And now assign the correct other signals to them.....
+            graphconnectionsstr += '        ' + nodeinstanceinputsstr + ' = ' + nodeinstanceinputsourcesstr + '\n'
 
         
         # Create the string for the input tuples of the edges
