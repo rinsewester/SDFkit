@@ -1,6 +1,6 @@
 {-# LANGUAGE RecordWildCards, DataKinds #-}
 
-module Template where
+module <GRAPH_NAME> where
 
 -- imports
 import CLaSH.Prelude

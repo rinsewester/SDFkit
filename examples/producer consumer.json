@@ -1,5 +1,5 @@
 { 
-	"name": "simple SDF",
+	"name": "Producer consumer",
 
 	"nodes" : [
 		{

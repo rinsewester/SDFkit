@@ -38,6 +38,7 @@ class ClashCodeGen(object):
                 templatestr = f.read()
 
             # Now replace the variables in the code template
+            templatestr = templatestr.replace('<GRAPH_NAME>', graph.name)
             templatestr = templatestr.replace('<NODE_FUNC_DEFS>', nodeFuncDefs)
             templatestr = templatestr.replace('<NODE_DEFS>', nodeDefs)
             templatestr = templatestr.replace('<EDGE_DEFS>', edgeDefs)

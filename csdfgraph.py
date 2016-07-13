@@ -10,6 +10,7 @@ author: Rinse Wester
 
 import networkx as nx
 import json
+import string
 from copy import deepcopy
 
 
@@ -210,7 +211,11 @@ class CSDFGraph(nx.DiGraph):
             jsonstr = f.read()
 
         jsondata = json.loads(jsonstr)
-        self.name = jsondata['name']
+        namestr = jsondata['name'].strip()
+        namestr = string.capwords(namestr)
+        namestr = namestr.replace(' ', '')
+        self.name = namestr
+        print('Name of graph: ', namestr)
 
         for jsnode in jsondata['nodes']:
             nodeName = jsnode['name']
