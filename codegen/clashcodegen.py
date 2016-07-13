@@ -219,7 +219,7 @@ class ClashCodeGen(object):
             tokensstr = ''
             for tkn in tokensexp:
                 tokensstr += str(tkn)
-                tokensstr += ' <: '
+                tokensstr += ' :> '
             tokensstr += ' Nil'
             edgedefs += 'e_' + src + '_' + dst +'L = mealy hsdfedge8 (' + tokensstr + ' :: Vec8 Cntr, 0 :: RdPtr, ' + str(len(tokens)) + ' :: WrPtr)\n' 
 
@@ -286,6 +286,6 @@ class ClashCodeGen(object):
     def _generateGraphOutputs(graph):
         graphOutputs = []
         for src, dst in graph.edges():
-            graphOutputs.append('e_' + src + '_' + dst + '_rd, e_' + src + '_' + dst + '_rd')
+            graphOutputs.append('e_' + src + '_' + dst + '_rd, e_' + src + '_' + dst + '_dataout')
         graphOutputsStr = '(' + (', '.join(graphOutputs)) + ')'
         return graphOutputsStr

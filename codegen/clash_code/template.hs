@@ -20,8 +20,7 @@ import HSDFEdge
 -- Definiton of edges
 <EDGE_DEFS>
 
--- The actual graph 
-graph :: <GRAPH_TYPE>
+-- The actual graph
 graph inputs = outputs
     where
         -- Instantiations of nodes
@@ -34,7 +33,7 @@ graph inputs = outputs
 <GRAPH_CONNECTIONS>
 
         -- Output for debugging
-        output = bundle <GRAPH_OUTPUTS>
+        outputs = bundle <GRAPH_OUTPUTS>
 
 
 simres = L.take 25 $ simulate graph $ L.repeat True
