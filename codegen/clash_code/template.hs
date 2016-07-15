@@ -21,6 +21,7 @@ import HSDFEdge
 <EDGE_DEFS>
 
 -- The actual graph
+<GRAPH_TYPE>
 graph inputs = outputs
     where
         -- Instantiations of nodes

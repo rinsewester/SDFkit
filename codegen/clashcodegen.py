@@ -28,6 +28,7 @@ class ClashCodeGen(object):
             nodeFuncDefs = ClashCodeGen._generateNodeFuncDefs(graph)
             nodeDefs = ClashCodeGen._generateNodeDefs(graph)
             edgeDefs = ClashCodeGen._generateEdgeDefs(graph)
+            graphType = ClashCodeGen._generateGraphType(graph)
             nodeInstances = ClashCodeGen._generateNodeInstances(graph)
             edgeInstances = ClashCodeGen._generateEdgeInstances(graph)
             graphConnections = ClashCodeGen._generateGraphConnections(graph)
@@ -42,13 +43,54 @@ class ClashCodeGen(object):
             templatestr = templatestr.replace('<NODE_FUNC_DEFS>', nodeFuncDefs)
             templatestr = templatestr.replace('<NODE_DEFS>', nodeDefs)
             templatestr = templatestr.replace('<EDGE_DEFS>', edgeDefs)
+            templatestr = templatestr.replace('<GRAPH_TYPE>', graphType)
             templatestr = templatestr.replace('<NODE_INSTANCES>', nodeInstances)
             templatestr = templatestr.replace('<EDGE_INSTANCES>', edgeInstances)
             templatestr = templatestr.replace('<GRAPH_CONNECTIONS>', graphConnections)
             templatestr = templatestr.replace('<GRAPH_OUTPUTS>', graphOutputs)
 
+
             # TODO save in target directory
             print(templatestr)
+
+    def _getCLasHTypes(node, code):
+        # Get the first line: should be the type definition
+        typeline = code.splitlines()[0]
+
+        # Remove whitespaces: makes regex better to read
+        typeline = typeline.replace(' ', '')
+        typeline = typeline.replace('\t', '')
+
+        # Use regex to validate typestring
+        m = re.match(r'^(\w+)\:\:((\w+\-\>)*)(Cntr\-\>){2}(\w+|\(\)|\(\w+(,\w+)+\))$', typeline)
+        if m == None:
+            raise ValueError('CLASH type definition incorrrect for ' + node)
+
+         # Validate function name
+        fname = m.group(1)
+        if fname != 'f_' + node:
+            raise ValueError('Incorrrect naming of CLaSH function, should be f_' +node )
+
+        # Get the input types
+        inptypesstr = m.group(2)
+        if inptypesstr == '':
+            inptypes = []
+        else:
+            inptypes = inptypesstr.replace('->', ' ').split()
+
+        # Get the output types
+        outputtypesstr = m.group(5)
+        if outputtypesstr == '()':
+            # Empty tuple so no types
+            outputtypes = []
+        elif outputtypesstr.startswith('('):
+            # several outputs in tuple
+            outputtypes = outputtypesstr[1:-1].replace(',', ' ').split()
+        else:
+            # Single output type 
+            outputtypes = [outputtypesstr]
+
+        return (inptypes, outputtypes)
             
     def _generateNodeInstances(graph):
 
@@ -290,3 +332,16 @@ class ClashCodeGen(object):
             graphOutputs.append('e_' + src + '_' + dst + '_rd, e_' + src + '_' + dst + '_dataout')
         graphOutputsStr = '(' + (', '.join(graphOutputs)) + ')'
         return graphOutputsStr
+
+    def _generateGraphType(graph):
+        outputtupletypes = []
+        for src, dst in graph.edges():
+            _, nodeoutptypes = ClashCodeGen._getCLasHTypes(src, graph.node[src]['clashcode'])
+            outpnumber = graph[src][dst]['res']
+            # print('Type for', (src, dst), 'using outputnr', outpnumber, 'src types', nodeoutptypes)
+            edgetype = nodeoutptypes[outpnumber]
+            outputtupletypes.append('Bool')
+            outputtupletypes.append(edgetype)
+
+        outputtuplestr = '(' + (', '.join(outputtupletypes)) + ')'
+        return 'graph :: Signal Bool -> Signal ' + outputtuplestr

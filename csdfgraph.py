@@ -11,6 +11,7 @@ author: Rinse Wester
 import networkx as nx
 import json
 import string
+import re
 from copy import deepcopy
 
 
@@ -166,7 +167,6 @@ class CSDFGraph(nx.DiGraph):
                     prate = self[n][dest]['prates'][phase]
                     resnr = self[n][dest]['res']
                     if len(results[resnr]) != prate:
-                        # print('edge: ', (n, dest), 'prate: ', prate, 'rescount', len(results[resnr]) )
                         raise ValueError('Mismatch between number of tokens produced and production rate: ', 'edge: ', (n, dest), 'prate: ', prate, 'rescount', len(results[resnr]) )
                     self[n][dest]['itkns'] = results[self[n][dest]['res']]
 
@@ -215,7 +215,6 @@ class CSDFGraph(nx.DiGraph):
         namestr = string.capwords(namestr)
         namestr = namestr.replace(' ', '')
         self.name = namestr
-        print('Name of graph: ', namestr)
 
         for jsnode in jsondata['nodes']:
             nodeName = jsnode['name']
