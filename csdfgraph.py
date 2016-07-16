@@ -211,6 +211,8 @@ class CSDFGraph(nx.DiGraph):
             jsonstr = f.read()
 
         jsondata = json.loads(jsonstr)
+
+        # make sure the name becomes camelcase without spaces: required by CLaSH
         namestr = jsondata['name'].strip()
         namestr = string.capwords(namestr)
         namestr = namestr.replace(' ', '')
@@ -301,24 +303,4 @@ class CSDFGraph(nx.DiGraph):
 # The default SDF graph
 G0 = CSDFGraph()
 G0.loadFromFile('examples/simple graph.json')
-G0.test()
-
-
-# Functions for nodes
-# cpy = 'lambda xs: [xs[0], xs[0]]'
-# forw = 'lambda xs: xs'
-# addm = 'lambda xs, y: [((xs[0] + xs[1]) * y[0]) % 27]'
-# intgr = 'lambda x, y: [x[0]+y[0]]'
-
-# G0.add_nodes_from([
-#   ('n0', cpy,  (100, 100)),
-#   ('n1', addm, (100, 300)),
-#   ('n2', forw,  (300, 300)),
-#   ('n3', intgr,  (300, 100))])
-# G0.add_edges_from([
-#   ('n0','n1', 0, [2], [2], []),
-#   ('n1','n2', 0, [1], [1], []),
-#   ('n2','n1', 1, [1], [1], [1]),
-#   ('n2','n3', 0, [1], [1], []),
-#   ('n3','n0', 0, [1], [1], [1])])
-# G0.add_self_edge('n3', 1, [1], [1], [0], 7/8*2*math.pi)
+# G0.test()
