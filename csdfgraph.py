@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Main class to that represents an SDF graphf.
+Main class that represents a CSDF graph.
 
 author: Rinse Wester
 
@@ -11,7 +11,6 @@ author: Rinse Wester
 import networkx as nx
 import json
 import string
-import re
 from copy import deepcopy
 
 
