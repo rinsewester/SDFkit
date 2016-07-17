@@ -29,7 +29,7 @@ class ClashCodeGen(object):
 
             nodeFuncDefs = ClashCodeGen._generateNodeFuncDefs(graph)
             nodeDefs = ClashCodeGen._generateNodeDefs(graph)
-            edgeDefs = ClashCodeGen._generateEdgeDefs(graph)
+            edgeDefs = ClashCodeGen._generateEdgeDefs(graph, edgeTypes)
             graphType = ClashCodeGen._generateGraphType(graph, edgeTypes)
             nodeInstances = ClashCodeGen._generateNodeInstances(graph)
             edgeInstances = ClashCodeGen._generateEdgeInstances(graph)
@@ -278,7 +278,7 @@ class ClashCodeGen(object):
 
         return nodedefs
 
-    def _generateEdgeDefs(graph):
+    def _generateEdgeDefs(graph, edgetypes):
         edgedefs = ''
 
         for src, dst in graph.edges():
@@ -290,8 +290,9 @@ class ClashCodeGen(object):
                 tokensstr += str(tkn)
                 tokensstr += ' :> '
             tokensstr += ' Nil'
-            # TODO: add proper type of element to vector definition
-            edgedefs += 'e_' + src + '_' + dst +'L = mealy hsdfedge8 (' + tokensstr + ' :: Vec8 Cntr, 0 :: RdPtr, ' + str(len(tokens)) + ' :: WrPtr)\n' 
+            tokentype = edgetypes[(src, dst)]
+            # TODO: Edge capacity now fixed to 8: should come from graph class
+            edgedefs += 'e_' + src + '_' + dst +'L = mealy hsdfedge8 (' + tokensstr + ' :: Vec8 ' + tokentype + ', 0 :: RdPtr, ' + str(len(tokens)) + ' :: WrPtr)\n' 
 
         return edgedefs
 
