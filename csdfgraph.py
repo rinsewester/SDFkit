@@ -301,5 +301,5 @@ class CSDFGraph(nx.DiGraph):
 
 # The default SDF graph
 G0 = CSDFGraph()
-G0.loadFromFile('examples/simple graph.json')
+G0.loadFromFile('examples/SDF/simple graph.json')
 # G0.test()
