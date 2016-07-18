@@ -1,0 +1,56 @@
+{ 
+	"name": "Nine Counter",
+
+	"nodes" : [
+		{
+			"name" : "Pr",
+			"function" : "lambda clockcount, firecount: [firecount % 16]",
+			"clashcode" : "f_Pr :: Cntr -> Cntr -> Nibble\nf_Pr firecounter phase = res\n  where\n    res = resize firecounter",
+			"pos" : [100, 100]
+		},
+
+		{
+			"name" : "Cnt",
+			"function" : "lambda num_in, cur_cnt, clockcount, firecount: ([cur_cnt[0] + 1] if num_in[0] == 9 else [cur_cnt[0]], [cur_cnt[0] + 1] if num_in[0] == 9 else [cur_cnt[0]])",
+			"clashcode" : "f_Cnt :: Nibble -> Cntr -> Cntr -> Cntr -> (Cntr, Cntr)\nf_Cnt num_in cur_cnt firecounter phase = (res, res)\n  where\n    res = if num_in == 9 then cur_cnt + 1 else cur_cnt",
+			"pos" : [300, 100]
+		},
+		{
+			"name" : "Cr",
+			"function" : "lambda cnt_in, clockcount, firecount: []",
+			"clashcode" : "f_Cr :: Cntr -> Cntr -> Cntr -> ()\nf_Cr cnt_in firecounter phase = res\n  where\n    res = ()",
+			"pos" : [500, 100]
+		}
+	],
+
+	"edges": [
+		{
+			"src" : "Pr",
+			"dst" : "Cnt",
+			"resnr" : 0,
+			"argnr" : 0,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		},
+		{
+			"src" : "Cnt",
+			"dst" : "Cnt",
+			"resnr" : 1,
+			"argnr" : 1,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : [0],
+			"angle" : 4.71
+		},
+		{
+			"src" : "Cnt",
+			"dst" : "Cr",
+			"resnr" : 0,
+			"argnr" : 0,
+			"prates" : [1],
+			"crates" : [1],
+			"tkns" : []
+		}
+	]
+}

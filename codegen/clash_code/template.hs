@@ -37,7 +37,8 @@ graph inputs = outputs
         outputs = bundle <GRAPH_OUTPUTS>
 
 
-simres = L.take 25 $ simulate graph $ L.repeat True
+-- Simulate the circuit for 128 clock-cycles
+simres = L.take 128 $ simulate graph $ L.repeat True
 
 
 topEntity = graph
