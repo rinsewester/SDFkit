@@ -41,9 +41,9 @@ class MainWindow(QMainWindow):
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(qApp.quit)
 
-        filemenu = self.menuBar().addMenu('&File')
-        filemenu.addAction(openAction)
-        filemenu.addAction(exitAction)
+        graphmenu = self.menuBar().addMenu('&Graph')
+        graphmenu.addAction(openAction)
+        graphmenu.addAction(exitAction)
 
         clashcodegenAction = QAction(
             QIcon('images/hardware.png'), '&Generate CLaSH code', self)
@@ -51,28 +51,28 @@ class MainWindow(QMainWindow):
         clashcodegenAction.setStatusTip('Generate CLaSH code')
         clashcodegenAction.triggered.connect(self.clashcodegenActionTriggered)
 
-        softcodegenAction = QAction(
-            QIcon('images/software.png'), 'Generate &software', self)
-        softcodegenAction.setShortcut('Ctrl+W')
-        softcodegenAction.setStatusTip('Generate C code')
-        softcodegenAction.triggered.connect(self.softcodegenActionTriggered)
+        # softcodegenAction = QAction(
+        #     QIcon('images/software.png'), 'Generate &software', self)
+        # softcodegenAction.setShortcut('Ctrl+W')
+        # softcodegenAction.setStatusTip('Generate C code')
+        # softcodegenAction.triggered.connect(self.softcodegenActionTriggered)
 
-        gpucodegenAction = QAction(
-            QIcon('images/gpu.png'), '&Generate OpenCL code', self)
-        gpucodegenAction.setShortcut('Ctrl+L')
-        gpucodegenAction.setStatusTip('Generate OpenCL code')
-        gpucodegenAction.triggered.connect(self.gpucodegenActionTriggered)
+        # gpucodegenAction = QAction(
+        #     QIcon('images/gpu.png'), '&Generate OpenCL code', self)
+        # gpucodegenAction.setShortcut('Ctrl+L')
+        # gpucodegenAction.setStatusTip('Generate OpenCL code')
+        # gpucodegenAction.triggered.connect(self.gpucodegenActionTriggered)
 
         codegenmenu = self.menuBar().addMenu('&Code generation')
         codegenmenu.addAction(clashcodegenAction)
-        codegenmenu.addAction(softcodegenAction)
-        codegenmenu.addAction(gpucodegenAction)
+        # codegenmenu.addAction(softcodegenAction)
+        # codegenmenu.addAction(gpucodegenAction)
 
         self.toolbar = self.addToolBar('Exit')
         self.toolbar.addAction(openAction)
         self.toolbar.addAction(clashcodegenAction)
-        self.toolbar.addAction(softcodegenAction)
-        self.toolbar.addAction(gpucodegenAction)
+        # self.toolbar.addAction(softcodegenAction)
+        # self.toolbar.addAction(gpucodegenAction)
         self.toolbar.addAction(exitAction)
 
         self.sbar = self.statusBar()
@@ -147,21 +147,21 @@ class MainWindow(QMainWindow):
                 self, 'Generate CLaSH code',
                 '<b>Error generating CLaSH code:</b> ' + str(e))
 
-    def softcodegenActionTriggered(self):
-        try:
-            CCodeGen.generateCode(self.graph, './output/' + self.graph.name)
-        except Exception as e:
-            QMessageBox.critical(
-                self, 'Generate C code',
-                '<b>Error generating C code:</b> ' + str(e))        
+    # def softcodegenActionTriggered(self):
+    #     try:
+    #         CCodeGen.generateCode(self.graph, './output/' + self.graph.name)
+    #     except Exception as e:
+    #         QMessageBox.critical(
+    #             self, 'Generate C code',
+    #             '<b>Error generating C code:</b> ' + str(e))        
 
-    def gpucodegenActionTriggered(self):
-        try:
-            OpenCLCodeGen.generateCode(self.graph, './output/' + self.graph.name)
-        except Exception as e:
-            QMessageBox.critical(
-                self, 'Generate OpenCL code',
-                '<b>Error generating OpenCL code:</b> ' + str(e))
+    # def gpucodegenActionTriggered(self):
+    #     try:
+    #         OpenCLCodeGen.generateCode(self.graph, './output/' + self.graph.name)
+    #     except Exception as e:
+    #         QMessageBox.critical(
+    #             self, 'Generate OpenCL code',
+    #             '<b>Error generating OpenCL code:</b> ' + str(e))
         
 
 
