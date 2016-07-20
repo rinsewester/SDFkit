@@ -4,22 +4,22 @@
 	"nodes" : [
 		{
 			"name" : "n0",
-			"function" : "lambda xs, clockcount, firecount: [xs[0], xs[0]]",
+			"function" : "lambda xs, firecounter, phase: [xs[0], xs[0]]",
 			"pos" : [100, 100]
 		},
 		{
 			"name" : "n1",
-			"function" : "lambda xs, y, clockcount, firecount: [((xs[0] + xs[1]) * y[0]) % 27]",
+			"function" : "lambda xs, y, firecounter, phase: [((xs[0] + xs[1]) * y[0]) % 27]",
 			"pos" : [100, 300]
 		},
 		{
 			"name" : "n2",
-			"function" : "lambda xs, clockcount, firecount: xs",
+			"function" : "lambda xs, firecounter, phase: xs",
 			"pos" : [300, 300]
 		},
 		{
 			"name" : "n3",
-			"function" : "lambda x, y, clockcount, firecount: [x[0] + y[0]]",
+			"function" : "lambda x, y, firecounter, phase: [x[0] + y[0]]",
 			"pos" : [300, 100]
 		}
 	],
