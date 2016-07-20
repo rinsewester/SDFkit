@@ -60,6 +60,8 @@ class ClashCodeGen(object):
     def _getEdgeTypes(graph):
         edgeTypes = {}
         for src, dst in graph.edges():
+            if len(graph.node[src]['clashcode'].splitlines()) < 2:
+                raise ValueError('Node ' + src + ' has not enough CLASH code: at least one line for type and one for implementation required')
             nodeoutptypes = ClashCodeGen._getCLasHOutputTypes(graph, src, graph.node[src]['clashcode'])
             outpnumber = graph[src][dst]['res']
             edgeTypes[(src, dst)] = nodeoutptypes[outpnumber]
