@@ -4,23 +4,23 @@
 	"nodes" : [
 		{
 			"name" : "Pr",
-			"function" : "lambda clockcount, firecount: [list(range(firecount,firecount+5))] if (firecount % 4) == 0 else []",
+			"function" : "lambda firecounter, phase: [list(range(firecounter, firecounter + 5))] if phase == 0 else []",
 			"pos" : [100, 100]
 		},
 
 		{
 			"name" : "Spl",
-			"function" : "lambda xs, state, clockcount, firecount: (xs[0][:3] if (firecount % 3) == 0 else state[0][(firecount % 3):(firecount % 3) + 3], xs if (firecount % 3) == 0 else state if (firecount % 3) == 1 else [])",
+			"function" : "lambda xs, state, firecounter, phase: (xs[0][:3] if phase == 0 else state[0][phase:phase + 3], xs if phase == 0 else state if phase == 1 else [])",
 			"pos" : [300, 100]
 		},
 		{
 			"name" : "Op",
-			"function" : "lambda xs, clockcount, firecount: [sum(xs) / 3]",
+			"function" : "lambda xs, firecounter, phase: [sum(xs) / 3]",
 			"pos" : [500, 100]
 		},
 		{
 			"name" : "Cr",
-			"function" : "lambda x, clockcount, firecount: []",
+			"function" : "lambda x, firecounter, phase: []",
 			"pos" : [700, 100]
 		}
 	],
