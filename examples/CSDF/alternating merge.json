@@ -4,22 +4,22 @@
 	"nodes" : [
 		{
 			"name" : "P1",
-			"function" : "lambda clockcount, firecount: [firecount] if (firecount % 2 == 1) else []",
+			"function" : "lambda firecounter, phase: [firecounter] if (phase == 1) else []",
 			"pos" : [100, 100]
 		},
 		{
 			"name" : "P2",
-			"function" : "lambda clockcount, firecount: [firecount] if (firecount % 2 == 0) else []",
+			"function" : "lambda firecounter, phase: [firecounter] if (phase == 0) else []",
 			"pos" : [100, 300]
 		},
 		{
 			"name" : "F",
-			"function" : "lambda xs, ys, clockcount, firecount: xs if (firecount % 2 == 0) else ys",
+			"function" : "lambda xs, ys, firecounter, phase: xs if (phase == 0) else ys",
 			"pos" : [300, 200]
 		},
 		{
 			"name" : "C",
-			"function" : "lambda xs, clockcount, firecount: []",
+			"function" : "lambda xs, firecounter, phase: []",
 			"pos" : [500, 200]
 		}
 	],
