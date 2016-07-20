@@ -11,6 +11,7 @@ author: Rinse Wester
 import networkx as nx
 import json
 import string
+import sdfmath
 from copy import deepcopy
 
 
@@ -149,11 +150,20 @@ class CSDFGraph(nx.DiGraph):
                 for i, v in zip(arg_inds, args):
                     args_sorted[i] = v
 
+                # Determine the phase, i.e., lcm of length of all consumption
+                # and production rates of current node
+                ratelengths = []
+                for src in self.predecessors(n):
+                    ratelengths.append(len(self[src][n]['crates']))
+                for dst in self.successors(n):
+                    ratelengths.append(len(self[n][dst]['prates']))
+                phase = self.node[n]['firecount'] % sdfmath.lcm(ratelengths)
+
                 # execute node function where clockcount and firecount are
                 # variables that can be used inside the function of a node
                 res = self.node[n]['func'](
-                    *args_sorted, clockcount=self.clockcount,
-                    firecount=self.node[n]['firecount'])
+                    *args_sorted, firecounter=self.node[n]['firecount'],
+                    phase=phase)
                 if type(res) is tuple:
                     results = list(res)
                 else:

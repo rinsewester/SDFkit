@@ -4,20 +4,20 @@
 	"nodes" : [
 		{
 			"name" : "Pr",
-			"function" : "lambda clockcount, firecount: [firecount]",
+			"function" : "lambda firecounter, phase: [firecounter]",
 			"clashcode" : "f_Pr :: Cntr -> Cntr -> Cntr\nf_Pr firecounter phase = res\n  where\n    res = firecounter",
 			"pos" : [100, 100]
 		},
 
 		{
 			"name" : "Int",
-			"function" : "lambda x, y, clockcount, firecount: ([x[0] + y[0]], [x[0] + y[0]])",
+			"function" : "lambda x, y, firecounter, phase: ([x[0] + y[0]], [x[0] + y[0]])",
 			"clashcode" : "f_Int :: Cntr -> Cntr -> Cntr -> Cntr -> (Cntr, Cntr)\nf_Int x y firecounter phase = (res, res)\n  where\n    res = x + y",
 			"pos" : [300, 100]
 		},
 		{
 			"name" : "Cr",
-			"function" : "lambda x, clockcount, firecount: []",
+			"function" : "lambda x, firecounter, phase: []",
 			"clashcode" : "f_Cr :: Cntr -> Cntr -> Cntr -> ()\nf_Cr x firecounter phase = res\n  where\n    res = ()",
 			"pos" : [500, 100]
 		}
