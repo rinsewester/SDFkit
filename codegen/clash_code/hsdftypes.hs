@@ -32,3 +32,5 @@ type WrPtr = Unsigned 4
 -- Vector types
 type ByteVec = Vec 8 Byte
 type Vec8 a = Vec 8 a
+type Vec3 a = Vec 3 a
+
