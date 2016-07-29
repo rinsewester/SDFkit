@@ -25,11 +25,11 @@ csdfedge (elms, rptr, wptr, tkncntr, prateptr, crateptr)
     ((elms', rptr', wptr', tkncntr', prateptr', crateptr'), (dataout, canread, canwrite, err))
     where
         -- Vector for production and consumption rates
-        prates = 3 :> 1 :> Nil :: Vec 2 PRate
-        crates = 2 :> 0 :> 2 :> Nil :: Vec 3 CRate
+        prates = 0 :> 3 :> Nil :: Vec 2 PRate
+        crates = 1 :> 2 :> Nil :: Vec 2 CRate
         -- Max value of pointer before wrap to 0
         prateptr_max = 1 :: RatesPtr
-        crateptr_max = 2 :: RatesPtr
+        crateptr_max = 1 :: RatesPtr
         -- Current prduction/consumption rate
         cur_prate = prates !! prateptr
         cur_crate = crates !! crateptr
@@ -61,7 +61,10 @@ csdfedge (elms, rptr, wptr, tkncntr, prateptr, crateptr)
 
 csdfedgeL = mealy csdfedge (repeat 0 :: Vec16 Byte, 0, 0, 0, 0, 0)
 
-simres_a = simulate csdfedgeL [(1 :> 2 :> 3 :> Nil, False, True), (4 :> 0 :> 0 :> Nil, True, False), (0 :> 0 :> 0 :> Nil, True, False), (0 :> 0 :> 0 :> Nil, False, False), (0 :> 0 :> 0 :> Nil, False, False)]
+datain_0 = repeat 0 :: Vec 3 Byte
+datain_1 = 1 :> 2 :>3 :> Nil :: Vec 3 Byte
+
+simres_a = simulate csdfedgeL [(datain_0, False, True), (datain_1, False, True), (datain_0, True, False), (datain_0, True, False)]
 
 
 topEntity = csdfedgeL
