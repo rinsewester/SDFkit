@@ -50,7 +50,7 @@ n_CrL = mealy (n_Cr f_Cr) (0, 0)
 
 
 -- The actual graph
-graph :: Signal Bool -> Signal (Bool, Bool)
+graph :: Signal Bool -> Signal (Bool, Vec 3 Byte, Bool, Vec 2 Byte, Bool)
 graph inputs = outputs
     where
         -- Instantiations of nodes
@@ -66,7 +66,7 @@ graph inputs = outputs
         (e_Pr_Cr_datain, e_Pr_Cr_rd, e_Pr_Cr_wrt) = (n_Pr_dataout0, n_Cr_fire, n_Pr_fire)
 
         -- Output for debugging
-        outputs = bundle (e_Pr_Cr_err, e_Pr_Cr_err)
+        outputs = bundle (n_Pr_fire, n_Pr_dataout0, n_Cr_fire, n_Cr_datain0, e_Pr_Cr_err)
 
 
 -- Simulate the circuit for 128 clock-cycles
