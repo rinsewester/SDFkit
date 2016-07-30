@@ -39,7 +39,7 @@ n_PrL = mealy (n_Pr f_Pr) (0, 0)
 n_Cr :: (a -> Cntr -> Cntr -> ()) -> (Cntr, Cntr) -> (a, Bool) -> ((Cntr, Cntr), (Bool))
 n_Cr f (firecounter, phase) (datain0, canrd0) = ((firecounter', phase'), (fire))
     where
-        fire = not canrd0
+        fire = canrd0
         firecounter' = if fire then firecounter + 1 else firecounter
         phase_max = 0
         phase' = if fire then (if phase < phase_max then phase + 1 else 0) else phase_max
