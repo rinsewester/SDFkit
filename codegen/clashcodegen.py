@@ -146,9 +146,9 @@ class ClashCodeGen(object):
             for i in range(inputcount):
                 nodeinstanceinputs.append(nname + '_datain' + str(i))
             for i in range(inputcount):
-                nodeinstanceinputs.append(nname + '_empty' + str(i))
+                nodeinstanceinputs.append(nname + '_canrd' + str(i))
             for i in range(outputcount):
-                nodeinstanceinputs.append(nname + '_full' + str(i))
+                nodeinstanceinputs.append(nname + '_canwrt' + str(i))
 
             if len(nodeinstanceinputs) == 1:
                 nodeinstanceinputsstr = nodeinstanceinputs[0]
@@ -170,7 +170,7 @@ class ClashCodeGen(object):
 
         for src, dst in graph.edges():
             ename = 'e_' + src + '_' + dst
-            edgeInstances += "        ({0}_dataout, {0}_empty, {0}_full) = unbundle $ {0}L $ bundle ({0}_datain, {0}_rd, {0}_wrt)\n".format(ename)
+            edgeInstances += "        ({0}_dataout, {0}_canrd, {0}_canwrt) = unbundle $ {0}L $ bundle ({0}_datain, {0}_rd, {0}_wrt)\n".format(ename)
         return edgeInstances
 
     def _generateNodeFuncDefs(graph):
@@ -209,10 +209,10 @@ class ClashCodeGen(object):
 
             # create the list of input types
             ninptypes = finptypes
-            # add bool types for the 'empty' input
+            # add bool types for the 'canrd' input
             for i in range(inputcount):
                 ninptypes.append('Bool')
-            # add bool types for the 'full' input
+            # add bool types for the 'canwrt' input
             for i in range(outputcount):
                 ninptypes.append('Bool')
             ninptypesstr = '(' + (', '.join(ninptypes)) + ')'
@@ -229,9 +229,9 @@ class ClashCodeGen(object):
             for i in range(inputcount):
                 ninputs.append('datain' + str(i))
             for i in range(inputcount):
-                ninputs.append('empty' + str(i))
+                ninputs.append('canrd' + str(i))
             for i in range(outputcount):
-                ninputs.append('full' + str(i))
+                ninputs.append('canwrt' + str(i))
             ninputsstr = '(' + (', '.join(ninputs)) + ')'
 
             # Create the list of outputs
@@ -246,9 +246,9 @@ class ClashCodeGen(object):
             # Create the line expressing the firing condition
             nfireconds = []
             for i in range(inputcount):
-                nfireconds.append('not empty' + str(i))
+                nfireconds.append('canrd' + str(i))
             for i in range(outputcount):
-                nfireconds.append('not full' + str(i))
+                nfireconds.append('canwrt' + str(i))
             nfirecondsstr = 'fire = ' + (' && '.join(nfireconds))
 
 
@@ -317,17 +317,17 @@ class ClashCodeGen(object):
                     if graph[src][n]['arg'] == i:
                         nodeinstanceinputsources.append('e_' + src + '_' + n + '_dataout')
             for i in range(inputcount):
-                nodeinstanceinputs.append(nname + '_empty' + str(i))
-                # find source node that is connected to this empty port
+                nodeinstanceinputs.append(nname + '_canrd' + str(i))
+                # find source node that is connected to this canrd port
                 for src in graph.predecessors(n):
                     if graph[src][n]['arg'] == i:
-                        nodeinstanceinputsources.append('e_' + src + '_' + n + '_empty')
+                        nodeinstanceinputsources.append('e_' + src + '_' + n + '_canrd')
             for i in range(outputcount):
-                nodeinstanceinputs.append(nname + '_full' + str(i))
-                # find destination node that is connected to this full port
+                nodeinstanceinputs.append(nname + '_canwrt' + str(i))
+                # find destination node that is connected to this canwrt port
                 for dst in graph.successors(n):
                     if graph[n][dst]['res'] == i:
-                        nodeinstanceinputsources.append('e_' + n + '_' + dst + '_full')
+                        nodeinstanceinputsources.append('e_' + n + '_' + dst + '_canwrt')
 
             if len(nodeinstanceinputs) == 1:
                 nodeinstanceinputsstr = nodeinstanceinputs[0]
