@@ -126,18 +126,19 @@ class MainWindow(QMainWindow):
 
         graphfile, _ = QFileDialog.getOpenFileName(
             self, 'Open graph', './examples')
-        try:
-            self.graph = CSDFGraph()
-            self.graph.loadFromFile(graphfile)
-        except (FileNotFoundError, ValueError, KeyError) as e:
-            QMessageBox.critical(
-                self, 'Error opening file',
-                '<b>Error opening file:</b>' + '\n\n' + str(e))
-            self.graph = None
+        if graphfile != '':
+            try:
+                self.graph = CSDFGraph()
+                self.graph.loadFromFile(graphfile)
+            except (FileNotFoundError, ValueError, KeyError) as e:
+                QMessageBox.critical(
+                    self, 'Error opening file',
+                    '<b>Error opening file:</b>' + '\n\n' + str(e))
+                self.graph = None
 
-        self.runWindow.setGraph(self.graph)
-        self.graphWidget.setGraph(self.graph)
-        self._updateLogWindow()
+            self.runWindow.setGraph(self.graph)
+            self.graphWidget.setGraph(self.graph)
+            self._updateLogWindow()
 
     def clashcodegenActionTriggered(self):
         try:
@@ -146,6 +147,7 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(
                 self, 'Generate CLaSH code',
                 '<b>Error generating CLaSH code:</b> ' + str(e))
+            # TODO: Remove the following line when clash codegen completed
             raise e
 
     # def softcodegenActionTriggered(self):
