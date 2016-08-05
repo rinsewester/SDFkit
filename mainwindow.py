@@ -16,7 +16,8 @@ from PyQt5.QtGui import QIcon
 from csdfgraph import *
 from runwindow import *
 from logwindow import LogWidget
-from graphwidget import GraphWidget
+#from graphwidget import GraphWidget
+from graphicsviewTest import GraphWidget
 
 from codegen.clashcodegen import *
 from codegen.ccodegen import *
@@ -81,7 +82,7 @@ class MainWindow(QMainWindow):
 
         self.dwRunWindow = QDockWidget('Simulate graph', self)
         self.runWindow = RunWindow()
-        self.runWindow.setGraph(self.graph)
+        #self.runWindow.setGraph(self.graph)
         self.dwRunWindow.setAllowedAreas(Qt.LeftDockWidgetArea)
         self.dwRunWindow.setWidget(self.runWindow)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dwRunWindow)
@@ -96,19 +97,21 @@ class MainWindow(QMainWindow):
         self.runWindow.setLogWidget(self.logWindow)
 
         self.graphWidget = GraphWidget()
-        self.graphWidget.setGraph(self.graph)
+        #self.graphWidget.setGraph(self.graph)
         self.runWindow.setGraphWidget(self.graphWidget)
+        self.setCentralWidget(self.graphWidget)
 
-        self.scrlarea = QScrollArea(self)
-        self.scrlarea.setAutoFillBackground(True)
-        p = self.scrlarea.palette()
-        p.setColor(self.scrlarea.backgroundRole(), Qt.white)
-        self.scrlarea.setPalette(p)
-        self.scrlarea.setWidget(self.graphWidget)
-        self.setCentralWidget(self.scrlarea)
+
+        # self.scrlarea = QScrollArea(self)
+        # self.scrlarea.setAutoFillBackground(True)
+        # p = self.scrlarea.palette()
+        # p.setColor(self.scrlarea.backgroundRole(), Qt.white)
+        # self.scrlarea.setPalette(p)
+        # self.scrlarea.setWidget(self.graphWidget)
+        # self.setCentralWidget(self.scrlarea)
 
         self.setWindowTitle('SDFkit')
-        self.setGeometry(300, 300, 1300, 750)
+        self.setGeometry(0, 30, 1300, 750)
         self.show()
 
     def _updateLogWindow(self):
