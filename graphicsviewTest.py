@@ -20,7 +20,6 @@ class GraphicsView(QGraphicsView):
         if event.modifiers() & Qt.ControlModifier:
             if event.angleDelta().y() > 0:
                 GraphWidget.zoomIn(6)
-                print('zoomIN')
             else:
                 GraphWidget.zoomOut(6)
         
@@ -56,8 +55,6 @@ class GraphWidget(QWidget):
         testNode = Node(QColor(255,0,0),50 , 50)
         node = scene.addItem(testNode)
 
-
-
         text = scene.addText('Test', QFont('Arial', 20))
         rect = scene.addRect(100, 100, 80, 60)
         text.setFlag(QGraphicsItem.ItemIsMovable)
@@ -65,8 +62,7 @@ class GraphWidget(QWidget):
 
 
         #UI for the graphicsView
-        size = 16
-        iconSize = QSize(size, size)
+        iconSize = QSize(16, 16)
 
         self.zoomInButton = QToolButton(self)
         self.zoomInButton.setAutoRepeat(True)
@@ -112,7 +108,6 @@ class GraphWidget(QWidget):
 
 
     def resetView(self):
-
         self.zoomSlider.setValue(250)
         self.setupMatrix()
         self.graphicsView.ensureVisible(QRectF(0,0,0,0))
@@ -126,8 +121,6 @@ class GraphWidget(QWidget):
 
     def setupMatrix(self):
         scale = 2.0 ** ((self.zoomSlider.value() - 250) / 50.0)
-        print((self.zoomSlider.value() - 250) / 50.0)
-        #scale = scale * scale
 
         transform = QTransform()
         transform.scale(scale, scale)
@@ -137,17 +130,27 @@ class GraphWidget(QWidget):
 
 
     def zoomIn(self, level):
-        self.zoomSlider.setValue(self.zoomSlider.value() + level)
+        if not level:
+            levelValue = 1
+        else:
+            levelValue = level
+
+        self.zoomSlider.setValue(self.zoomSlider.value() + levelValue)
 
 
     def zoomOut(self, level):
-        self.zoomSlider.setValue(self.zoomSlider.value() - level)
+        if not level:
+            levelValue = 1
+        else:
+            levelValue = level
+
+        self.zoomSlider.setValue(self.zoomSlider.value() - levelValue)
+
 
     def wheelEvent(self, event):
         if event.modifiers() & Qt.ControlModifier:
             if event.angleDelta().y() > 0:
                 self.zoomIn(6)
-                print('zoomIN')
             else:
                 self.zoomOut(6)
         
