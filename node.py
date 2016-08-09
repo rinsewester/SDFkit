@@ -37,6 +37,7 @@ class Node(QGraphicsItem):
         self.inputList = []
         self.addNewInput()
         #self.addNewInput()
+        #self.addNewInput()
 
         self.outputList = []
         self.addNewOutput()
@@ -52,16 +53,20 @@ class Node(QGraphicsItem):
 
 
     def boundingRect(self):
+    	#Used for collision detection
         return QRectF(0, 0, self.nodeBodyWidth, self.getNodeBodyHeight())
 
     
     def shape(self):
+    	#Determines the paint area
     	path = QPainterPath()
     	path.addRect(0, 0, self.nodeBodyWidth, self.getNodeBodyHeight())
 
     	return path
 
-    
+
+#--------------
+#---Painting---    
     def paint(self, painter, option, widget):
         self.paintNodeBody(painter)
         self.paintNodeInputs(painter)
@@ -123,23 +128,26 @@ class Node(QGraphicsItem):
             textPoint = QPoint(self.ioWidth + 2, self.ioHeight + 2)
         else:
         	#Calculate xTranslation to center text in node
-            xTranslation = ((self.nodeBodyWidth - 2 * self.ioWidth - 2 * 2) / (maxLength * 2 + 2)) * (maxLength - len(self.nodeText))
+            xTranslation = ((self.nodeBodyWidth - 2 * self.ioWidth - 2 * 2) / ((maxLength + 2) * 2)) * (maxLength - len(self.nodeText) + 2)
             textPointX = self.ioWidth + 2 + xTranslation
             textPoint = QPoint(textPointX, self.ioHeight + 2)
 
-
-        
         painter.drawText(textPoint, nodeTextDisplayed)    
 
 
-
+#------------------
+#---Mouse Events---
     def mousePressEvent(self, event):
-        self.mouseIsOnInput(event.pos())
-        self.mouseIsOnOutput(event.pos())
+        if self.mouseIsOnInput(event.pos()) < 0:
+            self.mouseIsOnOutput(event.pos())
 
         super().mousePressEvent(event)
         self.update()
 
+        #Must be done after super().mousePressEvent(event) in order to
+        #flag the node again after clicking on an input/output
+        self.setFlag(QGraphicsItem.ItemIsSelectable, True)
+        self.setFlag(QGraphicsItem.ItemIsMovable, True)
 
 
     def mouseMoveEvent(self, event):
@@ -150,10 +158,15 @@ class Node(QGraphicsItem):
 
 
     def mouseReleaseEvent(self, event):
+        self.setFlag(QGraphicsItem.ItemIsSelectable, True)
+        self.setFlag(QGraphicsItem.ItemIsMovable, True)
+
         super().mouseReleaseEvent(event)
         self.update()
 
 
+#------------------
+#---In/Outputs-----
     def getInputPoint(self, inputIndex):
         inputPoint = QPointF(0, inputIndex * (self.ioHeightDifference + self.ioHeight) + self.ioHeight)
 
@@ -183,15 +196,7 @@ class Node(QGraphicsItem):
         newOutput = (self.getOutputPoint(i).x(), self.getOutputPoint(i).y(), False, False)
         self.outputList.append(newOutput)
 
-
-    def getNodeBodyHeight(self):
-        longestList = len(self.inputList)
-        if len(self.outputList) > len(self.inputList):
-            longestList = len(self.outputList)
-
-        return (longestList * (self.ioHeightDifference + self.ioHeight) + self.ioHeight)
-
-
+    
     def mouseIsOnInput(self, mousePos):
         for i in range(0, len(self.inputList)):
             inputPoint = QPointF(self.inputList[i][0], self.inputList[i][1])
@@ -204,8 +209,9 @@ class Node(QGraphicsItem):
                     self.setFlag(QGraphicsItem.ItemIsMovable, False)
                     return i
 
-        self.setFlag(QGraphicsItem.ItemIsSelectable, True)
-        self.setFlag(QGraphicsItem.ItemIsMovable, True)
+        # self.setFlag(QGraphicsItem.ItemIsSelectable, True)
+        # self.setFlag(QGraphicsItem.ItemIsMovable, True)
+        return -1
 
 
     def mouseIsOnOutput(self, mousePos):
@@ -220,5 +226,17 @@ class Node(QGraphicsItem):
                     self.setFlag(QGraphicsItem.ItemIsMovable, False)
                     return i
         
-        self.setFlag(QGraphicsItem.ItemIsSelectable, True)
-        self.setFlag(QGraphicsItem.ItemIsMovable, True)
+        # self.setFlag(QGraphicsItem.ItemIsSelectable, True)
+        # self.setFlag(QGraphicsItem.ItemIsMovable, True)
+        return -1
+
+
+#------------------
+#---Other----------
+    def getNodeBodyHeight(self):
+        longestList = len(self.inputList)
+        if len(self.outputList) > len(self.inputList):
+            longestList = len(self.outputList)
+
+        return (longestList * (self.ioHeightDifference + self.ioHeight) + self.ioHeight)
+
