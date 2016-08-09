@@ -41,11 +41,12 @@ class Node(QGraphicsItem):
 
         self.outputList = []
         self.addNewOutput()
+        self.addNewOutput()
         #self.addNewOutput()
         #self.addNewOutput()
 
-        #print(self.inputList)
-        #print(self.outputList)
+        print(self.inputList)
+        print(self.outputList)
 
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
         print('node succesfully created: "' + nodeName + '"')
@@ -89,6 +90,15 @@ class Node(QGraphicsItem):
     def paintNodeInputs(self, painter):
         color = QColor(0, 0, 0)
         painter.setPen(color)
+        yTranslation = 0
+
+        if len(self.inputList) < len(self.outputList):
+            totalHeightInputs = (len(self.inputList) * self.ioHeight + (len(self.inputList) - 1) * self.ioHeightDifference)
+            print(totalHeightInputs)
+            totalHeightAvailableForIputs = self.getNodeBodyHeight() - self.ioHeightDifference * 2
+            print(totalHeightAvailableForIputs)
+            yTranslation = (totalHeightAvailableForIputs - totalHeightInputs) / 2
+            print(yTranslation)
 
         #Draw all inputs
         for i in range(0, len(self.inputList)):
@@ -97,8 +107,10 @@ class Node(QGraphicsItem):
             else:
                 brush = QBrush(self.nodeInputColor) 
 
+            
+
             painter.setBrush(brush)
-            painter.drawRoundedRect(self.inputList[i][0], self.inputList[i][1], self.ioWidth, 10, 2, 2)
+            painter.drawRoundedRect(self.inputList[i][0], self.inputList[i][1] + yTranslation, self.ioWidth, 10, 2, 2)
          
          
     def paintNodeOutputs(self, painter):
@@ -198,6 +210,7 @@ class Node(QGraphicsItem):
 
     
     def mouseIsOnInput(self, mousePos):
+    	#for i in self.inputList
         for i in range(0, len(self.inputList)):
             inputPoint = QPointF(self.inputList[i][0], self.inputList[i][1])
 
