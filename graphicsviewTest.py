@@ -47,18 +47,23 @@ class GraphWidget(QWidget):
         self.graphicsView.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.graphicsView.setRenderHint(QPainter.Antialiasing, True)
 
+
         #Make a graphics scene
         scene = QGraphicsScene()
         self.graphicsView.setScene(scene)
 
+        #Add nodes with (QGraphicsScene(), xpos, ypos, nodeName)
+        self.nodeList = []
+        self.addNode(scene, 0, 0, '1')
+        self.addNode(scene, 150, 0, 'n2')
+        self.addNode(scene, 300, 0, 'nr 3')
+        self.addNode(scene, 0, 200, 'Node 4')
+        self.addNode(scene, 150, 200, 'Node 5 <-')
+        self.addNode(scene, 300, 200, 'Node 6 name')
 
-        testNode = Node(QColor(255,0,0),50 , 50)
-        node = scene.addItem(testNode)
-
-        text = scene.addText('Test', QFont('Arial', 20))
-        rect = scene.addRect(100, 100, 80, 60)
-        text.setFlag(QGraphicsItem.ItemIsMovable)
-        rect.setFlag(QGraphicsItem.ItemIsMovable)
+        text = scene.addText('Test', QFont('Arial', 20))  
+        text.moveBy(100, 100)      
+        text.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
 
 
         #UI for the graphicsView
@@ -157,3 +162,13 @@ class GraphWidget(QWidget):
             event.accept()
         else:
             super().wheelEvent(event)
+
+
+    def addNode(self, scene, x, y, name):
+        newNode = Node(name)
+        newNode.setPos(x, y)
+        newNodeInScene = scene.addItem(newNode)
+
+        self.nodeList.append(newNodeInScene)
+
+
