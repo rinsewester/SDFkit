@@ -171,6 +171,7 @@ class MainWindow(QMainWindow):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon('images/logo.png'))
     ex = MainWindow()
     app.exec_()
     app.deleteLater()
