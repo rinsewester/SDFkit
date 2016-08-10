@@ -12,8 +12,7 @@ import sys
 from PyQt5.QtWidgets import QWidget, QDockWidget, QGraphicsView, QGraphicsScene, QApplication, QSplitter, QSlider, QHBoxLayout, QVBoxLayout, QGridLayout, QFrame, QLabel, QToolButton, QButtonGroup, QGraphicsScene, QGraphicsItem
 from PyQt5.QtCore import Qt, QSize, QObject, pyqtSignal, QRectF, QPointF
 from PyQt5.QtGui import QIcon, QTransform, QColor, QPainter, QBrush, QFont
-from node import*
-from edge import*
+from graph import*
 
 class GraphicsView(QGraphicsView):
 
@@ -48,33 +47,12 @@ class GraphWidget(QWidget):
         self.graphicsView.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.graphicsView.setRenderHint(QPainter.Antialiasing, True)
 
-        self.graphicsView.setMouseTracking(True)
-
-
-
         #Make a graphics scene
         scene = QGraphicsScene()
         self.graphicsView.setScene(scene)
 
-        #Add edges with (QGraphicsScene(), x1, y1, x2, y2)
-        self.edgeList = []
-        self.addEdge(scene, 0, 0, 100, 100)
-
-        #Add nodes with (QGraphicsScene(), xpos, ypos, nodeName)
-        self.nodeList = []
-        self.addNode(scene, 0, 0, '1')
-        self.addNode(scene, 150, 0, 'n2')
-        self.addNode(scene, 300, 0, 'nr 3')
-        self.addNode(scene, 0, 200, 'Node 4')
-        self.addNode(scene, 150, 200, 'Node 5 <-')
-        self.addNode(scene, 300, 200, 'Node 6 name')
-
-        
-
-        # text = scene.addText('Test', QFont('Arial', 20))  
-        # text.moveBy(100, 100)      
-        # text.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
-
+        #Create a graph that can contain nodes and edges
+        graph = Graph(scene, self.graphicsView)
 
         #UI for the graphicsView
         iconSize = QSize(16, 16)

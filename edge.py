@@ -10,7 +10,7 @@ author: Sander Giesselink
 
 import sys
 from PyQt5.QtWidgets import QWidget, QGraphicsItem
-from PyQt5.QtCore import QPointF, QRectF, QEvent
+from PyQt5.QtCore import QPoint, QRectF, QEvent
 from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath
 
 class Edge(QGraphicsItem):
@@ -22,9 +22,9 @@ class Edge(QGraphicsItem):
         self.startPoint = startPoint
         self.endPoint = endPoint
         self.midPoint = self.calculateMidPoint(startPoint, endPoint)
-        print('startPoint: ' + str(self.startPoint))
-        print('midPoint: ' + str(self.midPoint))
-        print('endPoint: ' + str(self.endPoint))
+        # print('startPoint: ' + str(self.startPoint))
+        # print('midPoint: ' + str(self.midPoint))
+        # print('endPoint: ' + str(self.endPoint))
 
         self.edgeColor = QColor(200, 200, 200)
         self.edgeColorSelected = QColor(120, 120, 120)
@@ -37,17 +37,20 @@ class Edge(QGraphicsItem):
 
     def boundingRect(self):
         #Used for collision detection
-        width = abs(self.startPoint.x() - self.endPoint.x())	#Simple rectangle update to fit the shape of the curve
-        height = abs(self.startPoint.y() - self.endPoint.y())
-        return QRectF(self.startPoint.x(), self.startPoint.y(), width, height)
+        rect = QRectF(self.startPoint, self.endPoint)
+        rect = rect.normalized()
+
+        return rect
 
     
     def shape(self):
         #Determines the paint area
         path = QPainterPath()
-        width = abs(self.startPoint.x() - self.endPoint.x())	#Simple rectangle update to fit the shape of the curve (use QPainterPath.addPolygon(QPolygonF))
-        height = abs(self.startPoint.y() - self.endPoint.y())
-        path.addRect(self.startPoint.x(), self.startPoint.y(), width, height)
+
+        rect = QRectF(self.startPoint, self.endPoint)
+        rect = rect.normalized()
+
+        path.addRect(rect)
 
         return path
 
@@ -64,17 +67,14 @@ class Edge(QGraphicsItem):
 
         painter.setPen(pen)
 
-
         painter.drawLine(self.startPoint, self.midPoint)
         painter.drawLine(self.midPoint, self.endPoint)
-
-
 
 
     def calculateMidPoint(self, startPoint, endPoint):
         x = (startPoint.x() + endPoint.x()) / 2
         y = (startPoint.y() + endPoint.y()) / 2
-        return QPointF(x, y)
+        return QPoint(x, y)
 
 
     def hoverEnterEvent(self, event):

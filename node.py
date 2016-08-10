@@ -36,7 +36,7 @@ class Node(QGraphicsItem):
 
         self.inputList = []
         self.addNewInput()
-        #self.addNewInput()
+        self.addNewInput()
         #self.addNewInput()
 
         self.outputList = []
@@ -45,14 +45,17 @@ class Node(QGraphicsItem):
         #self.addNewOutput()
         #self.addNewOutput()
 
-        #print(self.inputList)
-        #print(self.outputList)
+
+        self.setYTranslationLeftIO()
+        self.setYTranslationRightIO()
 
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
         self.hover = False
         print('node succesfully created: "' + nodeName + '"')
 
+
+    #def get_pos(view, item)
 
 
     def boundingRect(self):
@@ -101,13 +104,10 @@ class Node(QGraphicsItem):
     def paintNodeInputs(self, painter):
         color = QColor(0, 0, 0)
         painter.setPen(color)
-        self.yTranslationLeftIO = 0
+        
+        self.setYTranslationLeftIO()
 
-        if len(self.inputList) < len(self.outputList):
-            totalHeightInputs = (len(self.inputList) * self.ioHeight + (len(self.inputList) - 1) * self.ioHeightDifference)
-            totalHeightAvailableForInputs = self.getNodeBodyHeight() - self.ioHeightDifference * 2
-            self.yTranslationLeftIO = (totalHeightAvailableForInputs - totalHeightInputs) / 2
-
+        
         #Draw all inputs
         for i in range(0, len(self.inputList)):
             if self.inputList[i][3]:
@@ -123,13 +123,8 @@ class Node(QGraphicsItem):
     def paintNodeOutputs(self, painter):
         color = QColor(0, 0, 0)
         painter.setPen(color)
-        self.yTranslationRightIO = 0
-
-        if len(self.outputList) < len(self.inputList):
-            totalHeightOutputs = (len(self.outputList) * self.ioHeight + (len(self.outputList) - 1) * self.ioHeightDifference)
-            totalHeightAvailableForOutputs = self.getNodeBodyHeight() - self.ioHeightDifference * 2
-            self.yTranslationRightIO = (totalHeightAvailableForOutputs - totalHeightOutputs) / 2
-
+        
+        self.setYTranslationRightIO()
 
         #Draw all inputs
         for i in range(0, len(self.outputList)):
@@ -140,8 +135,8 @@ class Node(QGraphicsItem):
 
             painter.setBrush(brush)
             painter.drawRoundedRect(self.outputList[i][0], self.outputList[i][1] + self.yTranslationRightIO, self.ioWidth, 10, 2, 2)
-      
-      
+
+
     def paintNodeName(self, painter):
         nodeTextDisplayed = self.nodeText
 
@@ -227,6 +222,20 @@ class Node(QGraphicsItem):
         return outputPoint
 
 
+    def getInputPointForEdge(self, inputIndex):
+        inputPoint = QPointF(self.pos().x(), self.pos().y() +  inputIndex * (self.ioHeightDifference + self.ioHeight) + self.ioHeight + (self.ioHeight / 2) + self.yTranslationLeftIO)
+
+        #Returns the point where an edge can connect to a specific input
+        return inputPoint
+
+
+    def getOutputPointForEdge(self, outputIndex):
+        outputPoint = QPointF(self.pos().x() + self.nodeBodyWidth, self.pos().y() + outputIndex * (self.ioHeightDifference + self.ioHeight) + self.ioHeight + (self.ioHeight / 2) + self.yTranslationRightIO)
+
+        #Returns the point of a specific output
+        return outputPoint
+
+
     def addNewInput(self):
         i = len(self.inputList)
 
@@ -278,6 +287,24 @@ class Node(QGraphicsItem):
 
         self.hover = True
         return -1
+
+
+    def setYTranslationLeftIO(self):
+        if len(self.inputList) < len(self.outputList):
+            totalHeightInputs = (len(self.inputList) * self.ioHeight + (len(self.inputList) - 1) * self.ioHeightDifference)
+            totalHeightAvailableForInputs = self.getNodeBodyHeight() - self.ioHeightDifference * 2
+            self.yTranslationLeftIO = (totalHeightAvailableForInputs - totalHeightInputs) / 2
+        else:
+            self.yTranslationLeftIO = 0
+    
+
+    def setYTranslationRightIO(self):
+        if len(self.outputList) < len(self.inputList):
+            totalHeightOutputs = (len(self.outputList) * self.ioHeight + (len(self.outputList) - 1) * self.ioHeightDifference)
+            totalHeightAvailableForOutputs = self.getNodeBodyHeight() - self.ioHeightDifference * 2
+            self.yTranslationRightIO = (totalHeightAvailableForOutputs - totalHeightOutputs) / 2
+        else:
+            self.yTranslationRightIO = 0
 
 
 #------------------
