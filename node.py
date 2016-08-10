@@ -52,7 +52,7 @@ class Node(QGraphicsItem):
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
         self.hover = False
-        print('node succesfully created: "' + nodeName + '"')
+        #print('node succesfully created: "' + nodeName + '"')
 
 
     #def get_pos(view, item)

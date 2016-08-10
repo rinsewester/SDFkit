@@ -49,7 +49,7 @@ class Graph():
 
 
         #---Grid test scene---
-        gridSize = 3
+        gridSize = 25
         for i in range(gridSize):
             for j in range(gridSize):
                 name = str(i) + '/' + str(j)
