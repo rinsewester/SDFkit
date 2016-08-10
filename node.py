@@ -11,9 +11,7 @@ author: Sander Giesselink
 import sys
 from PyQt5.QtWidgets import QWidget, QGraphicsItem, QPushButton, QVBoxLayout
 from PyQt5.QtCore import QRectF, QPointF, QPoint
-from PyQt5.QtGui import QColor, QPainter, QBrush, QPainterPath
-
-from testButton import testClass
+from PyQt5.QtGui import QColor, QPainter, QBrush, QPainterPath, QLinearGradient
 
 class Node(QGraphicsItem):
 
@@ -24,8 +22,10 @@ class Node(QGraphicsItem):
         self.ioHeight = 10
         self.ioHeightDifference = 10
         self.nodeBodyWidth = 100
-        self.nodeBodyColor = QColor(200, 200, 200)
+        self.nodeBodyColor = QColor(210, 210, 210)
+        self.nodeBodyColorGradient = QColor(190, 190, 190)
         self.nodeBodyColorSelected = QColor(150, 150, 150)
+        self.nodeBodyColorHover = QColor(180, 180, 180)
         self.nodeInputColor = QColor(240, 240, 240)
         self.nodeInputColorSelected = QColor(220, 220, 220)
         self.nodeOutputColor = QColor(120, 120, 120)
@@ -41,29 +41,31 @@ class Node(QGraphicsItem):
 
         self.outputList = []
         self.addNewOutput()
-        self.addNewOutput()
+        #self.addNewOutput()
         #self.addNewOutput()
         #self.addNewOutput()
 
-        print(self.inputList)
-        print(self.outputList)
+        #print(self.inputList)
+        #print(self.outputList)
 
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
+        self.setAcceptHoverEvents(True)
+        self.hover = False
         print('node succesfully created: "' + nodeName + '"')
 
 
 
     def boundingRect(self):
-    	#Used for collision detection
+        #Used for collision detection
         return QRectF(0, 0, self.nodeBodyWidth, self.getNodeBodyHeight())
 
     
     def shape(self):
-    	#Determines the paint area
-    	path = QPainterPath()
-    	path.addRect(0, 0, self.nodeBodyWidth, self.getNodeBodyHeight())
+        #Determines the paint area
+        path = QPainterPath()
+        path.addRect(0, 0, self.nodeBodyWidth, self.getNodeBodyHeight())
 
-    	return path
+        return path
 
 
 #--------------
@@ -79,7 +81,16 @@ class Node(QGraphicsItem):
         color = QColor(0, 0, 0)
         painter.setPen(color)
       
-        brush = QBrush(self.nodeBodyColor)
+        #Subtle gradient
+        gradient = QLinearGradient(0, 0, self.nodeBodyWidth, self.getNodeBodyHeight())
+        gradient.setColorAt(0, self.nodeBodyColor)
+        gradient.setColorAt(1, self.nodeBodyColorGradient)
+        brush = QBrush(gradient)
+        #brush = QBrush(self.nodeBodyColor)
+
+        if self.hover:
+        	brush = QBrush(self.nodeBodyColorHover)
+
         if QGraphicsItem.isSelected(self):
             brush = QBrush(self.nodeBodyColorSelected)
 
@@ -90,15 +101,12 @@ class Node(QGraphicsItem):
     def paintNodeInputs(self, painter):
         color = QColor(0, 0, 0)
         painter.setPen(color)
-        yTranslation = 0
+        self.yTranslationLeftIO = 0
 
         if len(self.inputList) < len(self.outputList):
             totalHeightInputs = (len(self.inputList) * self.ioHeight + (len(self.inputList) - 1) * self.ioHeightDifference)
-            print(totalHeightInputs)
-            totalHeightAvailableForIputs = self.getNodeBodyHeight() - self.ioHeightDifference * 2
-            print(totalHeightAvailableForIputs)
-            yTranslation = (totalHeightAvailableForIputs - totalHeightInputs) / 2
-            print(yTranslation)
+            totalHeightAvailableForInputs = self.getNodeBodyHeight() - self.ioHeightDifference * 2
+            self.yTranslationLeftIO = (totalHeightAvailableForInputs - totalHeightInputs) / 2
 
         #Draw all inputs
         for i in range(0, len(self.inputList)):
@@ -106,16 +114,22 @@ class Node(QGraphicsItem):
                 brush = QBrush(self.nodeInputColorSelected)  
             else:
                 brush = QBrush(self.nodeInputColor) 
-
-            
+        
 
             painter.setBrush(brush)
-            painter.drawRoundedRect(self.inputList[i][0], self.inputList[i][1] + yTranslation, self.ioWidth, 10, 2, 2)
+            painter.drawRoundedRect(self.inputList[i][0], self.inputList[i][1] + self.yTranslationLeftIO, self.ioWidth, 10, 2, 2)
          
          
     def paintNodeOutputs(self, painter):
         color = QColor(0, 0, 0)
         painter.setPen(color)
+        self.yTranslationRightIO = 0
+
+        if len(self.outputList) < len(self.inputList):
+            totalHeightOutputs = (len(self.outputList) * self.ioHeight + (len(self.outputList) - 1) * self.ioHeightDifference)
+            totalHeightAvailableForOutputs = self.getNodeBodyHeight() - self.ioHeightDifference * 2
+            self.yTranslationRightIO = (totalHeightAvailableForOutputs - totalHeightOutputs) / 2
+
 
         #Draw all inputs
         for i in range(0, len(self.outputList)):
@@ -125,7 +139,7 @@ class Node(QGraphicsItem):
                 brush = QBrush(self.nodeOutputColor) 
 
             painter.setBrush(brush)
-            painter.drawRoundedRect(self.outputList[i][0], self.outputList[i][1], self.ioWidth, 10, 2, 2)
+            painter.drawRoundedRect(self.outputList[i][0], self.outputList[i][1] + self.yTranslationRightIO, self.ioWidth, 10, 2, 2)
       
       
     def paintNodeName(self, painter):
@@ -150,8 +164,8 @@ class Node(QGraphicsItem):
 #------------------
 #---Mouse Events---
     def mousePressEvent(self, event):
-        if self.mouseIsOnInput(event.pos()) < 0:
-            self.mouseIsOnOutput(event.pos())
+        if self.mouseIsOnInput(event.pos(), True) < 0:
+            self.mouseIsOnOutput(event.pos(), True)
 
         super().mousePressEvent(event)
         self.update()
@@ -174,6 +188,26 @@ class Node(QGraphicsItem):
         self.setFlag(QGraphicsItem.ItemIsMovable, True)
 
         super().mouseReleaseEvent(event)
+        self.update()
+
+
+    def hoverMoveEvent(self, event):
+        if self.mouseIsOnInput(event.pos()) < 0:
+            self.mouseIsOnOutput(event.pos())
+
+        super().hoverMoveEvent(event)
+        self.update()
+
+        #Must be done after super().mousePressEvent(event) in order to
+        #flag the node again after clicking on an input/output
+        self.setFlag(QGraphicsItem.ItemIsSelectable, True)
+        self.setFlag(QGraphicsItem.ItemIsMovable, True)
+
+
+    def hoverLeaveEvent(self, event):
+        self.hover = False
+
+        super().hoverLeaveEvent(event)
         self.update()
 
 
@@ -209,38 +243,40 @@ class Node(QGraphicsItem):
         self.outputList.append(newOutput)
 
     
-    def mouseIsOnInput(self, mousePos):
+    def mouseIsOnInput(self, mousePos, click = False):
     	#for i in self.inputList
         for i in range(0, len(self.inputList)):
-            inputPoint = QPointF(self.inputList[i][0], self.inputList[i][1])
+            inputPoint = QPointF(self.inputList[i][0], self.inputList[i][1] + self.yTranslationLeftIO)
 
-            #If mouse is over input -> set mouseHover to true
+            #If mouse is over input -> return input
             if mousePos.x() > inputPoint.x() and mousePos.x() < inputPoint.x() + self.ioWidth:
                 if mousePos.y() > inputPoint.y() and mousePos.y() < inputPoint.y() + self.ioHeight:
-                    print('mouse on input: ' + str(i))
+                    if click:
+                        print('mouse on input: ' + str(i))
                     self.setFlag(QGraphicsItem.ItemIsSelectable, False)
                     self.setFlag(QGraphicsItem.ItemIsMovable, False)
+                    self.hover = False
                     return i
 
-        # self.setFlag(QGraphicsItem.ItemIsSelectable, True)
-        # self.setFlag(QGraphicsItem.ItemIsMovable, True)
+        self.hover = True
         return -1
 
 
-    def mouseIsOnOutput(self, mousePos):
+    def mouseIsOnOutput(self, mousePos, click = False):
         for i in range(0, len(self.outputList)):
-            outputPoint = QPointF(self.outputList[i][0], self.outputList[i][1])
+            outputPoint = QPointF(self.outputList[i][0], self.outputList[i][1] + self.yTranslationRightIO)
 
-            #If mouse is over output -> set mouseHover to true
+            #If mouse is over input -> return output
             if mousePos.x() > outputPoint.x() and mousePos.x() < outputPoint.x() + self.ioWidth:
                 if mousePos.y() > outputPoint.y() and mousePos.y() < outputPoint.y() + self.ioHeight:
-                    print('mouse on output: ' + str(i))
+                    if click:
+                        print('mouse on output: ' + str(i))
                     self.setFlag(QGraphicsItem.ItemIsSelectable, False)
                     self.setFlag(QGraphicsItem.ItemIsMovable, False)
+                    self.hover = False
                     return i
-        
-        # self.setFlag(QGraphicsItem.ItemIsSelectable, True)
-        # self.setFlag(QGraphicsItem.ItemIsMovable, True)
+
+        self.hover = True
         return -1
 
 

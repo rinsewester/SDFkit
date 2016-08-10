@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QWidget, QDockWidget, QGraphicsView, QGraphicsScene,
 from PyQt5.QtCore import Qt, QSize, QObject, pyqtSignal, QRectF, QPointF
 from PyQt5.QtGui import QIcon, QTransform, QColor, QPainter, QBrush, QFont
 from node import*
+from edge import*
 
 class GraphicsView(QGraphicsView):
 
@@ -47,10 +48,17 @@ class GraphWidget(QWidget):
         self.graphicsView.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.graphicsView.setRenderHint(QPainter.Antialiasing, True)
 
+        self.graphicsView.setMouseTracking(True)
+
+
 
         #Make a graphics scene
         scene = QGraphicsScene()
         self.graphicsView.setScene(scene)
+
+        #Add edges with (QGraphicsScene(), x1, y1, x2, y2)
+        self.edgeList = []
+        self.addEdge(scene, 0, 0, 100, 100)
 
         #Add nodes with (QGraphicsScene(), xpos, ypos, nodeName)
         self.nodeList = []
@@ -61,9 +69,11 @@ class GraphWidget(QWidget):
         self.addNode(scene, 150, 200, 'Node 5 <-')
         self.addNode(scene, 300, 200, 'Node 6 name')
 
-        text = scene.addText('Test', QFont('Arial', 20))  
-        text.moveBy(100, 100)      
-        text.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
+        
+
+        # text = scene.addText('Test', QFont('Arial', 20))  
+        # text.moveBy(100, 100)      
+        # text.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
 
 
         #UI for the graphicsView
@@ -108,8 +118,6 @@ class GraphWidget(QWidget):
         self.zoomSlider.valueChanged.connect(self.setupMatrix)
         self.zoomInButton.clicked.connect(self.zoomIn)
         self.zoomOutButton.clicked.connect(self.zoomOut)
-
-
 
 
     def resetView(self):
@@ -170,5 +178,14 @@ class GraphWidget(QWidget):
         newNodeInScene = scene.addItem(newNode)
 
         self.nodeList.append(newNodeInScene)
+
+
+    def addEdge(self, scene, x1, y1, x2, y2):
+        startPoint = QPoint(x1, y1)
+        endPoint = QPoint(x2, y2)
+        newEdge = Edge(scene, startPoint, endPoint)
+        newEdgeInScene = scene.addItem(newEdge)
+
+        self.edgeList.append(newEdgeInScene)
 
 
