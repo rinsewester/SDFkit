@@ -33,13 +33,13 @@ class Graph():
         #Add nodes with: (QGraphicsScene(), xpos, ypos, nodeName)
         #self.addNode(scene, 0, 0, 'Node name')
         
-        #---Simple test scene---
+        # #---Simple test scene---
         # self.addNode(scene, 0, 0, '1')
         # self.addNode(scene, 150, 0, 'n2')
-        # self.addNode(scene, 300, 0, 'nr 3')
-        # self.addNode(scene, 0, 200, 'Node 4')
-        # self.addNode(scene, 150, 200, 'Node 5 <-')
-        # self.addNode(scene, 300, 200, 'Node 6 name')
+        # self.addNode(scene, 300, 0, 'node 3')
+        # self.addNode(scene, 0, 200, 'Node 4 <-')
+        # self.addNode(scene, 150, 200, 'Node 5 name')
+        # self.addNode(scene, 300, 200, 'Node 6 name here')
         
         # self.addEdgeToNodes(scene, 0, 1)
         # self.addEdgeToNodes(scene, 1, 2)
@@ -49,7 +49,7 @@ class Graph():
 
 
         #---Grid test scene---
-        gridSize = 25
+        gridSize = 50
         for i in range(gridSize):
             for j in range(gridSize):
                 name = str(i) + '/' + str(j)

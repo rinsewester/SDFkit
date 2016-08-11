@@ -10,7 +10,7 @@ author: Sander Giesselink
 
 import sys
 from PyQt5.QtWidgets import QWidget, QGraphicsItem, QPushButton, QVBoxLayout
-from PyQt5.QtCore import QRectF, QPointF, QPoint
+from PyQt5.QtCore import QRectF, QPointF, QPoint, Qt
 from PyQt5.QtGui import QColor, QPainter, QBrush, QPainterPath, QLinearGradient
 
 class Node(QGraphicsItem):
@@ -33,6 +33,7 @@ class Node(QGraphicsItem):
 
 
         self.nodeText = nodeName
+        self.nodeTextDisplayed = ''
 
         self.inputList = []
         self.addNewInput()
@@ -74,13 +75,18 @@ class Node(QGraphicsItem):
 #--------------
 #---Painting---    
     def paint(self, painter, option, widget):
-        self.paintNodeBody(painter)
-        self.paintNodeInputs(painter)
-        self.paintNodeOutputs(painter)
-        self.paintNodeName(painter)
+        lod = option.levelOfDetailFromTransform(painter.worldTransform())
+        #print (lod)
+
+        self.paintNodeBody(painter, lod)
+        if lod > 0.2:
+            self.paintNodeInputs(painter)
+            self.paintNodeOutputs(painter)
+        if lod > 0.5:
+            self.paintNodeName(painter)
 
 
-    def paintNodeBody(self, painter):
+    def paintNodeBody(self, painter, lod):
         color = QColor(0, 0, 0)
         painter.setPen(color)
       
@@ -98,7 +104,11 @@ class Node(QGraphicsItem):
             brush = QBrush(self.nodeBodyColorSelected)
 
         painter.setBrush(brush)
-        painter.drawRoundedRect(0, 0, self.nodeBodyWidth, self.getNodeBodyHeight(), 10, 10)
+
+        if lod > 0.1:
+            painter.drawRoundedRect(0, 0, self.nodeBodyWidth, self.getNodeBodyHeight(), 10, 10)
+        else:
+        	painter.drawRect(0, 0, self.nodeBodyWidth, self.getNodeBodyHeight())
 
 
     def paintNodeInputs(self, painter):
@@ -106,15 +116,13 @@ class Node(QGraphicsItem):
         painter.setPen(color)
         
         self.setYTranslationLeftIO()
-
         
         #Draw all inputs
         for i in range(0, len(self.inputList)):
             if self.inputList[i][3]:
                 brush = QBrush(self.nodeInputColorSelected)  
             else:
-                brush = QBrush(self.nodeInputColor) 
-        
+                brush = QBrush(self.nodeInputColor)         
 
             painter.setBrush(brush)
             painter.drawRoundedRect(self.inputList[i][0], self.inputList[i][1] + self.yTranslationLeftIO, self.ioWidth, 10, 2, 2)
@@ -138,22 +146,26 @@ class Node(QGraphicsItem):
 
 
     def paintNodeName(self, painter):
-        nodeTextDisplayed = self.nodeText
+        if self.nodeTextDisplayed == '':
+            self.getNodeName()
+        
+        painter.drawText(self.rectNodeName, Qt.AlignCenter, self.nodeTextDisplayed) 
+        
+
+    def getNodeName(self):
+        self.nodeTextDisplayed = self.nodeText
 
         maxLength = 10
 
         if len(self.nodeText) > maxLength:
-        	#Cutoff text if the name is too long
-            nodeTextDisplayed = self.nodeText[:maxLength]
-            nodeTextDisplayed += '..'
-            textPoint = QPoint(self.ioWidth + 2, self.ioHeight + 2)
-        else:
-        	#Calculate xTranslation to center text in node
-            xTranslation = ((self.nodeBodyWidth - 2 * self.ioWidth - 2 * 2) / ((maxLength + 2) * 2)) * (maxLength - len(self.nodeText) + 2)
-            textPointX = self.ioWidth + 2 + xTranslation
-            textPoint = QPoint(textPointX, self.ioHeight + 2)
+            #Cutoff text if the name is too long
+            self.nodeTextDisplayed = self.nodeText[:maxLength]
+            self.nodeTextDisplayed += '..'
 
-        painter.drawText(textPoint, nodeTextDisplayed)    
+        textPoint = QPoint(self.ioWidth + 4, 3)
+        textWidth = self.nodeBodyWidth - self.ioWidth * 2 - 4
+        textEndPoint = QPoint(textPoint.x() + textWidth, textPoint.y() + 10)
+        self.rectNodeName = QRectF(textPoint, textEndPoint)
 
 
 #------------------

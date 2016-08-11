@@ -26,9 +26,9 @@ class Edge(QGraphicsItem):
         # print('midPoint: ' + str(self.midPoint))
         # print('endPoint: ' + str(self.endPoint))
 
-        self.edgeColor = QColor(200, 200, 200)
-        self.edgeColorSelected = QColor(120, 120, 120)
-        self.edgeColorHover = QColor(160, 160, 160)
+        self.edgeColor = QColor(160, 160, 160)
+        self.edgeColorSelected = QColor(80, 80, 80)
+        self.edgeColorHover = QColor(120, 120, 120)
 
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
@@ -56,19 +56,22 @@ class Edge(QGraphicsItem):
 
 
     def paint(self, painter, option, widget):
-        pen = QPen(self.edgeColor)
-        pen.setWidth(3)
+    	lod = option.levelOfDetailFromTransform(painter.worldTransform())
 
-        if self.hover:
-        	pen.setColor(self.edgeColorHover)
+    	if lod > 0.15:
+            pen = QPen(self.edgeColor)
+            pen.setWidth(3)
 
-        if QGraphicsItem.isSelected(self):
-        	pen.setColor(self.edgeColorSelected)
+            if self.hover:
+        	    pen.setColor(self.edgeColorHover)
 
-        painter.setPen(pen)
+            if QGraphicsItem.isSelected(self):
+        	    pen.setColor(self.edgeColorSelected)
 
-        painter.drawLine(self.startPoint, self.midPoint)
-        painter.drawLine(self.midPoint, self.endPoint)
+            painter.setPen(pen)
+
+            painter.drawLine(self.startPoint, self.midPoint)
+            painter.drawLine(self.midPoint, self.endPoint)
 
 
     def calculateMidPoint(self, startPoint, endPoint):
