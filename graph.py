@@ -33,13 +33,13 @@ class Graph():
         #Add nodes with: (QGraphicsScene(), xpos, ypos, nodeName)
         #self.addNode(scene, 0, 0, 'Node name')
         
-        # #---Simple test scene---
-        # self.addNode(scene, 0, 0, '1')
-        # self.addNode(scene, 150, 0, 'n2')
-        # self.addNode(scene, 300, 0, 'node 3')
-        # self.addNode(scene, 0, 200, 'Node 4 <-')
-        # self.addNode(scene, 150, 200, 'Node 5 name')
-        # self.addNode(scene, 300, 200, 'Node 6 name here')
+        #---Simple test scene---
+        self.addNode(scene, 0, 0, '1')
+        self.addNode(scene, 150, 0, 'n2')
+        self.addNode(scene, 300, 0, 'node 3')
+        self.addNode(scene, 0, 200, 'Node 4 <-')
+        self.addNode(scene, 150, 200, 'Node 5 name')
+        self.addNode(scene, 300, 200, 'Node 6 name here')
         
         # self.addEdgeToNodes(scene, 0, 1)
         # self.addEdgeToNodes(scene, 1, 2)
@@ -48,16 +48,16 @@ class Graph():
         # self.addEdgeToNodes(scene, 3, 1)
 
 
-        #---Grid test scene---
-        gridSize = 50
-        for i in range(gridSize):
-            for j in range(gridSize):
-                name = str(i) + '/' + str(j)
-                #print(name)
-                self.addNode(scene, j*150, i*100, name)
+        # #---Grid test scene---
+        # gridSize = 50
+        # for i in range(gridSize):
+        #     for j in range(gridSize):
+        #         name = str(i) + '/' + str(j)
+        #         #print(name)
+        #         self.addNode(scene, j*150, i*100, name)
 
-        for i in range(gridSize*gridSize - 1):
-                self.addEdgeToNodes(scene, i, i + 1)
+        # for i in range(gridSize*gridSize - 1):
+        #         self.addEdgeToNodes(scene, i, i + 1)
 
 
 
