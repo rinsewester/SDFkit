@@ -10,19 +10,19 @@ author: Sander Giesselink
 
 import sys
 from PyQt5.QtWidgets import QWidget, QGraphicsItem
-from PyQt5.QtCore import QPoint, QRectF, QEvent
+from PyQt5.QtCore import QPoint, QRectF, QEvent, QPointF
 from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath
 
 class Edge(QGraphicsItem):
 
-    def __init__(self, scene, startPoint, endPoint):
+    def __init__(self, scene, beginPoint, endPoint):
         super().__init__()
 
         self.scene = scene
-        self.startPoint = startPoint
+        self.beginPoint = beginPoint
         self.endPoint = endPoint
-        self.midPoint = self.calculateMidPoint(startPoint, endPoint)
-        # print('startPoint: ' + str(self.startPoint))
+        self.midPoint = self.calculateMidPoint(beginPoint, endPoint)
+        # print('beginPoint: ' + str(self.beginPoint))
         # print('midPoint: ' + str(self.midPoint))
         # print('endPoint: ' + str(self.endPoint))
 
@@ -30,14 +30,14 @@ class Edge(QGraphicsItem):
         self.edgeColorSelected = QColor(80, 80, 80)
         self.edgeColorHover = QColor(120, 120, 120)
 
-        self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
+        #self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
         self.hover = False
 
 
     def boundingRect(self):
         #Used for collision detection
-        rect = QRectF(self.startPoint, self.endPoint)
+        rect = QRectF(self.beginPoint, self.endPoint)
         rect = rect.normalized()
 
         return rect
@@ -47,7 +47,7 @@ class Edge(QGraphicsItem):
         #Determines the paint area
         path = QPainterPath()
 
-        rect = QRectF(self.startPoint, self.endPoint)
+        rect = QRectF(self.beginPoint, self.endPoint)
         rect = rect.normalized()
 
         path.addRect(rect)
@@ -70,13 +70,33 @@ class Edge(QGraphicsItem):
 
             painter.setPen(pen)
 
-            painter.drawLine(self.startPoint, self.midPoint)
-            painter.drawLine(self.midPoint, self.endPoint)
+            #Paint 2 lines that go to a midPoint
+            # painter.drawLine(self.beginPoint, self.midPoint)
+            # painter.drawLine(self.midPoint, self.endPoint)
+
+            #Paint a line between the beginPoint and endPoint
+            painter.drawLine(self.beginPoint, self.endPoint)
+
+            #self.debug(painter)
 
 
-    def calculateMidPoint(self, startPoint, endPoint):
-        x = (startPoint.x() + endPoint.x()) / 2
-        y = (startPoint.y() + endPoint.y()) / 2
+    def debug(self, painter):
+        #Actual paint area
+        painter.setBrush(QBrush(QColor(0, 0, 0, 0)))
+        pen = QPen(QColor(255, 0, 0, 100))
+        pen.setWidth(0.5)
+        painter.setPen(pen)
+
+        path = QPainterPath()
+
+        path.addPath(self.shape())
+
+        painter.drawPath(path)
+
+
+    def calculateMidPoint(self, beginPoint, endPoint):
+        x = (beginPoint.x() + endPoint.x()) / 2
+        y = (beginPoint.y() + endPoint.y()) / 2
         return QPoint(x, y)
 
 
@@ -96,4 +116,15 @@ class Edge(QGraphicsItem):
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
+        self.update()
+
+
+    def moveEdge(self, delta, edgeSide):
+        if edgeSide == 'begin':
+            self.beginPoint += delta
+        else:
+            self.endPoint += delta
+
+        #Prepare the painter for a geometry change, so it repaints correctly
+        self.prepareGeometryChange()
         self.update()
