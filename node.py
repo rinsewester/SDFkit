@@ -34,20 +34,21 @@ class Node(QGraphicsItem):
         self.nodeNeutralColor = QColor(180, 180, 180, 100)
         self.nodeNeutralColorHover = QColor(180, 180, 180)
         self.lastPos = QPointF(0, 0)
+        self.yTranslationLeftIO = 0
+        self.yTranslationRightIO = 0
 
 
         self.nodeText = nodeName
         self.nodeTextDisplayed = ''
 
-
+        self.edgeList = []
         self.ioList = []
         #Add 2x IO ('left' = left, 'right' = right /,/ 0 = neutral, 1 = input, 2 is output)
         self.addNewIO('left', 0)
         self.addNewIO('right', 0)
 
 
-        self.edgeList = []
-
+        
 
         self.setYTranslationLeftIO()
         self.setYTranslationRightIO()
@@ -327,29 +328,53 @@ class Node(QGraphicsItem):
 
 
     def setYTranslationLeftIO(self):
-        #YTranslation is used to center the IO on one side if the other side contains more IO
-        leftSideLength = self.getLengthLeftSide()
-        rightSideLength = self.getLengthRightSide()
+        i = 1
+        # #YTranslation is used to center the IO on one side if the other side contains more IO
+        # yTranslationDifference = self.yTranslationLeftIO
 
-        if leftSideLength < rightSideLength:
-            totalHeightInputs = (leftSideLength * self.ioHeight + (leftSideLength - 1) * self.ioHeightDifference)
-            totalHeightAvailableForInputs = self.nodeBodyHeight - self.ioHeightDifference * 2
-            self.yTranslationLeftIO = (totalHeightAvailableForInputs - totalHeightInputs) / 2
-        else:
-            self.yTranslationLeftIO = 0
+        # leftSideLength = self.getLengthLeftSide()
+        # rightSideLength = self.getLengthRightSide()
+
+        # if leftSideLength < rightSideLength:
+        #     totalHeightInputs = (leftSideLength * self.ioHeight + (leftSideLength - 1) * self.ioHeightDifference)
+        #     totalHeightAvailableForInputs = self.nodeBodyHeight - self.ioHeightDifference * 2
+        #     self.yTranslationLeftIO = (totalHeightAvailableForInputs - totalHeightInputs) / 2
+        # else:
+        #     self.yTranslationLeftIO = 0
+
+        # #Update edge positions when the translation is changed
+        # yTranslationDifference += self.yTranslationLeftIO
+        # posChange = QPointF(0, yTranslationDifference)
+        # self.moveEdges(posChange, 'left')
+        # print("info:")
+        # print(self.getLengthLeftSide())
+        # print(self.getLengthRightSide())
+        # print(posChange)
     
 
     def setYTranslationRightIO(self):
-        #YTranslation is used to center the IO on one side if the other side contains more IO
-        leftSideLength = self.getLengthLeftSide()
-        rightSideLength = self.getLengthRightSide()
+        i = 1
+        # #YTranslation is used to center the IO on one side if the other side contains more IO
+        # yTranslationDifference = self.yTranslationRightIO
 
-        if rightSideLength < leftSideLength:
-            totalHeightOutputs = (rightSideLength * self.ioHeight + (rightSideLength - 1) * self.ioHeightDifference)
-            totalHeightAvailableForOutputs = self.nodeBodyHeight - self.ioHeightDifference * 2
-            self.yTranslationRightIO = (totalHeightAvailableForOutputs - totalHeightOutputs) / 2
-        else:
-            self.yTranslationRightIO = 0
+        # leftSideLength = self.getLengthLeftSide()
+        # rightSideLength = self.getLengthRightSide()
+
+        # if rightSideLength < leftSideLength:
+        #     totalHeightOutputs = (rightSideLength * self.ioHeight + (rightSideLength - 1) * self.ioHeightDifference)
+        #     totalHeightAvailableForOutputs = self.nodeBodyHeight - self.ioHeightDifference * 2
+        #     self.yTranslationRightIO = (totalHeightAvailableForOutputs - totalHeightOutputs) / 2
+        # else:
+        #     self.yTranslationRightIO = 0
+
+        # #Update edge positions when the translation is changed
+        # yTranslationDifference += self.yTranslationRightIO
+        # posChange = QPointF(0, yTranslationDifference)
+        # self.moveEdges(posChange, 'right')
+        # print("info:")
+        # print(self.getLengthLeftSide())
+        # print(self.getLengthRightSide())
+        # print(posChange)
 
 
 #------------------
@@ -439,13 +464,17 @@ class Node(QGraphicsItem):
         self.edgeList.append(newEdge)
 
 
-    def moveEdges(self, posChange):
+    def moveEdges(self, posChange, side = 'both'):
+        print(side)
         #Move edges connected to node
         if len(self.edgeList) > 0:
             #deltaPos = event.lastPos() - event.pos()
             deltaPos = posChange
             for i in range(len(self.edgeList)):
                 if 'begin' in self.edgeList[i]:
-                    self.edgeList[i][0].moveEdge(deltaPos, 'begin')
+                    #Only move edge side if the entire edge is moved or the specified side is moved
+                    if side == 'both' or side == self.ioList[i][3]:
+                        self.edgeList[i][0].moveEdge(deltaPos, 'begin')
                 else:
-                    self.edgeList[i][0].moveEdge(deltaPos, 'end')
+                    if side == 'both' or side == self.ioList[i][3]:
+                        self.edgeList[i][0].moveEdge(deltaPos, 'end')

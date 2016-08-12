@@ -79,7 +79,7 @@ class Edge(QGraphicsItem):
             curvePath = self.shape()
             painter.drawPath(curvePath)
 
-            #self.debug(painter)
+            self.debug(painter)
 
 
     def debug(self, painter):
@@ -96,8 +96,8 @@ class Edge(QGraphicsItem):
         painter.drawPath(path)
 
         #Curve points
-        painter.drawEllipse(self.curvePoint1, 5, 5)
-        painter.drawEllipse(self.curvePoint2, 5, 5)
+        painter.drawEllipse(self.curvePoint1, 2, 2)
+        painter.drawEllipse(self.curvePoint2, 2, 2)
 
 
     def calculateMidPoint(self, beginPoint, endPoint):

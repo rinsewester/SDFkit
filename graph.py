@@ -38,16 +38,28 @@ class Graph():
         if testScene == 1:
             self.addNode(scene, 0, 0, '1')
             self.addNode(scene, 150, 0, 'n2')
-            self.addNode(scene, 300, 0, 'node 3')
+            self.addNode(scene, 300, 200, 'node 3')
             self.addNode(scene, 0, 200, 'Node 4 <-')
-            self.addNode(scene, 150, 200, 'Node 5 name')
-            self.addNode(scene, 300, 200, 'Node 6 name here')
+            self.addNode(scene, -150, 100, 'Node 5 name')
+            self.addNode(scene, -300, 0, 'Node 6 name here')
+            self.addNode(scene, -150, -100, 'Node 7 name here')
+            self.addNode(scene, 200, -100, 'Node 8 name here')
+            self.addNode(scene, 350, 0, 'n9')
             
             self.addEdgeToNodes(scene, 0, 1)
+            self.addEdgeToNodes(scene, 1, 7)
+            self.addEdgeToNodes(scene, 1, 8)
             self.addEdgeToNodes(scene, 1, 2)
+            self.addEdgeToNodes(scene, 5, 6)
+            self.addEdgeToNodes(scene, 6, 0)
             self.addEdgeToNodes(scene, 5, 4)
             self.addEdgeToNodes(scene, 4, 3)
             self.addEdgeToNodes(scene, 3, 1)
+            self.addEdgeToNodes(scene, 3, 1)
+            self.addEdgeToNodes(scene, 3, 1)
+            self.addEdgeToNodes(scene, 3, 1)
+            self.addEdgeToNodes(scene, 5, 5)
+
 
 
         #---Grid test scene---
