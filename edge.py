@@ -10,8 +10,8 @@ author: Sander Giesselink
 
 import sys
 from PyQt5.QtWidgets import QWidget, QGraphicsItem
-from PyQt5.QtCore import QPoint, QRectF, QEvent, QPointF
-from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath
+from PyQt5.QtCore import Qt, QPoint, QRectF, QEvent, QPointF
+from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QPainterPathStroker
 
 class Edge(QGraphicsItem):
 
@@ -36,21 +36,25 @@ class Edge(QGraphicsItem):
 
 
     def boundingRect(self):
-        #Used for collision detection
+        #Used for collision detection and repaint
         rect = QRectF(self.beginPoint, self.endPoint)
         rect = rect.normalized()
 
+        #Make rect slightly larger in order to include the linecap
+        rect.setX(rect.x() - 1)
+        rect.setY(rect.y() - 1)
+        rect.setWidth(rect.width() + 2)
+        rect.setHeight(rect.height() + 2)
         return rect
 
     
     def shape(self):
-        #Determines the paint area
-        path = QPainterPath()
+        #Determines the paint path
 
-        rect = QRectF(self.beginPoint, self.endPoint)
-        rect = rect.normalized()
+        path = QPainterPath(self.beginPoint)
+        path.cubicTo(self.curvePoint1, self.curvePoint2, self.endPoint)
 
-        path.addRect(rect)
+        
 
         return path
 
@@ -61,6 +65,7 @@ class Edge(QGraphicsItem):
     	if lod > 0.15:
             pen = QPen(self.edgeColor)
             pen.setWidth(3)
+            pen.setCapStyle(Qt.RoundCap)
 
             if self.hover:
         	    pen.setColor(self.edgeColorHover)
@@ -69,20 +74,17 @@ class Edge(QGraphicsItem):
         	    pen.setColor(self.edgeColorSelected)
 
             painter.setPen(pen)
+            painter.setBrush(QBrush(QColor(0, 0, 0, 0)))
 
-            #Paint 2 lines that go to a midPoint
-            # painter.drawLine(self.beginPoint, self.midPoint)
-            # painter.drawLine(self.midPoint, self.endPoint)
-
-            #Paint a line between the beginPoint and endPoint
-            painter.drawLine(self.beginPoint, self.endPoint)
+            curvePath = self.shape()
+            painter.drawPath(curvePath)
 
             #self.debug(painter)
 
 
     def debug(self, painter):
-        #Actual paint area
-        painter.setBrush(QBrush(QColor(0, 0, 0, 0)))
+        #Paint path
+        painter.setBrush(QBrush(QColor(0, 0, 0, 25)))
         pen = QPen(QColor(255, 0, 0, 100))
         pen.setWidth(0.5)
         painter.setPen(pen)
@@ -93,10 +95,18 @@ class Edge(QGraphicsItem):
 
         painter.drawPath(path)
 
+        #Curve points
+        painter.drawEllipse(self.curvePoint1, 5, 5)
+        painter.drawEllipse(self.curvePoint2, 5, 5)
+
 
     def calculateMidPoint(self, beginPoint, endPoint):
         x = (beginPoint.x() + endPoint.x()) / 2
         y = (beginPoint.y() + endPoint.y()) / 2
+
+        self.curvePoint1 = QPointF(self.endPoint.x(), self.beginPoint.y())
+        self.curvePoint2 = QPointF(self.beginPoint.x(), self.endPoint.y())
+
         return QPoint(x, y)
 
 
@@ -124,6 +134,9 @@ class Edge(QGraphicsItem):
             self.beginPoint += delta
         else:
             self.endPoint += delta
+
+        #Update midPoint
+        self.midPoint = self.calculateMidPoint(self.beginPoint, self.endPoint)
 
         #Prepare the painter for a geometry change, so it repaints correctly
         self.prepareGeometryChange()
