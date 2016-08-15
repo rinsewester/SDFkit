@@ -39,26 +39,37 @@ class Graph():
             self.addNode(scene, 0, 0, '1')
             self.addNode(scene, 150, 0, 'n2')
             self.addNode(scene, 300, 200, 'node 3')
-            self.addNode(scene, 0, 200, 'Node 4 <-')
+            self.addNode(scene, -100, 200, 'Node 4 <-')
             self.addNode(scene, -150, 100, 'Node 5 name')
             self.addNode(scene, -300, 0, 'Node 6 name here')
             self.addNode(scene, -150, -100, 'Node 7 name here')
-            self.addNode(scene, 200, -100, 'Node 8 name here')
-            self.addNode(scene, 350, 0, 'n9')
+            self.addNode(scene, 200, -150, 'Node 8 name here')
+            self.addNode(scene, 650, -50, 'n9')
+            self.addNode(scene, 350, 100, 'node 10')
+            self.addNode(scene, 300, 350, 'node 11')
+            self.addNode(scene, -300, 200, 'Node 12')
             
-            self.addEdgeToNodes(scene, 0, 1)
-            self.addEdgeToNodes(scene, 1, 7)
-            self.addEdgeToNodes(scene, 1, 8)
-            self.addEdgeToNodes(scene, 1, 2)
-            self.addEdgeToNodes(scene, 5, 6)
-            self.addEdgeToNodes(scene, 6, 0)
-            self.addEdgeToNodes(scene, 5, 4)
-            self.addEdgeToNodes(scene, 4, 3)
-            self.addEdgeToNodes(scene, 3, 1)
-            self.addEdgeToNodes(scene, 3, 1)
-            self.addEdgeToNodes(scene, 3, 1)
-            self.addEdgeToNodes(scene, 3, 1)
-            self.addEdgeToNodes(scene, 5, 5)
+            self.addEdgeToNodes(scene, 0, 1, 'right', 'left')
+            self.addEdgeToNodes(scene, 6, 6, 'left', 'right')
+            self.addEdgeToNodes(scene, 7, 7, 'right', 'left')
+            self.addEdgeToNodes(scene, 7, 7, 'right', 'left')
+            self.addEdgeToNodes(scene, 7, 7, 'right', 'left')
+            self.addEdgeToNodes(scene, 1, 7, 'right', 'left')
+            self.addEdgeToNodes(scene, 1, 8, 'right', 'left')
+            self.addEdgeToNodes(scene, 1, 2, 'right', 'left')
+            self.addEdgeToNodes(scene, 5, 6, 'right', 'left')
+            self.addEdgeToNodes(scene, 6, 0, 'right', 'left')
+            self.addEdgeToNodes(scene, 5, 4, 'right', 'left')
+            self.addEdgeToNodes(scene, 4, 3, 'right', 'left')
+            self.addEdgeToNodes(scene, 3, 1, 'right', 'left')
+            self.addEdgeToNodes(scene, 3, 1, 'right', 'left')
+            self.addEdgeToNodes(scene, 1, 3, 'left', 'right')
+            self.addEdgeToNodes(scene, 3, 1, 'right', 'left')
+            self.addEdgeToNodes(scene, 5, 5, 'right', 'left')
+            self.addEdgeToNodes(scene, 9, 2, 'left', 'right')
+            self.addEdgeToNodes(scene, 2, 10, 'right', 'right')
+            self.addEdgeToNodes(scene, 2, 10, 'left', 'left')
+            self.addEdgeToNodes(scene, 3, 11, 'left', 'left')
 
 
 
@@ -72,7 +83,7 @@ class Graph():
                     self.addNode(scene, j*150, i*100, name)
 
             for i in range(gridSize*gridSize - 1):
-                self.addEdgeToNodes(scene, i, i + 1)
+                self.addEdgeToNodes(scene, i, i + 1, 'right', 'left')
 
 
 
@@ -85,8 +96,8 @@ class Graph():
         self.nodeList.append(newNode)
 
 
-    def addEdge(self, scene, beginPoint, endPoint):
-        newEdge = Edge(scene, beginPoint, endPoint)
+    def addEdge(self, scene, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops):
+        newEdge = Edge(scene, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops)
 
         #Place edges always behind nodes
         newEdge.setZValue(1)
@@ -98,25 +109,30 @@ class Graph():
         return newEdge
 
 
-    def addEdgeToNodes(self, scene, beginNodeIndex, endNodeIndex):
+    def addEdgeToNodes(self, scene, beginNodeIndex, endNodeIndex, beginSide, endSide):
         beginNode = self.nodeList[beginNodeIndex]
         endNode = self.nodeList[endNodeIndex]
 
+        edgeSelfLoops = False
+        if beginNode == endNode:
+            edgeSelfLoops = True
+
+
         #Get points on the nodes that the edge can connect to
-        beginPoint = beginNode.getIOPointForEdge('right', 2)
-        endPoint = endNode.getIOPointForEdge('left', 1)
+        beginPoint = beginNode.getIOPointForEdge(beginSide, 2)
+        endPoint = endNode.getIOPointForEdge(endSide, 1)
 
         #Set the beginNode as an output
-        beginNode.setIOType('right', 2)
+        beginNode.setIOType(beginSide, 2)
         #Set the endNode as an input
-        endNode.setIOType('left', 1)
+        endNode.setIOType(endSide, 1)
 
         #Add new IO ports to nodes for future edges
-        beginNode.addNewIO('right', 0)
-        endNode.addNewIO('left', 0)
+        beginNode.addNewIO(beginSide, 0)
+        endNode.addNewIO(endSide, 0)
         
         #Create edge between the 2 nodes
-        edge = self.addEdge(scene, beginPoint, endPoint)
+        edge = self.addEdge(scene, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops)
 
         #Give both nodes a reference to the created edge
         beginNode.addEdge(edge, 'begin')

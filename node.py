@@ -22,9 +22,10 @@ class Node(QGraphicsItem):
         self.ioWidth = 15
         self.ioHeight = 10
         self.ioHeightDifference = 10
-        self.nodeBodyWidth = 100
+        self.nodeBodyWidth = 80
+        self.maxNameLength = 6
         self.nodeBodyColor = QColor(210, 210, 210)
-        self.nodeBodyColorGradient = QColor(190, 190, 190)
+        self.nodeBodyColorGradient = QColor(180, 180, 180)
         self.nodeBodyColorSelected = QColor(150, 150, 150)
         self.nodeBodyColorHover = QColor(180, 180, 180)
         self.nodeInputColor = QColor(230, 230, 230)
@@ -62,12 +63,12 @@ class Node(QGraphicsItem):
 
 
     def boundingRect(self):
-        #Used for collision detection
+        #Used for collision detection and repaint
         return QRectF(0, 0, self.nodeBodyWidth, self.nodeBodyHeight)
 
     
     def shape(self):
-        #Determines the paint area
+        #Determines the collision area
         path = QPainterPath()
         path.addRect(0, 0, self.nodeBodyWidth, self.nodeBodyHeight)
 
@@ -401,6 +402,10 @@ class Node(QGraphicsItem):
         self.nodeBodyHeight = (longestSide * (self.ioHeightDifference + self.ioHeight) + self.ioHeight)
 
 
+    def getNodeBodyHeigth(self):
+    	return self.nodeBodyHeight
+
+
     def getLengthLeftSide(self):
         countSides = Counter(elem[3] for elem in self.ioList)
 
@@ -426,13 +431,11 @@ class Node(QGraphicsItem):
 
     def setNodeName(self):
     	#Determine the displayed name of the node and its location once
-        self.nodeTextDisplayed = self.nodeText
+        self.nodeTextDisplayed = self.nodeText 
 
-        maxLength = 9
-
-        if len(self.nodeText) > maxLength:
+        if len(self.nodeText) > self.maxNameLength:
             #Cutoff text if the name is too long
-            self.nodeTextDisplayed = self.nodeText[:maxLength]
+            self.nodeTextDisplayed = self.nodeText[:self.maxNameLength]
             self.nodeTextDisplayed += '..'
 
         textPoint = QPoint(self.ioWidth + 4, 3)
@@ -465,16 +468,13 @@ class Node(QGraphicsItem):
 
 
     def moveEdges(self, posChange, side = 'both'):
-        print(side)
         #Move edges connected to node
         if len(self.edgeList) > 0:
-            #deltaPos = event.lastPos() - event.pos()
-            deltaPos = posChange
             for i in range(len(self.edgeList)):
                 if 'begin' in self.edgeList[i]:
                     #Only move edge side if the entire edge is moved or the specified side is moved
                     if side == 'both' or side == self.ioList[i][3]:
-                        self.edgeList[i][0].moveEdge(deltaPos, 'begin')
+                        self.edgeList[i][0].moveEdge(posChange, 'begin')
                 else:
                     if side == 'both' or side == self.ioList[i][3]:
-                        self.edgeList[i][0].moveEdge(deltaPos, 'end')
+                        self.edgeList[i][0].moveEdge(posChange, 'end')
