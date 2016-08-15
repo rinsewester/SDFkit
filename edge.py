@@ -39,14 +39,9 @@ class Edge(QGraphicsItem):
 
     def boundingRect(self):
         #Used for collision detection and repaint
-        rect = QRectF(self.beginPoint, self.endPoint)
-        rect = rect.normalized()
+        path = self.getEdgePath()
+        rect = path.boundingRect()
 
-        #Make rect slightly larger in order to include the linecap
-        rect.setX(rect.x() - self.penWidth - self.xDiff)
-        rect.setY(rect.y() - self.penWidth + self.yTranslation)
-        rect.setWidth(rect.width() + 200 + self.xDiff * 2)
-        rect.setHeight(rect.height() + 200)
         return rect
 
     

@@ -19,7 +19,7 @@ class Graph():
         super().__init__()
 
         self.scene = scene
-        testScene = 1
+        testScene = 2
 
         
         self.edgeList = []
