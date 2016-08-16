@@ -50,6 +50,7 @@ class Graph():
             
             self.addEdgeToNodes(scene, 0, 1, 'right', 'left')
             self.addEdgeToNodes(scene, 6, 6, 'left', 'right')
+            self.addEdgeToNodes(scene, 11, 3, 'right', 'right')
             self.addEdgeToNodes(scene, 7, 7, 'right', 'left')
             self.addEdgeToNodes(scene, 7, 7, 'right', 'left')
             self.addEdgeToNodes(scene, 7, 7, 'right', 'left')
@@ -69,6 +70,7 @@ class Graph():
             self.addEdgeToNodes(scene, 2, 10, 'right', 'right')
             self.addEdgeToNodes(scene, 2, 10, 'left', 'left')
             self.addEdgeToNodes(scene, 3, 11, 'left', 'left')
+
 
 
 
@@ -99,6 +101,7 @@ class Graph():
     def addNode(self, scene, x, y, name):
         newNode = Node(name)
         newNode.setPos(x, y)
+        newNode.setZValue(0)
         
         #Add node to the scene and list
         scene.addItem(newNode)

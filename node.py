@@ -37,7 +37,7 @@ class Node(QGraphicsItem):
         self.lastPos = QPointF(0, 0)
         self.yTranslationLeftIO = 0
         self.yTranslationRightIO = 0
-        self.snappingIsOn = True
+        self.snappingIsOn = False
 
 
 
@@ -172,7 +172,7 @@ class Node(QGraphicsItem):
 #------------------
 #---Mouse Events---
     def mousePressEvent(self, event):
-        self.mouseIsOnIO(event.pos(), True)
+        self.mouseIsOnIO(event.pos(), True)     
 
         super().mousePressEvent(event)
         self.update()
@@ -191,11 +191,25 @@ class Node(QGraphicsItem):
 
 
     def itemChange(self, change, value):
+        #Move selected nodes and edges to the front, untill unselected
+        if change == QGraphicsItem.ItemSelectedChange:
+ 
+            if QGraphicsItem.isSelected(self):
+            	#Unselected (since the flag is not updated yet)
+                self.setZValue(0)
+                self.setZValueEdges(1)
+            else:
+            	#Selected
+                self.setZValue(2)
+                self.setZValueEdges(3)
+
         #If the position of the node changes -> calculate position change
         #and move edges with the node
         newPos = value
 
         if change == QGraphicsItem.ItemPositionChange:
+            self.setZValue(2)
+            self.setZValueEdges(3)
             
             if self.snappingIsOn:
             	#Snap node to closest grid point
@@ -495,3 +509,8 @@ class Node(QGraphicsItem):
                 else:
                     if side == 'both' or side == self.ioList[i][3]:
                         self.edgeList[i][0].moveEdge(posChange, 'end')
+
+
+    def setZValueEdges(self, zValue):
+        for i in range(len(self.edgeList)):
+        	self.edgeList[i][0].setZValueEdge(zValue)

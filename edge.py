@@ -217,8 +217,30 @@ class Edge(QGraphicsItem):
                 xPoint1 = self.beginPoint.x() - self.xDiff
                 xPoint2 = self.endPoint.x() - self.xDiff     
         
-        #Add a y translation to the curve points when the edge loops to the same node        
+        #Add a y translation to the curve points when the edge loops to the same node
+        #or otherwise crosses straight over itself      
         self.yTranslation = 0
+
+        if self.beginSide == self.endSide:
+            #The edge always crosses nodes on the same y level when the IO are on opposite sides
+            if abs(self.beginPoint.y() - self.endPoint.y()) < 35:
+                self.yTranslation = -45
+
+        else:
+            #When the IO is on different sides but the nodes are switched around
+            if abs(self.beginPoint.y() - self.endPoint.y()) < 55:
+                if self.beginSide == 'right':
+                    if self.beginPoint.x() > self.endPoint.x():
+                        self.yTranslation = -45
+                        xPoint1 = self.beginPoint.x() + 100
+                        xPoint2 = self.endPoint.x() - 100
+                else:
+                    if self.beginPoint.x() < self.endPoint.x():
+                        self.yTranslation = -45
+                        xPoint1 = self.beginPoint.x() - 100
+                        xPoint2 = self.endPoint.x() + 100
+
+        #Adjust for selflooping
         if self.edgeSelfLoops:
             if self.beginSide != self.endSide:
                 self.yTranslation = -45
@@ -266,3 +288,7 @@ class Edge(QGraphicsItem):
         #Prepare the painter for a geometry change, so it repaints correctly
         self.prepareGeometryChange()
         self.update()
+
+
+    def setZValueEdge(self, zValue):
+        self.setZValue(zValue)
