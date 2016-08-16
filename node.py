@@ -37,7 +37,8 @@ class Node(QGraphicsItem):
         self.lastPos = QPointF(0, 0)
         self.yTranslationLeftIO = 0
         self.yTranslationRightIO = 0
-        self.snappingIsOn = False
+        self.snappingIsOn = True
+        self.showNeutralIO = False
 
 
 
@@ -155,10 +156,15 @@ class Node(QGraphicsItem):
                 else:
                     brush = QBrush(self.nodeOutputColor)
 
-            painter.setBrush(brush)
-            path = self.getRoundedRectPath(i, yTranslation, self.ioList[i][3])
-            painter.drawPath(path.simplified())
-            #painter.drawRoundedRect(self.ioList[i][0], self.ioList[i][1] + yTranslation, self.ioWidth, self.ioHeight, 2, 2)
+            #Don't paint neutral IO if disabled
+            if self.ioList[i][4] == 0 and self.showNeutralIO:
+                painter.setBrush(brush)
+                path = self.getRoundedRectPath(i, yTranslation, self.ioList[i][3])
+                painter.drawPath(path.simplified())
+            elif self.ioList[i][4] != 0:
+                painter.setBrush(brush)
+                path = self.getRoundedRectPath(i, yTranslation, self.ioList[i][3])
+                painter.drawPath(path.simplified())
         
         painter.setPen(QColor(0, 0, 0))
 
@@ -428,6 +434,10 @@ class Node(QGraphicsItem):
             longestSide = ioOnLeftSide
         else:
             longestSide = ioOnRightSide  
+
+        #Make node smaller when the neutral IO is hidden
+        if not self.showNeutralIO:
+            longestSide = longestSide - 1
          
         #Set nodeBodyHeight based on longest io side
         self.nodeBodyHeight = (longestSide * (self.ioHeightDifference + self.ioHeight) + self.ioHeight)

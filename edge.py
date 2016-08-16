@@ -11,14 +11,13 @@ author: Sander Giesselink
 import sys
 from PyQt5.QtWidgets import QWidget, QGraphicsItem
 from PyQt5.QtCore import Qt, QPoint, QRectF, QEvent, QPointF
-from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QPainterPathStroker
+from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath
 
 class Edge(QGraphicsItem):
 
-    def __init__(self, scene, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops):
+    def __init__(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops):
         super().__init__()
 
-        self.scene = scene
         self.edgeSelfLoops = edgeSelfLoops
         self.penWidth = 4
         self.beginSide = beginSide
@@ -35,6 +34,7 @@ class Edge(QGraphicsItem):
         #self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
         self.hover = False
+        self.debugOn = True
 
 
     def boundingRect(self):
@@ -61,8 +61,8 @@ class Edge(QGraphicsItem):
         if lod > 0.05:
             self.paintEdge(painter)
 
-        # if lod > 0.15:
-        #     self.debug(painter) #Uncomment to turn on debug mode
+        if lod > 0.15 and self.debugOn:
+            self.debug(painter) #Uncomment to turn on debug mode
 
 
     def paintEdge(self, painter):
@@ -81,8 +81,10 @@ class Edge(QGraphicsItem):
 
         painter.setPen(pen)
         painter.setBrush(brush)
-    
-        edgePath = self.getEdgePath()
+
+        edgePath = self.getEdgePath()       
+        edgePath = edgePath.simplified()
+
 
 
         # edgePath = QPainterPath(self.beginPoint)
@@ -165,12 +167,12 @@ class Edge(QGraphicsItem):
         painter.setBrush(QBrush(QColor(0, 0, 0, 15)))
         path2 = QPainterPath()
         rect = self.boundingRect()
-        rect.setX(rect.x() - 1)
-        rect.setY(rect.y() - 1)
-        rect.setWidth(rect.width() + 2)
-        rect.setHeight(rect.height() + 2)
         path2.addRect(rect)
         painter.drawPath(path2)
+
+        #Middel point
+        painter.setPen(QPen(QColor(0, 0, 255, 100)))
+        painter.drawEllipse(self.midPoint, 2, 2)
    
 
 
@@ -292,3 +294,13 @@ class Edge(QGraphicsItem):
 
     def setZValueEdge(self, zValue):
         self.setZValue(zValue)
+
+
+    def getPointOnEdge(self, t):
+        edgePath = QPainterPath(self.beginPoint)
+        edgePath.cubicTo(self.curvePoint1, self.curvePoint2, self.endPoint)
+
+        point = QPointF(edgePath.pointAtPercent(t))
+        print(point)
+        return point
+        

@@ -12,6 +12,7 @@ import sys
 from PyQt5.QtCore import QPoint, QRectF
 from node import*
 from edge import*
+from tokenCluster import*
 
 class Graph():
 
@@ -86,6 +87,22 @@ class Graph():
             for i in range(gridSize*gridSize - 1):
                 self.addEdgeToNodes(scene, i, i + 1, 'right', 'left')
 
+        #---Simple test scene---
+        if testScene == 3:
+            self.addNode(scene, 0, 0, 'n1')
+            self.addNode(scene, 200, 100, 'n2')
+            self.addNode(scene, 200, 300, 'n3')
+            self.addNode(scene, -200, 300, 'n4')
+            self.addNode(scene, -200, 100, 'n5')
+
+            self.addEdgeToNodes(scene, 0, 1, 'right', 'left')
+            self.addEdgeToNodes(scene, 2, 2, 'right', 'left')
+            self.addEdgeToNodes(scene, 1, 2, 'right', 'right')
+            self.addEdgeToNodes(scene, 2, 3, 'left', 'right')
+            self.addEdgeToNodes(scene, 3, 4, 'left', 'left')
+            self.addEdgeToNodes(scene, 4, 0, 'right', 'left')
+
+            
 
     # def paint(self, painter, option, widget):
     #     print('test')
@@ -108,11 +125,15 @@ class Graph():
         self.nodeList.append(newNode)
 
 
-    def addEdge(self, scene, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops):
-        newEdge = Edge(scene, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops)
+    def addEdge(self, scene, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops):        
+
+        newEdge = Edge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops)
 
         #Place edges always behind nodes
         newEdge.setZValue(1)
+
+        #Give edge a cluster of tokens
+        tokenCluster = TokenCluster(scene, newEdge, newEdge.getPointOnEdge(0.5))
         
         #Add edge to the scene and list
         scene.addItem(newEdge)
