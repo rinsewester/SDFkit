@@ -9,7 +9,7 @@ author: Sander Giesselink
 """
 
 import sys
-from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QPoint, QRectF
 from node import*
 from edge import*
 
@@ -19,9 +19,8 @@ class Graph():
         super().__init__()
 
         self.scene = scene
-        testScene = 2
-
-        
+        testScene = 1
+      
         self.edgeList = []
         self.nodeList = []
 
@@ -85,6 +84,16 @@ class Graph():
             for i in range(gridSize*gridSize - 1):
                 self.addEdgeToNodes(scene, i, i + 1, 'right', 'left')
 
+
+    # def paint(self, painter, option, widget):
+    #     print('test')
+    #     self.scene.drawBackground(painter, QRectF(0, 0, self.getWidth(), self.getHeigth()))
+
+    # def drawBackground(self, painter, rect):
+    #     print('test')
+
+    #     super().drawBackground(painter, rect)
+    #     self.update()
 
 
     def addNode(self, scene, x, y, name):

@@ -23,7 +23,7 @@ class Node(QGraphicsItem):
         self.ioHeight = 10
         self.ioHeightDifference = 10
         self.nodeBodyWidth = 80
-        self.maxNameLength = 6
+        self.maxNameLength = 6        
         self.nodeBodyColor = QColor(210, 210, 210)
         self.nodeBodyColorGradient = QColor(180, 180, 180)
         self.nodeBodyColorSelected = QColor(150, 150, 150)
@@ -37,6 +37,8 @@ class Node(QGraphicsItem):
         self.lastPos = QPointF(0, 0)
         self.yTranslationLeftIO = 0
         self.yTranslationRightIO = 0
+        self.snappingIsOn = True
+
 
 
         self.nodeText = nodeName
@@ -191,13 +193,28 @@ class Node(QGraphicsItem):
     def itemChange(self, change, value):
         #If the position of the node changes -> calculate position change
         #and move edges with the node
-        if change == QGraphicsItem.ItemPositionChange:
-            currentPos = value
-            posChange = currentPos - self.lastPos
-            self.moveEdges(posChange)
-            self.lastPos = value
+        newPos = value
 
-        return super(Node, self).itemChange(change, value)
+        if change == QGraphicsItem.ItemPositionChange:
+            
+            if self.snappingIsOn:
+            	#Snap node to closest grid point
+                newPos = self.snapToGrid(newPos)
+
+            posChange = newPos - self.lastPos
+            self.moveEdges(posChange)
+            self.lastPos = newPos        
+
+        return super(Node, self).itemChange(change, newPos)
+
+
+    def snapToGrid(self, position):
+        #Return position of closest grid point
+        gridSize = 50
+        curPos = QPoint(position.x(), position.y())
+        gridPos = QPoint(round(curPos.x() / gridSize) * gridSize, round(curPos.y() / gridSize) * gridSize)
+
+        return gridPos
 
 
     def mouseReleaseEvent(self, event):
