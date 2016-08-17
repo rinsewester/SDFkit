@@ -14,7 +14,7 @@ from PyQt5.QtCore import Qt, QPoint, QPointF, QRectF
 from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont, QContextMenuEvent, QCursor
 
 class TokenCluster():
-    def __init__(self, widget, scene, view, edge):
+    def __init__(self, widget, scene, view, edge, tokenValues = [1, 2, 3, 40, 500, 'token', 789012]):
         super().__init__()
 
         self.edge = edge
@@ -22,17 +22,11 @@ class TokenCluster():
         self.view = view
         self.widget = widget
         self.addReferenceToEdge()
-        self.tokenValues = [1, 2, 3, 40, 500, 'token', 789012]
+        self.tokenValues = tokenValues
         self.tokensAreClusterd = False
 
         self.tokenList = []
 
-        #self.addToken(1)
-        #self.addToken(2)
-        #self.addToken(3)
-        #self.addToken(20)   
-        #self.addToken(300)  
-        
         self.newTokenValues(self.tokenValues) 
         
         #Update all tokens once
@@ -98,9 +92,13 @@ class TokenCluster():
 
 
     def contextMenu(self, pos):
+    	#Get point from scene
         point = self.view.mapFromScene(pos)
-        point = QPoint(point.x() + 250, point.y() + 80) #Maybe add scene origin instead
 
+        #Convert point to global point
+        point = self.view.mapToGlobal(point)
+
+        #Execute context menu
         self.tokenMenu.exec(point)
 
 
@@ -216,17 +214,17 @@ class Token(QGraphicsItem):
         
         elif self.rowLength == 1:
             if self.numberInRow == 0:
-                self.setPos(self.getPointCloseToCenter(10))
+                self.setPos(self.getPointCloseToCenter(8))
             else:
-                self.setPos(self.getPointCloseToCenter(-10))
+                self.setPos(self.getPointCloseToCenter(-8))
         
         elif self.rowLength == 2:
             if self.numberInRow == 0:
-                self.setPos(self.getPointCloseToCenter(20))
+                self.setPos(self.getPointCloseToCenter(15))
             elif self.numberInRow == 1:
                 self.setPos(self.getPointOnEdge(0.5))
             else:
-                self.setPos(self.getPointCloseToCenter(-20))
+                self.setPos(self.getPointCloseToCenter(-15))
 
         else:
             if self.numberInRow == 0:
@@ -236,16 +234,6 @@ class Token(QGraphicsItem):
             else:
                 self.cluster.tokensAreClusterd = True
                 self.setPos(self.getPointOnEdge(0.5))
-
-        # if self.numberInRow == 0:
-        # 	#First
-        #     self.setPos(self.getPointCloseToCenter(20))
-        # elif self.numberInRow == self.rowLength:
-        # 	#Last
-        #     self.setPos(self.getPointCloseToCenter(-20))
-        # else:
-        # 	#Other
-        #     self.setPos(self.getPointOnEdge(self.t))
 
     
     def setZValueToken(self, zValue):
@@ -257,5 +245,6 @@ class Token(QGraphicsItem):
 
 
     def contextMenuEvent(self, event):
+    	#Gets point of right click and converts it to a position on the scene
         self.cluster.contextMenu(event.scenePos())
 
