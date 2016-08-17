@@ -9,17 +9,19 @@ author: Sander Giesselink
 """
 
 import sys
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QPoint, QRectF
 from node import*
 from edge import*
 from tokenCluster import*
 
-class Graph():
+class Graph(QWidget):
 
     def __init__(self, scene, view):
         super().__init__()
 
         self.scene = scene
+        self.view = view
         testScene = 1
       
         self.edgeList = []
@@ -133,7 +135,7 @@ class Graph():
         newEdge.setZValue(1)
 
         #Give edge a cluster of tokens
-        tokenCluster = TokenCluster(scene, newEdge)
+        tokenCluster = TokenCluster(self, scene, self.view, newEdge)
         
         #Add edge to the scene and list
         scene.addItem(newEdge)

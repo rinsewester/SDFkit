@@ -9,67 +9,126 @@ author: Sander Giesselink
 """
 
 import sys
-from PyQt5.QtWidgets import QGraphicsItem
+from PyQt5.QtWidgets import QGraphicsItem, QMenu, QAction, QInputDialog
 from PyQt5.QtCore import Qt, QPoint, QPointF, QRectF
-from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont
+from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont, QContextMenuEvent, QCursor
 
 class TokenCluster():
-    def __init__(self, scene, edge):
+    def __init__(self, widget, scene, view, edge):
         super().__init__()
 
         self.edge = edge
         self.scene = scene
+        self.view = view
+        self.widget = widget
         self.addReferenceToEdge()
+        self.tokenValues = [1, 2, 3, 40, 500, 'token', 789012]
+        self.tokensAreClusterd = False
 
         self.tokenList = []
 
-        self.addToken(self.scene, 1)
-        self.addToken(self.scene, 2)
-        self.addToken(self.scene, 3)
-        self.addToken(self.scene, 20)   
-        self.addToken(self.scene, 300)   
+        #self.addToken(1)
+        #self.addToken(2)
+        #self.addToken(3)
+        #self.addToken(20)   
+        #self.addToken(300)  
+        
+        self.newTokenValues(self.tokenValues) 
         
         #Update all tokens once
         self.updateTokens()      
+
+        
+        self.setTokenAction = QAction('Edit tokens', self.widget)
+        self.setTokenAction.triggered.connect(self.setTokenActiontriggered)
+
+        self.tokenMenu = QMenu()
+        self.tokenMenu.addAction(self.setTokenAction)
         
         
 
 
-    def addToken(self, scene, value):
+    def addToken(self, value):
         listLength = len(self.tokenList)
-        token = Token(value, self.edge, listLength)
+        token = Token(value, self.edge, listLength, self)
 
-        #Remove last-in-row flag from second last token
         if listLength >= 1:
-            self.tokenList[listLength - 1].tokenIsLastInRow = False
+            #Update the row length for all tokens
+            for i in range(listLength):
+                self.tokenList[i].updateRowLength(listLength)
 
         #Add token to scene and list
-        token.setZValue(5)
+        token.setZValue(2)
         self.tokenList.append(token)
-        scene.addItem(token)
+        self.scene.addItem(token)
 
 
     def addReferenceToEdge(self):
         self.edge.setTokenCluster(self)
+    
 
-
+#------------------
+#---Changing tokens---
     def updateTokens(self):
         for i in range(len(self.tokenList)):
             self.tokenList[i].updatePos()
 
 
+    def newTokenValues(self, newTokens):
+    	#Replaces all tokens with new tokens
+        self.deleteTokens()
+        self.tokenList.clear()
+
+        for i in range(len(newTokens)):
+            self.addToken(newTokens[i])
+        
+        self.tokenValues = newTokens
+        self.updateTokens()  
+
+
+    def deleteTokens(self):
+        for i in range(len(self.tokenList)):
+            self.scene.removeItem(self.tokenList[i])
+            #Might also need to remove the QGraphicsItem itself, but 'delete' doesn't work
+
+
+    def setZValueTokenCluster(self, zValue):
+        for i in range(len(self.tokenList)):
+            self.tokenList[i].setZValueToken(zValue)
+
+
+    def contextMenu(self, pos):
+        point = self.view.mapFromScene(pos)
+        point = QPoint(point.x() + 250, point.y() + 80) #Maybe add scene origin instead
+
+        self.tokenMenu.exec(point)
+
+
+    def setTokenActiontriggered(self):
+        tokenStr = str(self.tokenValues)
+        newTokenStr, ok = QInputDialog.getText(self.widget, 'Edit tokens', 'Tokens:', text = tokenStr)
+        
+        if ok:
+            try:
+                newTokens = eval(newTokenStr)
+                print('Updated tokens to: ' + str(newTokenStr))
+                self.newTokenValues(newTokens)
+            except:
+                print('Invalid token entry')
+
+ 
 
 class Token(QGraphicsItem):
 
-    def __init__(self, value, edge, numberInRow):
+    def __init__(self, value, edge, numberInRow, cluster):
         super().__init__()
 
-        self.tokenIsLastInRow = True
         self.value = value
         self.edge = edge
         self.numberInRow = numberInRow
+        self.rowLength = numberInRow
+        self.cluster = cluster
         self.t = 0.5
-        #self.updatePos()
         self.tokenWidth = 15
         self.tokenHeight = 15
 
@@ -103,20 +162,26 @@ class Token(QGraphicsItem):
             painter.drawEllipse(self.getTokenRect())
             rectValue = self.getTokenRect()
 
+            #Determine font size based on size of token content
             if valueSize == 1:
-                #rectValue = QRectF(1, 1, self.tokenWidth, self.tokenHeight)
-                painter.setFont(QFont("Lucida Console", 10))
+                rectValue = QRectF(rectValue.x(), rectValue.x() + 1, rectValue.width(), rectValue.height())
+                painter.setFont(QFont("Lucida Console", 9))
             elif valueSize == 2:
-                painter.setFont(QFont("Lucida Console", 8))
+                painter.setFont(QFont("Lucida Console", 7))
             elif valueSize == 3:
                 painter.setFont(QFont("Lucida Console", 5))
-            elif valueSize == 4:
+            elif valueSize > 3:
                 painter.setFont(QFont("Lucida Console", 4))
                
             
-            if lod > 0.45:
+            if lod > 0.4:
                 painter.drawText(rectValue, Qt.AlignCenter, str(self.value))
-                #painter.drawRect(self.getTokenRect())
+                
+                #Add dots to indicate that not the entire contents of the token is displayed
+                if valueSize > 5:
+                    rect = rectValue                    
+                    rect.setY(rect.y() + 5)
+                    painter.drawText(rect, Qt.AlignCenter, '..')
 
 
 #------------------
@@ -144,12 +209,53 @@ class Token(QGraphicsItem):
 
     def updatePos(self):          
         #Update postion of the token based on its position in the row
-        if self.numberInRow == 0:
-        	#First
-            self.setPos(self.getPointCloseToCenter(20))
-        elif self.tokenIsLastInRow:
-        	#Last
-            self.setPos(self.getPointCloseToCenter(-20))
+        self.cluster.tokensAreClusterd = False
+
+        if self.rowLength == 0:
+            self.setPos(self.getPointOnEdge(0.5))
+        
+        elif self.rowLength == 1:
+            if self.numberInRow == 0:
+                self.setPos(self.getPointCloseToCenter(10))
+            else:
+                self.setPos(self.getPointCloseToCenter(-10))
+        
+        elif self.rowLength == 2:
+            if self.numberInRow == 0:
+                self.setPos(self.getPointCloseToCenter(20))
+            elif self.numberInRow == 1:
+                self.setPos(self.getPointOnEdge(0.5))
+            else:
+                self.setPos(self.getPointCloseToCenter(-20))
+
         else:
-        	#Other
-            self.setPos(self.getPointOnEdge(self.t))
+            if self.numberInRow == 0:
+                self.setPos(self.getPointCloseToCenter(20))
+            elif self.numberInRow == self.rowLength:
+                self.setPos(self.getPointCloseToCenter(-20))
+            else:
+                self.cluster.tokensAreClusterd = True
+                self.setPos(self.getPointOnEdge(0.5))
+
+        # if self.numberInRow == 0:
+        # 	#First
+        #     self.setPos(self.getPointCloseToCenter(20))
+        # elif self.numberInRow == self.rowLength:
+        # 	#Last
+        #     self.setPos(self.getPointCloseToCenter(-20))
+        # else:
+        # 	#Other
+        #     self.setPos(self.getPointOnEdge(self.t))
+
+    
+    def setZValueToken(self, zValue):
+        self.setZValue(zValue)
+
+
+    def updateRowLength(self, length):
+        self.rowLength = length
+
+
+    def contextMenuEvent(self, event):
+        self.cluster.contextMenu(event.scenePos())
+

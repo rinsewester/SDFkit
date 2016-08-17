@@ -34,7 +34,7 @@ class Edge(QGraphicsItem):
         #self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
         self.hover = False
-        self.debugOn = True
+        self.debugOn = False
 
 
     def boundingRect(self):
@@ -297,6 +297,7 @@ class Edge(QGraphicsItem):
 
     def setZValueEdge(self, zValue):
         self.setZValue(zValue)
+        self.tokenCluster.setZValueTokenCluster(zValue + 1)
 
 
     def getPointOnEdge(self, t):

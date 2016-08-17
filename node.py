@@ -11,7 +11,7 @@ author: Sander Giesselink
 import sys
 from PyQt5.QtWidgets import QWidget, QGraphicsItem, QPushButton, QVBoxLayout
 from PyQt5.QtCore import QRectF, QPointF, QPoint, Qt, QVariant
-from PyQt5.QtGui import QColor, QPainter, QBrush, QPainterPath, QLinearGradient
+from PyQt5.QtGui import QColor, QPainter, QBrush, QPainterPath, QLinearGradient, QFont
 from collections import Counter
 
 class Node(QGraphicsItem):
@@ -172,6 +172,7 @@ class Node(QGraphicsItem):
         if self.nodeTextDisplayed == '':
             self.setNodeName()
         
+        painter.setFont(QFont("Arial", 8))
         painter.drawText(self.rectNodeName, Qt.AlignCenter, self.nodeTextDisplayed) 
 
 
@@ -206,16 +207,16 @@ class Node(QGraphicsItem):
                 self.setZValueEdges(1)
             else:
             	#Selected
-                self.setZValue(2)
-                self.setZValueEdges(3)
+                self.setZValue(3)
+                self.setZValueEdges(4)
 
         #If the position of the node changes -> calculate position change
         #and move edges with the node
         newPos = value
 
         if change == QGraphicsItem.ItemPositionChange:
-            self.setZValue(2)
-            self.setZValueEdges(3)
+            # self.setZValue(3)
+            # self.setZValueEdges(4)
             
             if self.snappingIsOn:
             	#Snap node to closest grid point
