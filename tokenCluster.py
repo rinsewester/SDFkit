@@ -14,36 +14,65 @@ from PyQt5.QtCore import Qt, QPoint, QPointF, QRectF
 from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont
 
 class TokenCluster():
-    def __init__(self, scene, edge, clusterPos):
+    def __init__(self, scene, edge):
         super().__init__()
 
         self.edge = edge
         self.scene = scene
-        self.clusterPos = clusterPos
+        self.addReferenceToEdge()
 
         self.tokenList = []
 
-        self.addToken(self.scene, 2666)       
+        self.addToken(self.scene, 1)
+        self.addToken(self.scene, 2)
+        self.addToken(self.scene, 3)
+        self.addToken(self.scene, 20)   
+        self.addToken(self.scene, 300)   
+        
+        #Update all tokens once
+        self.updateTokens()      
+        
+        
 
 
     def addToken(self, scene, value):
-        token = Token(2666, self.edge, self.clusterPos)
+        listLength = len(self.tokenList)
+        token = Token(value, self.edge, listLength)
+
+        #Remove last-in-row flag from second last token
+        if listLength >= 1:
+            self.tokenList[listLength - 1].tokenIsLastInRow = False
+
+        #Add token to scene and list
         token.setZValue(5)
         self.tokenList.append(token)
         scene.addItem(token)
 
 
+    def addReferenceToEdge(self):
+        self.edge.setTokenCluster(self)
+
+
+    def updateTokens(self):
+        for i in range(len(self.tokenList)):
+            self.tokenList[i].updatePos()
+
+
 
 class Token(QGraphicsItem):
 
-    def __init__(self, value, edge, tokenPos):
+    def __init__(self, value, edge, numberInRow):
         super().__init__()
 
+        self.tokenIsLastInRow = True
         self.value = value
-        self.setPos(tokenPos)
+        self.edge = edge
+        self.numberInRow = numberInRow
+        self.t = 0.5
+        #self.updatePos()
         self.tokenWidth = 15
         self.tokenHeight = 15
-        print('Token created')
+
 
 
     def boundingRect(self):
@@ -66,7 +95,7 @@ class Token(QGraphicsItem):
         lod = option.levelOfDetailFromTransform(painter.worldTransform())
 
         if lod > 0.15:
-            valueSize = 4
+            valueSize = len(str(self.value))
             painter.setPen(QColor(0, 0, 0))
             painter.setBrush(QColor(255, 255, 255))
             
@@ -75,7 +104,7 @@ class Token(QGraphicsItem):
             rectValue = self.getTokenRect()
 
             if valueSize == 1:
-                rectValue = QRectF(1, 1, self.tokenWidth, self.tokenHeight)
+                #rectValue = QRectF(1, 1, self.tokenWidth, self.tokenHeight)
                 painter.setFont(QFont("Lucida Console", 10))
             elif valueSize == 2:
                 painter.setFont(QFont("Lucida Console", 8))
@@ -85,9 +114,9 @@ class Token(QGraphicsItem):
                 painter.setFont(QFont("Lucida Console", 4))
                
             
-
-            painter.drawText(rectValue, Qt.AlignCenter, str(self.value))
-            #painter.drawRect(self.getTokenRect())
+            if lod > 0.45:
+                painter.drawText(rectValue, Qt.AlignCenter, str(self.value))
+                #painter.drawRect(self.getTokenRect())
 
 
 #------------------
@@ -103,3 +132,24 @@ class Token(QGraphicsItem):
 #---Other---
     def getTokenRect(self):
         return QRectF(-self.tokenWidth / 2, -self.tokenHeight / 2, self.tokenWidth, self.tokenHeight)
+
+
+    def getPointOnEdge(self, t):
+        return self.edge.getPointOnEdge(t)
+
+
+    def getPointCloseToCenter(self, distance):
+        return self.edge.getPointCloseToCenter(distance)
+
+
+    def updatePos(self):          
+        #Update postion of the token based on its position in the row
+        if self.numberInRow == 0:
+        	#First
+            self.setPos(self.getPointCloseToCenter(20))
+        elif self.tokenIsLastInRow:
+        	#Last
+            self.setPos(self.getPointCloseToCenter(-20))
+        else:
+        	#Other
+            self.setPos(self.getPointOnEdge(self.t))

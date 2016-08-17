@@ -133,7 +133,7 @@ class Graph():
         newEdge.setZValue(1)
 
         #Give edge a cluster of tokens
-        tokenCluster = TokenCluster(scene, newEdge, newEdge.getPointOnEdge(0.5))
+        tokenCluster = TokenCluster(scene, newEdge)
         
         #Add edge to the scene and list
         scene.addItem(newEdge)

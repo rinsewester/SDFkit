@@ -286,6 +286,9 @@ class Edge(QGraphicsItem):
 
         #Update curve
         self.calculateCurvePoints(self.beginPoint, self.endPoint)
+
+        #Update tokens on the edge
+        self.tokenCluster.updateTokens()
        
         #Prepare the painter for a geometry change, so it repaints correctly
         self.prepareGeometryChange()
@@ -301,6 +304,25 @@ class Edge(QGraphicsItem):
         edgePath.cubicTo(self.curvePoint1, self.curvePoint2, self.endPoint)
 
         point = QPointF(edgePath.pointAtPercent(t))
-        print(point)
+
         return point
+
+
+    def getPointCloseToCenter(self, distance):
+        edgePath = QPainterPath(self.beginPoint)
+        edgePath.cubicTo(self.curvePoint1, self.curvePoint2, self.endPoint)
+
+        percent = (edgePath.length() / 2 + distance) / edgePath.length()
+     
+        #Snap to begin/end point when the edge is too small
+        if percent < 0:
+            percent = 0
+        elif percent > 1:
+            percent = 1
+
+        return self.getPointOnEdge(percent)
+
+
+    def setTokenCluster(self, tokenCluster):
+        self.tokenCluster = tokenCluster
         
