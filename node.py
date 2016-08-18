@@ -113,7 +113,7 @@ class Node(QGraphicsItem):
         painter.setBrush(brush)
 
         if lod > 0.1:
-            painter.drawRoundedRect(0, 0, self.nodeBodyWidth, self.nodeBodyHeight, 10, 10)
+            painter.drawRoundedRect(0, 0, self.nodeBodyWidth, self.nodeBodyHeight, 10, 5)
         else:
         	painter.drawRect(0, 0, self.nodeBodyWidth, self.nodeBodyHeight)
 
@@ -228,9 +228,10 @@ class Node(QGraphicsItem):
 
     def snapToGrid(self, position):
         #Return position of closest grid point
-        gridSize = 50
+        gridSizeX = 40
+        gridSizeY = 20
         curPos = QPoint(position.x(), position.y())
-        gridPos = QPoint(round(curPos.x() / gridSize) * gridSize, round(curPos.y() / gridSize) * gridSize)
+        gridPos = QPoint(round(curPos.x() / gridSizeX) * gridSizeX, round(curPos.y() / gridSizeY) * gridSizeY)
 
         return gridPos
 
@@ -273,7 +274,7 @@ class Node(QGraphicsItem):
         if side == 'right':
             addWidthForRightSide = self.nodeBodyWidth - self.ioWidth
 
-        ioPoint = QPointF(addWidthForRightSide, sideIndex * (self.ioHeightDifference + self.ioHeight) + self.ioHeight)
+        ioPoint = QPointF(addWidthForRightSide, sideIndex * (self.ioHeightDifference + self.ioHeight) + self.ioHeight / 2)
 
         #Returns the point of a specific io
         return ioPoint
@@ -290,11 +291,11 @@ class Node(QGraphicsItem):
 
             #Add y translation for the exact IO position relative to the node
             ioIndex = self.getLengthRightSide()
-            addedY = (ioIndex - 1) * (self.ioHeightDifference + self.ioHeight) + self.ioHeight + (self.ioHeight / 2) + self.yTranslationRightIO
+            addedY = (ioIndex - 1) * (self.ioHeightDifference + self.ioHeight) + self.ioHeight / 2 + (self.ioHeight / 2) + self.yTranslationRightIO
   
         else:
             ioIndex = self.getLengthLeftSide()
-            addedY = (ioIndex - 1) * (self.ioHeightDifference + self.ioHeight) + self.ioHeight + (self.ioHeight / 2) + self.yTranslationLeftIO
+            addedY = (ioIndex - 1) * (self.ioHeightDifference + self.ioHeight) + self.ioHeight / 2 + (self.ioHeight / 2) + self.yTranslationLeftIO
   
         #Returns the calculated point of the IO
         ioPoint = QPointF(self.pos().x() + addedX, self.pos().y() + addedY)
@@ -438,7 +439,7 @@ class Node(QGraphicsItem):
             longestSide = longestSide - 1
          
         #Set nodeBodyHeight based on longest io side
-        self.nodeBodyHeight = (longestSide * (self.ioHeightDifference + self.ioHeight) + self.ioHeight)
+        self.nodeBodyHeight = (longestSide * (self.ioHeightDifference + self.ioHeight))
 
 
     def getNodeBodyHeigth(self):
