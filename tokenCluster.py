@@ -31,7 +31,7 @@ class TokenCluster():
         
         #Update all tokens once
         self.updateTokens()      
-
+       
         
         self.setTokenAction = QAction('Edit tokens', self.widget)
         self.setTokenAction.triggered.connect(self.setTokenActiontriggered)
@@ -130,11 +130,16 @@ class Token(QGraphicsItem):
         self.tokenWidth = 15
         self.tokenHeight = 15
 
+        self.setAcceptHoverEvents(True)
+        self.hover = False
+
 
 
     def boundingRect(self):
         #Used for collision detection and repaint
         rect = self.getTokenRect()
+        if self.hover:
+            rect = self.getTokenRectHover()
 
         return rect
 
@@ -143,7 +148,7 @@ class Token(QGraphicsItem):
         #Determines the collision area
 
         path = QPainterPath()
-        path.addEllipse(self.getTokenRect())
+        path.addEllipse(self.boundingRect())
 
         return path
 
@@ -156,20 +161,37 @@ class Token(QGraphicsItem):
             painter.setPen(QColor(0, 0, 0))
             painter.setBrush(QColor(255, 255, 255))
             
-
-            painter.drawEllipse(self.getTokenRect())
             rectValue = self.getTokenRect()
+            if self.hover:
+            	#Make token larger when the mouse hovers over it
+                rectValue = self.getTokenRectHover()
+
+            painter.drawEllipse(rectValue)
+            
 
             #Determine font size based on size of token content
-            if valueSize == 1:
-                rectValue = QRectF(rectValue.x(), rectValue.x() + 1, rectValue.width(), rectValue.height())
-                painter.setFont(QFont("Lucida Console", 9))
-            elif valueSize == 2:
-                painter.setFont(QFont("Lucida Console", 7))
-            elif valueSize == 3:
-                painter.setFont(QFont("Lucida Console", 5))
-            elif valueSize > 3:
-                painter.setFont(QFont("Lucida Console", 4))
+            if self.hover:
+            	#Larger text when hovering
+                if valueSize == 1:
+                    rectValue = QRectF(rectValue.x(), rectValue.x() + 1, rectValue.width(), rectValue.height())
+                    painter.setFont(QFont("Lucida Console", 13))
+                elif valueSize == 2:
+                    painter.setFont(QFont("Lucida Console", 11))
+                elif valueSize == 3:
+                    painter.setFont(QFont("Lucida Console", 8))
+                elif valueSize > 3:
+                    painter.setFont(QFont("Lucida Console", 6))
+            else:
+            	#Normal size text when not hovering
+                if valueSize == 1:
+                    rectValue = QRectF(rectValue.x(), rectValue.x() + 1, rectValue.width(), rectValue.height())
+                    painter.setFont(QFont("Lucida Console", 9))
+                elif valueSize == 2:
+                    painter.setFont(QFont("Lucida Console", 7))
+                elif valueSize == 3:
+                    painter.setFont(QFont("Lucida Console", 5))
+                elif valueSize > 3:
+                    painter.setFont(QFont("Lucida Console", 4))
                
             
             if lod > 0.4:
@@ -191,10 +213,31 @@ class Token(QGraphicsItem):
         self.update()
 
 
+    def hoverEnterEvent(self, event):
+        self.hover = True
+        self.setZValue(6)
+
+        super().hoverEnterEvent(event)
+        self.update()
+
+
+    def hoverLeaveEvent(self, event):
+        self.hover = False
+        self.setZValue(2)
+        self.prepareGeometryChange()
+
+        super().hoverLeaveEvent(event)
+        self.update()
+
+
 #------------------
 #---Other---
     def getTokenRect(self):
-        return QRectF(-self.tokenWidth / 2, -self.tokenHeight / 2, self.tokenWidth, self.tokenHeight)
+        return QRectF(-self.tokenWidth * 0.5, -self.tokenHeight * 0.5, self.tokenWidth, self.tokenHeight)
+
+
+    def getTokenRectHover(self):
+        return QRectF(-self.tokenWidth * 0.75 , -self.tokenHeight * 0.75, self.tokenWidth * 1.5, self.tokenHeight * 1.5)
 
 
     def getPointOnEdge(self, t):
