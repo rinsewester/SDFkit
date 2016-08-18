@@ -207,17 +207,14 @@ class Node(QGraphicsItem):
                 self.setZValueEdges(1)
             else:
             	#Selected
-                self.setZValue(3)
-                self.setZValueEdges(4)
+                self.setZValue(4)
+                self.setZValueEdges(5)
 
         #If the position of the node changes -> calculate position change
         #and move edges with the node
         newPos = value
 
         if change == QGraphicsItem.ItemPositionChange:
-            # self.setZValue(3)
-            # self.setZValueEdges(4)
-            
             if self.snappingIsOn:
             	#Snap node to closest grid point
                 newPos = self.snapToGrid(newPos)

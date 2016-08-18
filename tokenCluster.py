@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QGraphicsItem, QMenu, QAction, QInputDialog
 from PyQt5.QtCore import Qt, QPoint, QPointF, QRectF
 from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont, QContextMenuEvent, QCursor
 
-class TokenCluster():
+class TokenCluster(QGraphicsItem):
     def __init__(self, widget, scene, view, edge, tokenValues = [1, 2, 3, 40, 500, 'token', 789012]):
         super().__init__()
 
@@ -24,12 +24,18 @@ class TokenCluster():
         self.addReferenceToEdge()
         self.tokenValues = tokenValues
         self.tokensAreClusterd = False
+        self.setAcceptHoverEvents(True)
+        self.hover = False
+        self.clusterWidth = 20
+        self.clusterHeight = 20
+        self.clusterColor = QColor(240, 240, 240)
 
         self.tokenList = []
 
         self.newTokenValues(self.tokenValues) 
         
         #Update all tokens once
+        self.setZValue(2)
         self.updateTokens()      
        
         
@@ -39,6 +45,63 @@ class TokenCluster():
         self.tokenMenu = QMenu()
         self.tokenMenu.addAction(self.setTokenAction)
         
+
+
+    def boundingRect(self):
+        #Used for collision detection and repaint
+        rect = self.getClusterRect()
+        if self.hover:
+            rect = self.getClusterRectHover()
+
+        return rect
+
+    
+    def shape(self):
+        #Determines the collision area
+        path = QPainterPath()
+        path.addEllipse(self.boundingRect())
+
+        return path
+
+
+    def paint(self, painter, option, widget):
+        lod = option.levelOfDetailFromTransform(painter.worldTransform())
+
+        if lod > 0.15 and self.tokensAreClusterd:
+            painter.setPen(QColor(0, 0, 0))
+            painter.setBrush(self.clusterColor)
+            
+            rect = self.getClusterRect()
+            smallRect1 = QRectF(-self.clusterWidth * 0.5, -self.clusterHeight * 0.25, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
+            smallRect2 = QRectF(-self.clusterWidth * 0.25, 0, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
+            smallRect3 = QRectF(-self.clusterWidth * 0.25, -self.clusterHeight * 0.5, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
+            smallRect4 = QRectF(0, -self.clusterHeight * 0.25, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
+
+
+
+            if self.hover:
+            	#Make token larger when the mouse hovers over it
+                rect = self.getClusterRectHover()
+                #smallRect = QRectF(-self.clusterWidth * 0.375, -self.clusterHeight * 0.375, self.clusterWidth * 0.75, self.clusterHeight * 0.75)
+                smallRect1 = QRectF(-self.clusterWidth * 0.75, -self.clusterHeight * 0.375, self.clusterWidth * 0.75, self.clusterHeight * 0.75)
+                smallRect2 = QRectF(-self.clusterWidth * 0.375, 0, self.clusterWidth * 0.875, self.clusterHeight * 0.75)
+                smallRect3 = QRectF(-self.clusterWidth * 0.375, -self.clusterHeight * 0.75, self.clusterWidth * 0.75, self.clusterHeight * 0.75)
+                smallRect4 = QRectF(0, -self.clusterHeight * 0.375, self.clusterWidth * 0.75, self.clusterHeight * 0.75)
+
+            #Paint cluster
+            painter.drawEllipse(rect)
+            painter.drawEllipse(smallRect1)
+            painter.drawEllipse(smallRect2)
+            painter.drawEllipse(smallRect3)
+            painter.drawEllipse(smallRect4)
+
+
+    def getClusterRect(self):
+        return QRectF(-self.clusterWidth * 0.5, -self.clusterHeight * 0.5, self.clusterWidth, self.clusterHeight)
+
+
+    def getClusterRectHover(self):
+        return QRectF(-self.clusterWidth * 0.75, -self.clusterHeight * 0.75, self.clusterWidth * 1.5, self.clusterHeight * 1.5)
         
 
 
@@ -52,7 +115,7 @@ class TokenCluster():
                 self.tokenList[i].updateRowLength(listLength)
 
         #Add token to scene and list
-        token.setZValue(2)
+        token.setZValue(3)
         self.tokenList.append(token)
         self.scene.addItem(token)
 
@@ -66,6 +129,8 @@ class TokenCluster():
     def updateTokens(self):
         for i in range(len(self.tokenList)):
             self.tokenList[i].updatePos()
+
+        self.setPos(self.edge.getPointOnEdge(0.5))
 
 
     def newTokenValues(self, newTokens):
@@ -87,8 +152,40 @@ class TokenCluster():
 
 
     def setZValueTokenCluster(self, zValue):
+        self.setZValue(zValue)
         for i in range(len(self.tokenList)):
-            self.tokenList[i].setZValueToken(zValue)
+            self.tokenList[i].setZValueToken(zValue + 1)
+
+
+#------------------
+#---Mouse Events---
+    def mousePressEvent(self, event):
+        print('Token Values: ' + str(self.tokenValues))  
+
+        super().mousePressEvent(event)
+        self.update()
+
+
+    def hoverEnterEvent(self, event):
+        self.hover = True
+        self.setZValue(self.zValue() + 4)
+
+        super().hoverEnterEvent(event)
+        self.update()
+
+
+    def hoverLeaveEvent(self, event):
+        self.hover = False
+        self.setZValue(self.zValue() - 4)
+        self.prepareGeometryChange()
+
+        super().hoverLeaveEvent(event)
+        self.update()
+
+
+    def contextMenuEvent(self, event):
+        #Gets point of right click and converts it to a position on the scene
+        self.contextMenu(event.scenePos())
 
 
     def contextMenu(self, pos):
@@ -116,6 +213,9 @@ class TokenCluster():
 
  
 
+
+
+
 class Token(QGraphicsItem):
 
     def __init__(self, value, edge, numberInRow, cluster):
@@ -129,6 +229,7 @@ class Token(QGraphicsItem):
         self.t = 0.5
         self.tokenWidth = 15
         self.tokenHeight = 15
+        self.tokenColor = QColor(255, 255, 255)
 
         self.setAcceptHoverEvents(True)
         self.hover = False
@@ -159,7 +260,7 @@ class Token(QGraphicsItem):
         if lod > 0.15:
             valueSize = len(str(self.value))
             painter.setPen(QColor(0, 0, 0))
-            painter.setBrush(QColor(255, 255, 255))
+            painter.setBrush(self.tokenColor)
             
             rectValue = self.getTokenRect()
             if self.hover:
@@ -215,7 +316,7 @@ class Token(QGraphicsItem):
 
     def hoverEnterEvent(self, event):
         self.hover = True
-        self.setZValue(6)
+        self.setZValue(self.zValue() + 4)
 
         super().hoverEnterEvent(event)
         self.update()
@@ -223,11 +324,16 @@ class Token(QGraphicsItem):
 
     def hoverLeaveEvent(self, event):
         self.hover = False
-        self.setZValue(2)
+        self.setZValue(self.zValue() - 4)
         self.prepareGeometryChange()
 
         super().hoverLeaveEvent(event)
         self.update()
+
+
+    def contextMenuEvent(self, event):
+        #Gets point of right click and converts it to a position on the scene
+        self.cluster.contextMenu(event.scenePos())
 
 
 #------------------
@@ -251,6 +357,7 @@ class Token(QGraphicsItem):
     def updatePos(self):          
         #Update postion of the token based on its position in the row
         self.cluster.tokensAreClusterd = False
+        self.setVisible(True)
 
         if self.rowLength == 0:
             self.setPos(self.getPointOnEdge(0.5))
@@ -274,9 +381,10 @@ class Token(QGraphicsItem):
                 self.setPos(self.getPointCloseToCenter(20))
             elif self.numberInRow == self.rowLength:
                 self.setPos(self.getPointCloseToCenter(-20))
-            else:
-                self.cluster.tokensAreClusterd = True
-                self.setPos(self.getPointOnEdge(0.5))
+            else:                
+                self.setVisible(False)
+            #Draw a cluster instead of all the tokens in the middle
+            self.cluster.tokensAreClusterd = True
 
     
     def setZValueToken(self, zValue):
@@ -287,7 +395,5 @@ class Token(QGraphicsItem):
         self.rowLength = length
 
 
-    def contextMenuEvent(self, event):
-    	#Gets point of right click and converts it to a position on the scene
-        self.cluster.contextMenu(event.scenePos())
+    
 

@@ -136,6 +136,7 @@ class Graph(QWidget):
 
         #Give edge a cluster of tokens
         tokenCluster = TokenCluster(self, scene, self.view, newEdge)
+        scene.addItem(tokenCluster)
         
         #Add edge to the scene and list
         scene.addItem(newEdge)
