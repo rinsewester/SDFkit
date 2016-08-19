@@ -125,15 +125,15 @@ class GraphWidget(QWidget):
 
 
     def setGraph(self, graphData):
-        graphData = graphData
+        self.graphData = graphData
 
         # set widget size based on min/max positions of nodes
-        if not graphData is None:
+        if not self.graphData is None:
             minX, minY = sys.maxsize, sys.maxsize
             maxX, maxY = 0, 0
 
-            for n in graphData.nodes():
-                x, y = graphData.node[n]['pos']
+            for n in self.graphData.nodes():
+                x, y = self.graphData.node[n]['pos']
                 minX = min(minX, x)
                 minY = min(minY, y)
                 maxX = max(maxX, x)
@@ -145,34 +145,52 @@ class GraphWidget(QWidget):
             self.setMinimumWidth(128)
             self.setMinimumHeight(128)
 
-        self.placeGraphObjects(graphData)
+        self.placeGraphObjects()
 
         self.update()
 
 
-    def placeGraphObjects(self, graphData):
+    def placeGraphObjects(self):
         #Delete existing objects
         self.graph.clearGraph()
 
         #Place graph objects based on the graph data
         nodeList = []
-        for n in graphData.nodes():
+        for n in self.graphData.nodes():
             #Place nodes
-            x, y = graphData.node[n]['pos']
+            x, y = self.graphData.node[n]['pos']
 
             self.graph.addNode(x, y, n)
             nodeList.append(n)
 
-        for src, dst in graphData.edges():
-            #Place edges
+        for src, dst in self.graphData.edges():
+            #Place edges and tokens
             node1 = nodeList.index(src)
-            node2 = nodeList.index(dst)           
+            node2 = nodeList.index(dst)
+            tokenValues = self.graphData[src][dst]['tkns']         
 
-            self.graph.addEdgeToNodes(node1, node2, 'right', 'left')
+            self.graph.addEdgeToNodes(node1, node2, 'right', 'left', tokenValues)
 
 
-    def updateTokens(self, graphData):
-        print(graphData[src][dst]['tkns'])
+    def updateTokensGraph(self):
+        #Update tokens after a step
+        i = 0
+        for src, dst in self.graphData.edges():
+            self.graph.updateTokens(i, self.graphData[src][dst]['tkns'])
+            i = i + 1
+
+
+        #print(graphData.edgestates.items())
+
+        #for src, dst in graphData.edges():
+            #Place tokens
+            #node1 = nodeList.index(src)
+            #node2 = nodeList.index(dst) 
+            #print(graphData[src][dst]['tkns'])
+
+
+        #states.append(self[src][dst]['tkns'])
+        #print(graphData[src][dst]['tkns'])
 
 
 

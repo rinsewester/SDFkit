@@ -23,7 +23,10 @@ class Graph(QWidget):
 
         self.scene = scene
         self.view = view
-        testScene = 4
+
+        # Test scenes only work when not overruled by
+        # "self.graphWidget.setGraph(self.graph)" in mainwindow.py
+        testScene = 0   #0 = empty, 1 = complex, 2 = grid, 3 = simple
       
         self.edgeList = []
         self.nodeList = []
@@ -38,7 +41,7 @@ class Graph(QWidget):
         # Add nodes with: (QGraphicsScene(), xpos, ypos, nodeName)
         # self.addNode(scene, 0, 0, 'Node name')
         
-        #---Simple test scene---
+        #---Complex test scene---
         if testScene == 1:
             self.addNode(0, 0, '1')
             self.addNode(150, 0, 'n2')
@@ -77,8 +80,6 @@ class Graph(QWidget):
             self.addEdgeToNodes(3, 11, 'left', 'left')
 
 
-
-
         #---Grid test scene---
         if testScene == 2:
             gridSize = 25
@@ -90,6 +91,7 @@ class Graph(QWidget):
 
             for i in range(gridSize*gridSize - 1):
                 self.addEdgeToNodes(i, i + 1, 'right', 'left')
+
 
         #---Simple test scene---
         if testScene == 3:
@@ -107,11 +109,6 @@ class Graph(QWidget):
             self.addEdgeToNodes(4, 0, 'right', 'left')
 
 
-        #---Load test scene---
-        if testScene == 4:
-            print('TestScene 4')
-
-
     def clearGraph(self):
         for i in range(len(self.nodeList)):
             self.scene.removeItem(self.nodeList[i])
@@ -120,7 +117,8 @@ class Graph(QWidget):
             self.scene.removeItem(self.edgeList[i])
 
         for i in range(len(self.clusterList)):
-           self.scene.removeItem(self.clusterList[i])
+            self.clusterList[i].deleteTokens()
+            self.scene.removeItem(self.clusterList[i])
 
         self.nodeList.clear()
         self.edgeList.clear()
@@ -137,14 +135,14 @@ class Graph(QWidget):
         self.nodeList.append(newNode)
 
 
-    def addEdge(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops):        
+    def addEdge(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, tokenValues = []):        
         newEdge = Edge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops)
 
         #Place edges always behind nodes
         newEdge.setZValue(1)
 
         #Give edge a cluster of tokens
-        tokenCluster = TokenCluster(self, self.scene, self.view, newEdge)
+        tokenCluster = TokenCluster(self, self.scene, self.view, newEdge, tokenValues)
         self.scene.addItem(tokenCluster)
         self.clusterList.append(tokenCluster)
         
@@ -155,7 +153,7 @@ class Graph(QWidget):
         return newEdge
 
 
-    def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide):
+    def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide, tokenValues = []):
         beginNode = self.nodeList[beginNodeIndex]
         endNode = self.nodeList[endNodeIndex]
 
@@ -178,8 +176,12 @@ class Graph(QWidget):
         endNode.addNewIO(endSide, 0)
         
         #Create edge between the 2 nodes
-        edge = self.addEdge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops)
+        edge = self.addEdge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, tokenValues)
 
         #Give both nodes a reference to the created edge
         beginNode.addEdge(edge, 'begin')
         endNode.addEdge(edge, 'end')
+
+
+    def updateTokens(self, edgeIndex, tokenValues):
+        self.clusterList[edgeIndex].newTokenValues(tokenValues)

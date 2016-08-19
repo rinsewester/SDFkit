@@ -65,9 +65,9 @@ class TokenCluster(QGraphicsItem):
 
 
     def paint(self, painter, option, widget):
-        lod = option.levelOfDetailFromTransform(painter.worldTransform())
+        self.lod = option.levelOfDetailFromTransform(painter.worldTransform())
 
-        if lod > 0.15 and self.tokensAreClusterd:
+        if self.lod > 0.15 and self.tokensAreClusterd:
             painter.setPen(QColor(0, 0, 0))
             painter.setBrush(self.clusterColor)
             
@@ -153,6 +153,9 @@ class TokenCluster(QGraphicsItem):
 
     def setZValueTokenCluster(self, zValue):
         self.setZValue(zValue)
+        if self.hover:
+            self.setZValue(7)
+
         for i in range(len(self.tokenList)):
             self.tokenList[i].setZValueToken(zValue + 1)
 
@@ -176,7 +179,12 @@ class TokenCluster(QGraphicsItem):
 
     def hoverLeaveEvent(self, event):
         self.hover = False
-        self.setZValue(self.zValue() - 4)
+
+        if self.zValue() == 7:
+            self.setZValue(7)
+        else:            
+            self.setZValue(self.zValue() - 4)
+
         self.prepareGeometryChange()
 
         super().hoverLeaveEvent(event)
@@ -258,51 +266,52 @@ class Token(QGraphicsItem):
         lod = option.levelOfDetailFromTransform(painter.worldTransform())
 
         if lod > 0.15:
-            valueSize = len(str(self.value))
-            painter.setPen(QColor(0, 0, 0))
-            painter.setBrush(self.tokenColor)
-            
-            rectValue = self.getTokenRect()
-            if self.hover:
-            	#Make token larger when the mouse hovers over it
-                rectValue = self.getTokenRectHover()
-
-            painter.drawEllipse(rectValue)
-            
-
-            #Determine font size based on size of token content
-            if self.hover:
-            	#Larger text when hovering
-                if valueSize == 1:
-                    rectValue = QRectF(rectValue.x(), rectValue.x() + 1, rectValue.width(), rectValue.height())
-                    painter.setFont(QFont("Lucida Console", 13))
-                elif valueSize == 2:
-                    painter.setFont(QFont("Lucida Console", 11))
-                elif valueSize == 3:
-                    painter.setFont(QFont("Lucida Console", 8))
-                elif valueSize > 3:
-                    painter.setFont(QFont("Lucida Console", 6))
-            else:
-            	#Normal size text when not hovering
-                if valueSize == 1:
-                    rectValue = QRectF(rectValue.x(), rectValue.x() + 1, rectValue.width(), rectValue.height())
-                    painter.setFont(QFont("Lucida Console", 9))
-                elif valueSize == 2:
-                    painter.setFont(QFont("Lucida Console", 7))
-                elif valueSize == 3:
-                    painter.setFont(QFont("Lucida Console", 5))
-                elif valueSize > 3:
-                    painter.setFont(QFont("Lucida Console", 4))
-               
-            
-            if lod > 0.4:
-                painter.drawText(rectValue, Qt.AlignCenter, str(self.value))
+            if lod > 1 or self.rowLength < 3:
+                valueSize = len(str(self.value))
+                painter.setPen(QColor(0, 0, 0))
+                painter.setBrush(self.tokenColor)
                 
-                #Add dots to indicate that not the entire contents of the token is displayed
-                if valueSize > 5:
-                    rect = rectValue                    
-                    rect.setY(rect.y() + 5)
-                    painter.drawText(rect, Qt.AlignCenter, '..')
+                rectValue = self.getTokenRect()
+                if self.hover:
+                	#Make token larger when the mouse hovers over it
+                    rectValue = self.getTokenRectHover()
+
+                painter.drawEllipse(rectValue)
+                
+
+                #Determine font size based on size of token content
+                if self.hover:
+                	#Larger text when hovering
+                    if valueSize == 1:
+                        rectValue = QRectF(rectValue.x(), rectValue.x() + 1, rectValue.width(), rectValue.height())
+                        painter.setFont(QFont("Lucida Console", 13))
+                    elif valueSize == 2:
+                        painter.setFont(QFont("Lucida Console", 11))
+                    elif valueSize == 3:
+                        painter.setFont(QFont("Lucida Console", 8))
+                    elif valueSize > 3:
+                        painter.setFont(QFont("Lucida Console", 6))
+                else:
+                	#Normal size text when not hovering
+                    if valueSize == 1:
+                        rectValue = QRectF(rectValue.x(), rectValue.x() + 1, rectValue.width(), rectValue.height())
+                        painter.setFont(QFont("Lucida Console", 9))
+                    elif valueSize == 2:
+                        painter.setFont(QFont("Lucida Console", 7))
+                    elif valueSize == 3:
+                        painter.setFont(QFont("Lucida Console", 5))
+                    elif valueSize > 3:
+                        painter.setFont(QFont("Lucida Console", 4))
+                   
+                
+                if lod > 0.4:
+                    painter.drawText(rectValue, Qt.AlignCenter, str(self.value))
+                    
+                    #Add dots to indicate that not the entire contents of the token is displayed
+                    if valueSize > 5:
+                        rect = rectValue                    
+                        rect.setY(rect.y() + 5)
+                        painter.drawText(rect, Qt.AlignCenter, '..')
 
 
 #------------------
@@ -316,7 +325,7 @@ class Token(QGraphicsItem):
 
     def hoverEnterEvent(self, event):
         self.hover = True
-        self.setZValue(self.zValue() + 4)
+        self.setZValue(self.zValue() + 4)     
 
         super().hoverEnterEvent(event)
         self.update()
@@ -324,7 +333,12 @@ class Token(QGraphicsItem):
 
     def hoverLeaveEvent(self, event):
         self.hover = False
-        self.setZValue(self.zValue() - 4)
+
+        if self.zValue() == 8:
+            self.setZValue(8)
+        else:            
+            self.setZValue(self.zValue() - 4)
+
         self.prepareGeometryChange()
 
         super().hoverLeaveEvent(event)
@@ -389,6 +403,9 @@ class Token(QGraphicsItem):
     
     def setZValueToken(self, zValue):
         self.setZValue(zValue)
+
+        if self.hover:
+            self.setZValue(8)
 
 
     def updateRowLength(self, length):

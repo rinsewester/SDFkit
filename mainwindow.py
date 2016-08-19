@@ -80,9 +80,12 @@ class MainWindow(QMainWindow):
 
         self.graph = G0
 
+        self.graphWidget = GraphWidget()
+        self.graphWidget.setGraph(self.graph) #Comment this line to enable test scenes in graph.py
+        
         self.dwRunWindow = QDockWidget('Simulate graph', self)
-        self.runWindow = RunWindow()
-        #self.runWindow.setGraph(self.graph)
+        self.runWindow = RunWindow(self.graphWidget)
+        self.runWindow.setGraph(self.graph)
         self.dwRunWindow.setAllowedAreas(Qt.LeftDockWidgetArea)
         self.dwRunWindow.setWidget(self.runWindow)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dwRunWindow)
@@ -96,10 +99,10 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dwLogWindow)
         self.runWindow.setLogWidget(self.logWindow)
 
-        self.graphWidget = GraphWidget()
-        #self.graphWidget.setGraph(self.graph)
         self.runWindow.setGraphWidget(self.graphWidget)
         self.setCentralWidget(self.graphWidget)
+
+        
 
 
         # self.scrlarea = QScrollArea(self)

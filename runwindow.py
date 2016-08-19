@@ -12,12 +12,15 @@ import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QComboBox, QLineEdit
 
 from csdfgraph import *
+from graphicsview import GraphWidget
 
 
 class RunWindow(QWidget):
 
-    def __init__(self):
+    def __init__(self, graphWidget):
         super().__init__()
+
+        self.graphWidget = graphWidget
 
         self.initUI()
 
@@ -90,13 +93,15 @@ class RunWindow(QWidget):
         elif self.sender() == self.btnBack:
             self.graph.back()
         elif self.sender() == self.btnNext:
-            self.graph.step()
+            self.graph.step()           
+
         else:
             # btnRunUntill button clicked
             src, dst = self.cmbEdges.currentText().split(' → ')
             n = 0
             while str(self.graph[src][dst]['tkns']) != ('[' + self.editContains.text() + ']') and n < MAX_ITERATIONS:
                 self.graph.step()
+                self.graphWidget.updateTokensGraph()
                 n += 1
             if n == MAX_ITERATIONS:
                 print('Condition never met')
@@ -106,7 +111,8 @@ class RunWindow(QWidget):
         self.btnReset.setEnabled(self.graph.stateCount() > 1)
 
         # Display the new state of the graph in the GraphWidget
-        self.gwid.update()
+        #self.gwid.update()
+        self.graphWidget.updateTokensGraph()
 
         # update the log window such that all tokens of all states are shown
         self.lwid.setEdgeData(list(self.graph.edgestates.values()))
