@@ -14,7 +14,7 @@ from PyQt5.QtCore import Qt, QPoint, QPointF, QRectF
 from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont, QContextMenuEvent, QCursor
 
 class TokenCluster(QGraphicsItem):
-    def __init__(self, widget, scene, view, edge, tokenValues = [1, 2, 3, 40, 500, 'token', 789012]):
+    def __init__(self, widget, scene, view, edge, tokenValues = []):
         super().__init__()
 
         self.edge = edge

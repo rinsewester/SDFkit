@@ -73,11 +73,11 @@ class GraphWidget(QWidget):
         self.graphicsView.setRenderHint(QPainter.Antialiasing, True)
 
         #Make a graphics scene
-        scene = GraphicsScene()
-        self.graphicsView.setScene(scene)
+        self.scene = GraphicsScene()
+        self.graphicsView.setScene(self.scene)
 
         #Create a graph that can contain nodes and edges
-        graph = Graph(scene, self.graphicsView)
+        self.graph = Graph(self.scene, self.graphicsView)
 
         #UI for the graphicsView
         iconSize = QSize(16, 16)
@@ -123,6 +123,59 @@ class GraphWidget(QWidget):
         self.zoomOutButton.clicked.connect(self.zoomOut)
 
 
+
+    def setGraph(self, graphData):
+        graphData = graphData
+
+        # set widget size based on min/max positions of nodes
+        if not graphData is None:
+            minX, minY = sys.maxsize, sys.maxsize
+            maxX, maxY = 0, 0
+
+            for n in graphData.nodes():
+                x, y = graphData.node[n]['pos']
+                minX = min(minX, x)
+                minY = min(minY, y)
+                maxX = max(maxX, x)
+                maxY = max(maxY, y)
+
+            self.setMinimumWidth(maxX + 128)
+            self.setMinimumHeight(maxY + 128)
+        else:
+            self.setMinimumWidth(128)
+            self.setMinimumHeight(128)
+
+        self.placeGraphObjects(graphData)
+
+        self.update()
+
+
+    def placeGraphObjects(self, graphData):
+        #Delete existing objects
+        self.graph.clearGraph()
+
+        #Place graph objects based on the graph data
+        nodeList = []
+        for n in graphData.nodes():
+            #Place nodes
+            x, y = graphData.node[n]['pos']
+
+            self.graph.addNode(x, y, n)
+            nodeList.append(n)
+
+        for src, dst in graphData.edges():
+            #Place edges
+            node1 = nodeList.index(src)
+            node2 = nodeList.index(dst)           
+
+            self.graph.addEdgeToNodes(node1, node2, 'right', 'left')
+
+
+    def updateTokens(self, graphData):
+        print(graphData[src][dst]['tkns'])
+
+
+
     def resetView(self):
         self.zoomSlider.setValue(250)
         self.setupMatrix()
@@ -161,40 +214,5 @@ class GraphWidget(QWidget):
             levelValue = level
 
         self.zoomSlider.setValue(self.zoomSlider.value() - levelValue)
-
-
-    # def wheelEvent(self, event):
-    #     if event.modifiers() & Qt.ControlModifier:
-    #         #self.graphicsView.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-    #         if event.angleDelta().y() > 0:
-    #             self.zoomIn(6)
-    #         else:
-    #             self.zoomOut(6)
-
-    #    #else:
-    #         #self.graphicsView.QEvent.ignore()        
-    #         event.accept()
-    #     else:
-    #         super().wheelEvent(event)
-
-    #         #self.graphicsView.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-
-
-    def addNode(self, scene, x, y, name):
-        newNode = Node(name)
-        newNode.setPos(x, y)
-        newNodeInScene = scene.addItem(newNode)
-
-        self.nodeList.append(newNodeInScene)
-
-
-    def addEdge(self, scene, x1, y1, x2, y2):
-        startPoint = QPoint(x1, y1)
-        endPoint = QPoint(x2, y2)
-        newEdge = Edge(scene, startPoint, endPoint)
-        newEdgeInScene = scene.addItem(newEdge)
-
-        self.edgeList.append(newEdgeInScene)
 
 

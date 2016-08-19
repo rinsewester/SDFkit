@@ -185,6 +185,14 @@ class Edge(QGraphicsItem):
         xPoint1 = self.midPoint.x()
         xPoint2 = self.midPoint.x()
 
+        #If beginPoint and endPoint are the same, move the endPoint by 1
+        if self.beginPoint == self.endPoint:
+            if self.beginSide == 'left':
+                self.endPoint = QPointF(self.endPoint.x() + 1, self.endPoint.y())       
+            else:
+                self.endPoint = QPointF(self.endPoint.x() - 1, self.endPoint.y())
+            self.calculateCurvePoints(self.beginPoint, self.endPoint)
+
         #Calculate curvePoints based on the position of the nodes
         self.xDiff = abs(self.beginPoint.x() - self.endPoint.x())
         if  self.xDiff < 400:
@@ -312,9 +320,12 @@ class Edge(QGraphicsItem):
     def getPointCloseToCenter(self, distance):
         edgePath = QPainterPath(self.beginPoint)
         edgePath.cubicTo(self.curvePoint1, self.curvePoint2, self.endPoint)
+        
+        if edgePath.length() > 0:
+            percent = (edgePath.length() / 2 + distance) / edgePath.length()
+        else:
+            percent = 0            
 
-        percent = (edgePath.length() / 2 + distance) / edgePath.length()
-     
         #Snap to begin/end point when the edge is too small
         if percent < 0:
             percent = 0
