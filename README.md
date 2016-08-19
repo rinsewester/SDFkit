@@ -15,4 +15,6 @@ Since a CSDF graph is highly parallel, the parallel nature of an FPGA is exploit
 A picture is worth a thousand words:
 ![screenshot](https://raw.githubusercontent.com/rinsewester/SDFkit/master/images/screenshot.png)
 
+## Setup
 
+Run pip to install requirements `pip install -r requirements.txt`
