@@ -79,6 +79,7 @@ class GraphWidget(QWidget):
 
         #Create a graph that can contain nodes and edges
         self.graph = Graph(self, self.scene, self.graphicsView)
+        self.tokensInScene = []
 
         #UI for the graphicsView
         iconSize = QSize(16, 16)
@@ -143,6 +144,10 @@ class GraphWidget(QWidget):
 
                 self.setMinimumWidth(maxX + 128)
                 self.setMinimumHeight(maxY + 128)
+
+                #Determine the center of the graph
+                self.centerOfGraph = QPointF((minX + maxX) / 2, (minY + maxY) / 2)
+
             else:
                 self.setMinimumWidth(128)
                 self.setMinimumHeight(128)
@@ -151,39 +156,77 @@ class GraphWidget(QWidget):
 
             self.update()
 
+            print(graphData)
 
     def placeGraphObjects(self):
         #Delete existing objects
         self.graph.clearGraph()
+        #Make sure every scene items is deleted
+        self.scene.clear()
+        self.tokensInScene.clear()
 
         #Place graph objects based on the graph data
         nodeList = []
+        nodePoints = []
         for n in self.graphData.nodes():
             #Place nodes
             x, y = self.graphData.node[n]['pos']
             func = self.graphData.node[n]['funcstr']
 
             self.graph.addNode(x, y, n, func)
+            nPoint = [x, y]
             nodeList.append(n)
+            nodePoints.append(nPoint)
 
+        print(nodeList)
+        print(nodePoints)
+
+
+        #Check for self-looping edges first
         for src, dst in self.graphData.edges():
             #Place edges and tokens
             node1 = nodeList.index(src)
             node2 = nodeList.index(dst)
-            tokenValues = self.graphData[src][dst]['tkns']         
+            
+            if src == dst:
+                tokenValues = self.graphData[src][dst]['tkns']
+                self.tokensInScene.append((src, dst))    
+                    
+                self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues)
+                
+        #Then place the rest of the edges (not self-looping)
+        for src, dst in self.graphData.edges():
+            #Place edges and tokens
+            node1 = nodeList.index(src)
+            node2 = nodeList.index(dst)
+            
+            if src != dst:
+                tokenValues = self.graphData[src][dst]['tkns']
+                self.tokensInScene.append((src, dst))    
 
-            self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues)
+                #If begin node is left of end node
+                if nodePoints[node1][0] < nodePoints[node2][0]:
+                    self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues)
+                elif nodePoints[node1][0] > nodePoints[node2][0]:
+                    self.graph.addEdgeToNodes(node1, node2, 'left', 'right', src, dst, tokenValues)
+                else:
+                    if nodePoints[node1][0] > self.centerOfGraph.x():
+                        self.graph.addEdgeToNodes(node1, node2, 'right', 'right', src, dst, tokenValues)
+                    else:
+                        self.graph.addEdgeToNodes(node1, node2, 'left', 'left', src, dst, tokenValues)
+            
 
 
     def updateTokensGraph(self):
         #Update tokens after a step
         i = 0
-        for src, dst in self.graphData.edges():
+        for src, dst in self.tokensInScene:
             self.graph.updateTokens(i, self.graphData[src][dst]['tkns'])
             i = i + 1
 
 
     def editTokens(self, src, dst, newTokens):
+        print('Edit tokens between: ' + str(src) + '/' + str(dst))
         self.graphData[src][dst]['tkns'] = newTokens
         self.csdfGraph.editTokens(src, dst, newTokens)
         

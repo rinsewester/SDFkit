@@ -42,6 +42,7 @@ class CSDFGraph(nx.DiGraph):
         self.edge[src][dst]['itkns'] = []
         self.edgestates[(src, dst)] = [tkns]
 
+
     def add_self_edge(self, n, resnr, argnr, prates, crates, tkns=[], angle=0.6):
 
         self.add_edge(n, n, resnr, argnr, prates, crates, tkns)
@@ -275,15 +276,15 @@ class CSDFGraph(nx.DiGraph):
         self[src][dst]['crates'] = newcrates
 
     def editTokens(self, src, dst, newTokens):
-        #newTokens = eval(newTokens)
+        #print(self.edge[src][dst])
+        #print(self.edge[src][dst]['tkns'])
+        newTokens = eval(str(newTokens))
         self[src][dst]['tkns'] = newTokens
         self._storestate()
 
-        #print('edit')
-
     def editNodeFunction(self, nodeName, newFunction):
         self.node[nodeName]['funcstr'] = newFunction
-        self.node[nodeName]['func'] = eval(newFunction)
+        #self.node[nodeName]['func'] = eval(newFunction)
 
     def print_state(self):
 
