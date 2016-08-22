@@ -56,10 +56,11 @@ class GraphicsScene(QGraphicsScene):
 
 class GraphWidget(QWidget):
 
-    def __init__(self):
+    def __init__(self, csdfGraph):
         super().__init__()
 
         self.initUI()
+        self.csdfGraph = csdfGraph
 
         
     def initUI(self):
@@ -77,7 +78,7 @@ class GraphWidget(QWidget):
         self.graphicsView.setScene(self.scene)
 
         #Create a graph that can contain nodes and edges
-        self.graph = Graph(self.scene, self.graphicsView)
+        self.graph = Graph(self, self.scene, self.graphicsView)
 
         #UI for the graphicsView
         iconSize = QSize(16, 16)
@@ -125,29 +126,30 @@ class GraphWidget(QWidget):
 
 
     def setGraph(self, graphData):
-        self.graphData = graphData
+        if graphData != None:
+            self.graphData = graphData
 
-        # set widget size based on min/max positions of nodes
-        if not self.graphData is None:
-            minX, minY = sys.maxsize, sys.maxsize
-            maxX, maxY = 0, 0
+            # set widget size based on min/max positions of nodes
+            if not self.graphData is None:
+                minX, minY = sys.maxsize, sys.maxsize
+                maxX, maxY = 0, 0
 
-            for n in self.graphData.nodes():
-                x, y = self.graphData.node[n]['pos']
-                minX = min(minX, x)
-                minY = min(minY, y)
-                maxX = max(maxX, x)
-                maxY = max(maxY, y)
+                for n in self.graphData.nodes():
+                    x, y = self.graphData.node[n]['pos']
+                    minX = min(minX, x)
+                    minY = min(minY, y)
+                    maxX = max(maxX, x)
+                    maxY = max(maxY, y)
 
-            self.setMinimumWidth(maxX + 128)
-            self.setMinimumHeight(maxY + 128)
-        else:
-            self.setMinimumWidth(128)
-            self.setMinimumHeight(128)
+                self.setMinimumWidth(maxX + 128)
+                self.setMinimumHeight(maxY + 128)
+            else:
+                self.setMinimumWidth(128)
+                self.setMinimumHeight(128)
 
-        self.placeGraphObjects()
+            self.placeGraphObjects()
 
-        self.update()
+            self.update()
 
 
     def placeGraphObjects(self):
@@ -159,8 +161,9 @@ class GraphWidget(QWidget):
         for n in self.graphData.nodes():
             #Place nodes
             x, y = self.graphData.node[n]['pos']
+            func = self.graphData.node[n]['funcstr']
 
-            self.graph.addNode(x, y, n)
+            self.graph.addNode(x, y, n, func)
             nodeList.append(n)
 
         for src, dst in self.graphData.edges():
@@ -169,7 +172,7 @@ class GraphWidget(QWidget):
             node2 = nodeList.index(dst)
             tokenValues = self.graphData[src][dst]['tkns']         
 
-            self.graph.addEdgeToNodes(node1, node2, 'right', 'left', tokenValues)
+            self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues)
 
 
     def updateTokensGraph(self):
@@ -180,18 +183,15 @@ class GraphWidget(QWidget):
             i = i + 1
 
 
-        #print(graphData.edgestates.items())
-
-        #for src, dst in graphData.edges():
-            #Place tokens
-            #node1 = nodeList.index(src)
-            #node2 = nodeList.index(dst) 
-            #print(graphData[src][dst]['tkns'])
-
-
-        #states.append(self[src][dst]['tkns'])
-        #print(graphData[src][dst]['tkns'])
-
+    def editTokens(self, src, dst, newTokens):
+        self.graphData[src][dst]['tkns'] = newTokens
+        self.csdfGraph.editTokens(src, dst, newTokens)
+        
+        
+    def editNodeFunction(self, nodeName, newFunction):
+        self.graphData.node[nodeName]['funcstr'] = newFunction
+        self.csdfGraph.editNodeFunction(nodeName, newFunction)
+        #self.graphData.node[nodename]['func'] = eval(str(newFunction))
 
 
     def resetView(self):
@@ -216,7 +216,7 @@ class GraphWidget(QWidget):
         self.setResetButtonEnabled()
 
 
-    def zoomIn(self, level):
+    def zoomIn(self, level = 1):
         if not level:
             levelValue = 1
         else:
@@ -225,7 +225,7 @@ class GraphWidget(QWidget):
         self.zoomSlider.setValue(self.zoomSlider.value() + levelValue)
 
 
-    def zoomOut(self, level):
+    def zoomOut(self, level = 1):
         if not level:
             levelValue = 1
         else:

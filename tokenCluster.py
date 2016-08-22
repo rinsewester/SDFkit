@@ -7,6 +7,9 @@ Widget to display simulation data of a CSDF graph.
 author: Sander Giesselink
 
 """
+#TODO
+#tokens need to update their zValue when created (not infront of edge if node is selected)
+#token hovering doesn't always work properly
 
 import sys
 from PyQt5.QtWidgets import QGraphicsItem, QMenu, QAction, QInputDialog
@@ -14,18 +17,21 @@ from PyQt5.QtCore import Qt, QPoint, QPointF, QRectF
 from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont, QContextMenuEvent, QCursor
 
 class TokenCluster(QGraphicsItem):
-    def __init__(self, widget, scene, view, edge, tokenValues = []):
+    def __init__(self, widget, scene, view, edge, src, dst, tokenValues = []):
         super().__init__()
 
         self.edge = edge
         self.scene = scene
         self.view = view
         self.widget = widget
+        self.src = src
+        self.dst = dst
         self.addReferenceToEdge()
         self.tokenValues = tokenValues
         self.tokensAreClusterd = False
         self.setAcceptHoverEvents(True)
         self.hover = False
+        self.setAcceptHoverEvents(True)
         self.clusterWidth = 20
         self.clusterHeight = 20
         self.clusterColor = QColor(240, 240, 240)
@@ -35,7 +41,10 @@ class TokenCluster(QGraphicsItem):
         self.newTokenValues(self.tokenValues) 
         
         #Update all tokens once
-        self.setZValue(2)
+        if self.edge.zValue() == 1:
+            self.setZValue(2)
+        else:
+            self.setZValue(6)
         self.updateTokens()      
        
         
@@ -77,8 +86,6 @@ class TokenCluster(QGraphicsItem):
             smallRect3 = QRectF(-self.clusterWidth * 0.25, -self.clusterHeight * 0.5, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
             smallRect4 = QRectF(0, -self.clusterHeight * 0.25, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
 
-
-
             if self.hover:
             	#Make token larger when the mouse hovers over it
                 rect = self.getClusterRectHover()
@@ -97,7 +104,11 @@ class TokenCluster(QGraphicsItem):
 
 
     def getClusterRect(self):
-        return QRectF(-self.clusterWidth * 0.5, -self.clusterHeight * 0.5, self.clusterWidth, self.clusterHeight)
+        if len(self.tokenList) > 0:
+            rect = QRectF(-self.clusterWidth * 0.5, -self.clusterHeight * 0.5, self.clusterWidth, self.clusterHeight)
+        else:
+            rect = QRectF(0, 0, 0, 0)
+        return rect
 
 
     def getClusterRectHover(self):
@@ -115,7 +126,11 @@ class TokenCluster(QGraphicsItem):
                 self.tokenList[i].updateRowLength(listLength)
 
         #Add token to scene and list
-        token.setZValue(3)
+        if self.edge.zValue() == 1:
+            token.setZValue(3)
+        else:
+            token.setZValue(7)
+        
         self.tokenList.append(token)
         self.scene.addItem(token)
 
@@ -130,6 +145,7 @@ class TokenCluster(QGraphicsItem):
         for i in range(len(self.tokenList)):
             self.tokenList[i].updatePos()
 
+        self.prepareGeometryChange()
         self.setPos(self.edge.getPointOnEdge(0.5))
 
 
@@ -142,7 +158,7 @@ class TokenCluster(QGraphicsItem):
             self.addToken(newTokens[i])
         
         self.tokenValues = newTokens
-        self.updateTokens()  
+        self.updateTokens()
 
 
     def deleteTokens(self):
@@ -212,12 +228,17 @@ class TokenCluster(QGraphicsItem):
         newTokenStr, ok = QInputDialog.getText(self.widget, 'Edit tokens', 'Tokens:', text = tokenStr)
         
         if ok:
-            try:
-                newTokens = eval(newTokenStr)
-                print('Updated tokens to: ' + str(newTokenStr))
-                self.newTokenValues(newTokens)
-            except:
-                print('Invalid token entry')
+            # try:
+            #     newTokens = eval(newTokenStr)
+            #     print('Updated tokens to: ' + str(newTokenStr))
+            #     self.newTokenValues(newTokens)
+            #     self.widget.editTokens(self.src, self.dst, newTokens)
+            # except:
+            #     print('Invalid token entry')
+            newTokens = eval(newTokenStr)
+            print('Updated tokens to: ' + str(newTokenStr))
+            self.newTokenValues(newTokens)
+            self.widget.editTokens(self.src, self.dst, newTokens)
 
  
 
@@ -325,7 +346,9 @@ class Token(QGraphicsItem):
 
     def hoverEnterEvent(self, event):
         self.hover = True
-        self.setZValue(self.zValue() + 4)     
+        self.setZValue(self.zValue() + 4)   
+        
+        self.prepareGeometryChange()  
 
         super().hoverEnterEvent(event)
         self.update()
@@ -372,6 +395,7 @@ class Token(QGraphicsItem):
         #Update postion of the token based on its position in the row
         self.cluster.tokensAreClusterd = False
         self.setVisible(True)
+        self.prepareGeometryChange()
 
         if self.rowLength == 0:
             self.setPos(self.getPointOnEdge(0.5))
@@ -399,6 +423,9 @@ class Token(QGraphicsItem):
                 self.setVisible(False)
             #Draw a cluster instead of all the tokens in the middle
             self.cluster.tokensAreClusterd = True
+        
+        self.prepareGeometryChange()
+        self.update()
 
     
     def setZValueToken(self, zValue):

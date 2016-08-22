@@ -9,14 +9,14 @@ author: Sander Giesselink
 """
 
 import sys
-from PyQt5.QtWidgets import QWidget, QGraphicsItem, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QGraphicsItem, QPushButton, QVBoxLayout, QMenu, QAction, QInputDialog
 from PyQt5.QtCore import QRectF, QPointF, QPoint, Qt, QVariant
-from PyQt5.QtGui import QColor, QPainter, QBrush, QPainterPath, QLinearGradient, QFont
+from PyQt5.QtGui import QColor, QPainter, QBrush, QPainterPath, QLinearGradient, QFont, QContextMenuEvent
 from collections import Counter
 
 class Node(QGraphicsItem):
 
-    def __init__(self, nodeName):
+    def __init__(self, widget, view, nodeName, function):
         super().__init__()
         
         self.ioWidth = 15
@@ -39,9 +39,11 @@ class Node(QGraphicsItem):
         self.yTranslationRightIO = 0
         self.snappingIsOn = True
         self.showNeutralIO = False
+        self.nodeFunction = function
 
 
-
+        self.widget = widget
+        self.view = view
         self.nodeText = nodeName
         self.nodeTextDisplayed = ''
 
@@ -52,6 +54,11 @@ class Node(QGraphicsItem):
         self.addNewIO('right', 0)
 
 
+        self.setNodeAction = QAction('Edit node function', self.widget)
+        self.setNodeAction.triggered.connect(self.setNodeActiontriggered)
+
+        self.nodeMenu = QMenu()
+        self.nodeMenu.addAction(self.setNodeAction)
         
 
         self.setYTranslationLeftIO()
@@ -264,6 +271,37 @@ class Node(QGraphicsItem):
 
         super().hoverLeaveEvent(event)
         self.update()
+
+    
+    def contextMenuEvent(self, event):
+        #Gets point of right click and converts it to a position on the scene
+        self.contextMenu(event.scenePos())
+
+
+    def contextMenu(self, pos):
+        #Get point from scene
+        point = self.view.mapFromScene(pos)
+
+        #Convert point to global point
+        point = self.view.mapToGlobal(point)
+
+        #Execute context menu
+        self.nodeMenu.exec(point)
+
+
+    def setNodeActiontriggered(self):
+        functionStr = str(self.nodeFunction)
+        newFunctionStr, ok = QInputDialog.getText(self.widget, 'Edit node function', 'Function:', text = functionStr)
+
+        if ok:
+            try:
+                newFunction = eval(newFunctionStr)
+                print('Updated function to: ' + str(newFunctionStr))
+                self.nodeFunction = newFunctionStr
+                self.widget.editNodeFunction(self.nodeText, newFunctionStr)
+            except:
+                print('Invalid token entry')
+            
 
 
 #------------------
@@ -480,7 +518,7 @@ class Node(QGraphicsItem):
 
         textPoint = QPoint(self.ioWidth + 4, 3)
         textWidth = self.nodeBodyWidth - self.ioWidth * 2 - 8
-        textEndPoint = QPoint(textPoint.x() + textWidth, textPoint.y() + 10)
+        textEndPoint = QPoint(textPoint.x() + textWidth, textPoint.y() + 12)
         self.rectNodeName = QRectF(textPoint, textEndPoint)
 
 

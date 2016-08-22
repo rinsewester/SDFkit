@@ -80,7 +80,7 @@ class MainWindow(QMainWindow):
 
         self.graph = G0
 
-        self.graphWidget = GraphWidget()
+        self.graphWidget = GraphWidget(self.graph)
         self.graphWidget.setGraph(self.graph) #Comment this line to enable test scenes in graph.py
         
         self.dwRunWindow = QDockWidget('Simulate graph', self)
@@ -135,15 +135,20 @@ class MainWindow(QMainWindow):
         try:
             self.graph = CSDFGraph()
             self.graph.loadFromFile(graphfile)
+
+            self.runWindow.setGraph(self.graph)
+            self.graphWidget.setGraph(self.graph)
+            self._updateLogWindow()
         except (FileNotFoundError, ValueError, KeyError) as e:
             QMessageBox.critical(
                 self, 'Error opening file',
                 '<b>Error opening file:</b>' + '\n\n' + str(e))
-            self.graph = None
+            #If there is an error, don't reset the graph but keep the old one
+            #self.graph = None
 
-        self.runWindow.setGraph(self.graph)
-        self.graphWidget.setGraph(self.graph)
-        self._updateLogWindow()
+        # self.runWindow.setGraph(self.graph)
+        # self.graphWidget.setGraph(self.graph)
+        # self._updateLogWindow()
 
     def clashcodegenActionTriggered(self):
         try:

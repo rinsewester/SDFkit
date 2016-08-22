@@ -34,7 +34,7 @@ class Edge(QGraphicsItem):
         #self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
         self.hover = False
-        self.debugOn = False
+        self.debugOn = True
 
 
     def boundingRect(self):
@@ -282,6 +282,9 @@ class Edge(QGraphicsItem):
 
 
     def mousePressEvent(self, event):
+        if event.button() == Qt.RightButton:
+            self.tokenCluster.contextMenu(event.scenePos())
+
         super().mousePressEvent(event)
         self.update()
 

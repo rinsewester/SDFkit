@@ -23,7 +23,7 @@ class CSDFGraph(nx.DiGraph):
 
         self.name = name
 
-        # state sorage for backtracking in simulations (tokens and counters)
+        # state storage for backtracking in simulations (tokens and counters)
         self.edgestates = {}
         self.nodestates = {}
 
@@ -273,6 +273,17 @@ class CSDFGraph(nx.DiGraph):
         src, dst = edge
         newcrates = eval(cratesstr)
         self[src][dst]['crates'] = newcrates
+
+    def editTokens(self, src, dst, newTokens):
+        #newTokens = eval(newTokens)
+        self[src][dst]['tkns'] = newTokens
+        self._storestate()
+
+        #print('edit')
+
+    def editNodeFunction(self, nodeName, newFunction):
+        self.node[nodeName]['funcstr'] = newFunction
+        self.node[nodeName]['func'] = eval(newFunction)
 
     def print_state(self):
 
