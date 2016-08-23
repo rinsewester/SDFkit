@@ -263,7 +263,7 @@ class CSDFGraph(nx.DiGraph):
     def updateTokens(self, edge, tokenstr):
         src, dst = edge
         newtokens = eval(tokenstr)
-        self[src][dst]['tkns'] = newtokens
+        self[src][dst]['tkns'] = newtokens       
 
     def updatePRates(self, edge, pratesstr):
         src, dst = edge
@@ -312,6 +312,6 @@ class CSDFGraph(nx.DiGraph):
 
 # The default SDF graph
 G0 = CSDFGraph()
-#G0.loadFromFile('examples/SDF/simple graph.json')
-G0.loadFromFile('examples/HSDF/nine counter.json')
+G0.loadFromFile('examples/SDF/simple graph.json')
+#G0.loadFromFile('examples/HSDF/nine counter.json')
 # G0.test()

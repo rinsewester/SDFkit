@@ -137,8 +137,8 @@ class Graph(QWidget):
         self.nodeList.append(newNode)
 
 
-    def addEdge(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues = []):        
-        newEdge = Edge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops)
+    def addEdge(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues, pRates, cRates):        
+        newEdge = Edge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, pRates, cRates)
 
         #Place edges always behind nodes
         newEdge.setZValue(1)
@@ -155,7 +155,7 @@ class Graph(QWidget):
         return newEdge
 
 
-    def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide, src = '', dst = '', tokenValues = []):
+    def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide, src = '', dst = '', tokenValues = [], pRates = 0, cRates = 0):
         beginNode = self.nodeList[beginNodeIndex]
         endNode = self.nodeList[endNodeIndex]
 
@@ -178,7 +178,7 @@ class Graph(QWidget):
         endNode.addNewIO(endSide, 0)
         
         #Create edge between the 2 nodes
-        edge = self.addEdge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues)
+        edge = self.addEdge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues, pRates, cRates)
 
         #Give both nodes a reference to the created edge
         beginNode.addEdge(edge, 'begin')
@@ -195,3 +195,11 @@ class Graph(QWidget):
 
     def editNodeFunction(self, name, newFunction):
         self.graphWidget.editNodeFunction(name, newFunction)
+
+    
+    def editPRates(self, src, dst, newPRates):
+        self.graphWidget.editPRates(src, dst, newPRates)
+
+
+    def editCRates(self, src, dst, newCRates):
+        self.graphWidget.editCRates(src, dst, newCRates)

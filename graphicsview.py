@@ -185,9 +185,11 @@ class GraphWidget(QWidget):
             
             if src == dst:
                 tokenValues = self.graphData[src][dst]['tkns']
+                pRates = self.graphData[src][dst]['prates']
+                cRates = self.graphData[src][dst]['crates']
                 self.tokensInScene.append((src, dst))    
                     
-                self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues)
+                self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues, pRates, cRates)
                 
         #Then place the rest of the edges (not self-looping)
         for src, dst in self.graphData.edges():
@@ -197,18 +199,20 @@ class GraphWidget(QWidget):
             
             if src != dst:
                 tokenValues = self.graphData[src][dst]['tkns']
+                pRates = self.graphData[src][dst]['prates']
+                cRates = self.graphData[src][dst]['crates']
                 self.tokensInScene.append((src, dst))    
 
                 #If begin node is left of end node
                 if nodePoints[node1][0] < nodePoints[node2][0]:
-                    self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues)
+                    self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues, pRates, cRates)
                 elif nodePoints[node1][0] > nodePoints[node2][0]:
-                    self.graph.addEdgeToNodes(node1, node2, 'left', 'right', src, dst, tokenValues)
+                    self.graph.addEdgeToNodes(node1, node2, 'left', 'right', src, dst, tokenValues, pRates, cRates)
                 else:
                     if nodePoints[node1][0] > self.centerOfGraph.x():
-                        self.graph.addEdgeToNodes(node1, node2, 'right', 'right', src, dst, tokenValues)
+                        self.graph.addEdgeToNodes(node1, node2, 'right', 'right', src, dst, tokenValues, pRates, cRates)
                     else:
-                        self.graph.addEdgeToNodes(node1, node2, 'left', 'left', src, dst, tokenValues)
+                        self.graph.addEdgeToNodes(node1, node2, 'left', 'left', src, dst, tokenValues, pRates, cRates)
             
 
 
@@ -231,9 +235,23 @@ class GraphWidget(QWidget):
         
         
     def editNodeFunction(self, nodeName, newFunction):
-        print('Updated function to: ' + str(newFunction))
+        print('Update function to: ' + str(newFunction))
         self.graphData.node[nodeName]['funcstr'] = newFunction
         self.graphData.updateNodeFunction(nodeName, newFunction)
+
+    
+    def editPRates(self, src, dst, newPRates):
+        print('Update pRates to: ' + str(newPRates))
+        self.graphData[src][dst]['prates'] = newPRates
+        newPRates = str(newPRates)
+        self.graphData.updatePRates((src, dst), newPRates)
+
+
+    def editCRates(self, src, dst, newCRates):
+        print('Update cRates to: ' + str(newCRates))
+        self.graphData[src][dst]['crates'] = newCRates
+        newCRates = str(newCRates)
+        self.graphData.updateCRates((src, dst), newCRates)
 
 
     def resetView(self):

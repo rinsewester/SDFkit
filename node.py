@@ -299,7 +299,7 @@ class Node(QGraphicsItem):
                 self.nodeFunction = newFunctionStr
                 self.widget.editNodeFunction(self.nodeText, newFunctionStr)
             except:
-                print('Invalid token entry')
+                print('Invalid function entry')
 
             # newFunction = eval(newFunctionStr)
             # self.nodeFunction = newFunctionStr

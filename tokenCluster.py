@@ -7,9 +7,6 @@ Widget to display simulation data of a CSDF graph.
 author: Sander Giesselink
 
 """
-#TODO
-#tokens need to update their zValue when created (not infront of edge if node is selected)
-#token hovering doesn't always work properly
 
 import sys
 from PyQt5.QtWidgets import QGraphicsItem, QMenu, QAction, QInputDialog
@@ -50,9 +47,15 @@ class TokenCluster(QGraphicsItem):
         
         self.setTokenAction = QAction('Edit tokens', self.widget)
         self.setTokenAction.triggered.connect(self.setTokenActiontriggered)
+        self.setPRatesAction = QAction('Edit production rates', self.widget)
+        self.setPRatesAction.triggered.connect(self.edge.setPRatesActiontriggered)
+        self.setCRatesAction = QAction('Edit consumption rates', self.widget)
+        self.setCRatesAction.triggered.connect(self.edge.setCRatesActiontriggered)
 
-        self.tokenMenu = QMenu()
-        self.tokenMenu.addAction(self.setTokenAction)
+        self.edgeMenu = QMenu()
+        self.edgeMenu.addAction(self.setTokenAction)
+        self.edgeMenu.addAction(self.setPRatesAction)
+        self.edgeMenu.addAction(self.setCRatesAction)
         
 
 
@@ -220,7 +223,7 @@ class TokenCluster(QGraphicsItem):
         point = self.view.mapToGlobal(point)
 
         #Execute context menu
-        self.tokenMenu.exec(point)
+        self.edgeMenu.exec(point)
 
 
     def setTokenActiontriggered(self):
@@ -228,22 +231,20 @@ class TokenCluster(QGraphicsItem):
         newTokenStr, ok = QInputDialog.getText(self.widget, 'Edit tokens', 'Tokens:', text = tokenStr)
         
         if ok:
-            # try:
-            #     newTokens = eval(newTokenStr)
-            #     print('Updated tokens to: ' + str(newTokenStr))
-            #     self.newTokenValues(newTokens)
-            #     self.widget.editTokens(self.src, self.dst, newTokens)
-            # except:
-            #     print('Invalid token entry')
+            try:
+                newTokens = eval(newTokenStr)
+                print('Updated tokens to: ' + str(newTokenStr))
+                self.newTokenValues(newTokens)
+                self.widget.editTokens(self.src, self.dst, newTokens)
+            except:
+                print('Invalid token entry')
             
 
-            newTokens = newTokenStr
-            newTokens = eval(newTokenStr)
-            print('Updated tokens to: ' + str(newTokenStr))
-            self.newTokenValues(newTokens)
-            self.widget.editTokens(self.src, self.dst, newTokens)
-
- 
+            # newTokens = newTokenStr
+            # newTokens = eval(newTokenStr)
+            # print('Updated tokens to: ' + str(newTokenStr))
+            # self.newTokenValues(newTokens)
+            # self.widget.editTokens(self.src, self.dst, newTokens)  
 
 
 

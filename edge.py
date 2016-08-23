@@ -9,13 +9,13 @@ author: Sander Giesselink
 """
 
 import sys
-from PyQt5.QtWidgets import QWidget, QGraphicsItem
-from PyQt5.QtCore import Qt, QPoint, QRectF, QEvent, QPointF
-from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath
+from PyQt5.QtWidgets import QWidget, QGraphicsItem, QInputDialog
+from PyQt5.QtCore import Qt, QPoint, QRect, QRectF, QEvent, QPointF
+from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont
 
 class Edge(QGraphicsItem):
 
-    def __init__(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops):
+    def __init__(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, pRates, cRates):
         super().__init__()
 
         self.edgeSelfLoops = edgeSelfLoops
@@ -25,6 +25,9 @@ class Edge(QGraphicsItem):
         self.beginPoint = beginPoint
         self.endPoint = endPoint
         self.calculateCurvePoints(beginPoint, endPoint)
+        self.cRates = cRates
+        self.pRates = pRates
+        self.updatePCRects()
         
 
         self.edgeColor = QColor(160, 160, 160)
@@ -34,12 +37,15 @@ class Edge(QGraphicsItem):
         #self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
         self.hover = False
-        self.debugOn = True
+        self.debugOn = False
 
 
     def boundingRect(self):
         #Used for collision detection and repaint
         path = self.getEdgePath()
+        path.addRect(self.cRect)
+        path.addRect(self.pRect)
+
         rect = path.boundingRect()
 
         return rect
@@ -59,13 +65,13 @@ class Edge(QGraphicsItem):
         lod = option.levelOfDetailFromTransform(painter.worldTransform())
 
         if lod > 0.05:
-            self.paintEdge(painter)
+            self.paintEdge(painter, lod)
 
         if lod > 0.15 and self.debugOn:
             self.debug(painter) #Uncomment to turn on debug mode
 
 
-    def paintEdge(self, painter):
+    def paintEdge(self, painter, lod):
         pen = QPen(QColor(0, 0, 0))
         pen.setWidth(1)
         pen.setCapStyle(Qt.RoundCap)
@@ -92,6 +98,21 @@ class Edge(QGraphicsItem):
 
 
         painter.drawPath(edgePath)
+
+        if lod > 0.4:
+            self.drawPCRates(painter)
+
+
+    def drawPCRates(self, painter):
+        #Draw production and consumption rates above begin and end of edge
+        pen = QPen(QColor(0, 0, 0))
+        painter.setPen(pen)
+        painter.setFont(QFont("Arial", 8))
+
+        if self.pRates[0] > 1:     
+            painter.drawText(self.pRect, Qt.AlignCenter, str(self.pRates[0]))
+        if self.cRates[0] > 1:     
+            painter.drawText(self.cRect, Qt.AlignCenter, str(self.cRates[0]))
 
 
     def getEdgePath(self):
@@ -300,6 +321,9 @@ class Edge(QGraphicsItem):
 
         #Update tokens on the edge
         self.tokenCluster.updateTokens()
+
+        #Update P & C rate rects
+        self.updatePCRects()
        
         #Prepare the painter for a geometry change, so it repaints correctly
         self.prepareGeometryChange()
@@ -340,4 +364,49 @@ class Edge(QGraphicsItem):
 
     def setTokenCluster(self, tokenCluster):
         self.tokenCluster = tokenCluster
+
+
+    def updatePCRects(self):
+        if self.beginSide == 'left':
+            self.pRect = QRectF(self.beginPoint.x() - 10, self.beginPoint.y() - 13, 10, 10)
+        else:
+            self.pRect = QRectF(self.beginPoint.x(), self.beginPoint.y() - 13, 10, 10)
         
+        if self.endSide == 'left':
+            self.cRect = QRectF(self.endPoint.x() - 10, self.endPoint.y() - 13, 10, 10)
+        else:
+            self.cRect = QRectF(self.endPoint.x(), self.endPoint.y() - 13, 10, 10)
+
+
+    def setPRatesActiontriggered(self):
+        pRatesStr = str(self.pRates)
+        newPRatesStr, ok = QInputDialog.getText(self.tokenCluster.widget, 'Edit production rates', 'Production rate:', text = pRatesStr)
+        
+        if ok:
+            try:
+                newPRates = eval(newPRatesStr)
+                self.pRates = newPRates
+                self.tokenCluster.widget.editPRates(self.tokenCluster.src, self.tokenCluster.dst, newPRates)
+            except:
+                print('Invalid pRate entry')
+
+            # newPRates = eval(newPRatesStr)
+            # self.pRates = newPRates
+            # self.tokenCluster.widget.editPRates(self.tokenCluster.src, self.tokenCluster.dst, newPRates)
+
+
+    def setCRatesActiontriggered(self):
+        cRatesStr = str(self.cRates)
+        newCRatesStr, ok = QInputDialog.getText(self.tokenCluster.widget, 'Edit consumption rates', 'Consumption rate:', text = cRatesStr)
+        
+        if ok:
+            try:
+                newCRates = eval(newCRatesStr)
+                self.cRates = newCRates
+                self.tokenCluster.widget.editCRates(self.tokenCluster.src, self.tokenCluster.dst, newCRates)
+            except:
+                print('Invalid cRate entry')
+
+            # newCRates = eval(newCRatesStr)
+            # self.cRates = newCRates
+            # self.tokenCluster.widget.editCRates(self.tokenCluster.src, self.tokenCluster.dst, newCRates)
