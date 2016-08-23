@@ -143,7 +143,7 @@ class CSDFGraph(nx.DiGraph):
                     crate = self[src][n]['crates'][phase]
                     if crate > 0:
                         args.append(self[src][n]['tkns'][-crate:])
-                        self[src][n]['tkns'] = self[src][n]['tkns'][:-crate]
+                        self[src][n]['tkns'] = self[src][n]['tkns'][:-crate]                      
                     else:
                         args.append([])
                 # order arguments
@@ -217,6 +217,7 @@ class CSDFGraph(nx.DiGraph):
         #  at least two nodes and one edge, proper connections
         #  and check wether all edges are connected consistenly
         #  to nodearguments and results
+        print('load file in csdfgraph: ' + str(filename))
         with open(filename, 'r') as f:
             jsonstr = f.read()
 
@@ -256,7 +257,6 @@ class CSDFGraph(nx.DiGraph):
                     edgePRates, edgeCRates, edgeTokens)
 
     def updateNodeFunction(self, nodename, funcstr):
-
         self.node[nodename]['funcstr'] = funcstr
         self.node[nodename]['func'] = eval(funcstr)
 
@@ -274,17 +274,6 @@ class CSDFGraph(nx.DiGraph):
         src, dst = edge
         newcrates = eval(cratesstr)
         self[src][dst]['crates'] = newcrates
-
-    def editTokens(self, src, dst, newTokens):
-        #print(self.edge[src][dst])
-        #print(self.edge[src][dst]['tkns'])
-        newTokens = eval(str(newTokens))
-        self[src][dst]['tkns'] = newTokens
-        self._storestate()
-
-    def editNodeFunction(self, nodeName, newFunction):
-        self.node[nodeName]['funcstr'] = newFunction
-        #self.node[nodeName]['func'] = eval(newFunction)
 
     def print_state(self):
 
@@ -323,5 +312,6 @@ class CSDFGraph(nx.DiGraph):
 
 # The default SDF graph
 G0 = CSDFGraph()
-G0.loadFromFile('examples/SDF/simple graph.json')
+#G0.loadFromFile('examples/SDF/simple graph.json')
+G0.loadFromFile('examples/HSDF/nine counter.json')
 # G0.test()

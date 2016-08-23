@@ -228,19 +228,20 @@ class TokenCluster(QGraphicsItem):
         newTokenStr, ok = QInputDialog.getText(self.widget, 'Edit tokens', 'Tokens:', text = tokenStr)
         
         if ok:
-            try:
-                newTokens = eval(newTokenStr)
-                print('Updated tokens to: ' + str(newTokenStr))
-                self.newTokenValues(newTokens)
-                self.widget.editTokens(self.src, self.dst, newTokens)
-            except:
-                print('Invalid token entry')
+            # try:
+            #     newTokens = eval(newTokenStr)
+            #     print('Updated tokens to: ' + str(newTokenStr))
+            #     self.newTokenValues(newTokens)
+            #     self.widget.editTokens(self.src, self.dst, newTokens)
+            # except:
+            #     print('Invalid token entry')
             
 
-            # newTokens = eval(newTokenStr)
-            # print('Updated tokens to: ' + str(newTokenStr))
-            # self.newTokenValues(newTokens)
-            # self.widget.editTokens(self.src, self.dst, newTokens)
+            newTokens = newTokenStr
+            newTokens = eval(newTokenStr)
+            print('Updated tokens to: ' + str(newTokenStr))
+            self.newTokenValues(newTokens)
+            self.widget.editTokens(self.src, self.dst, newTokens)
 
  
 

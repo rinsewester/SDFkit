@@ -56,11 +56,10 @@ class GraphicsScene(QGraphicsScene):
 
 class GraphWidget(QWidget):
 
-    def __init__(self, csdfGraph):
+    def __init__(self):
         super().__init__()
 
         self.initUI()
-        self.csdfGraph = csdfGraph
 
         
     def initUI(self):
@@ -156,7 +155,6 @@ class GraphWidget(QWidget):
 
             self.update()
 
-            print(graphData)
 
     def placeGraphObjects(self):
         #Delete existing objects
@@ -177,9 +175,6 @@ class GraphWidget(QWidget):
             nPoint = [x, y]
             nodeList.append(n)
             nodePoints.append(nPoint)
-
-        print(nodeList)
-        print(nodePoints)
 
 
         #Check for self-looping edges first
@@ -226,15 +221,19 @@ class GraphWidget(QWidget):
 
 
     def editTokens(self, src, dst, newTokens):
-        print('Edit tokens between: ' + str(src) + '/' + str(dst))
+        print('Update tokens between: ' + str(src) + '--->' + str(dst) + ' to: ' + str(newTokens))
         self.graphData[src][dst]['tkns'] = newTokens
-        self.csdfGraph.editTokens(src, dst, newTokens)
+        newTokens = str(newTokens)
+        self.graphData.updateTokens((src, dst), newTokens)
+
+        #Also store the state after the change (Makes it more visual and makes it possible to step back to)
+        self.graphData._storestate()
         
         
     def editNodeFunction(self, nodeName, newFunction):
+        print('Updated function to: ' + str(newFunction))
         self.graphData.node[nodeName]['funcstr'] = newFunction
-        self.csdfGraph.editNodeFunction(nodeName, newFunction)
-        #self.graphData.node[nodename]['func'] = eval(str(newFunction))
+        self.graphData.updateNodeFunction(nodeName, newFunction)
 
 
     def resetView(self):
