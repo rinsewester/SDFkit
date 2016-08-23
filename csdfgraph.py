@@ -122,78 +122,81 @@ class CSDFGraph(nx.DiGraph):
             states.pop()
 
     def step(self):
+        try:
 
-        # perform single iteration of DF graph
-        for n in self.nodes():
-            canfire = True
-            source_nodes = []
-            for src in self.predecessors(n):
-                source_nodes.append(src)
-                phase = self.node[n]['firecount'] % len(self[src][n]['crates'])
-                canfire &= len(self[src][n]['tkns']) >= self[
-                    src][n]['crates'][phase]
-            if canfire:
-                # collect arguments
-                args = []
-                arg_inds = []
-                for src in source_nodes:
-                    arg_inds.append(self[src][n]['arg'])
-                    phase = self.node[n]['firecount'] % len(
-                        self[src][n]['crates'])
-                    crate = self[src][n]['crates'][phase]
-                    if crate > 0:
-                        args.append(self[src][n]['tkns'][-crate:])
-                        self[src][n]['tkns'] = self[src][n]['tkns'][:-crate]                      
-                    else:
-                        args.append([])
-                # order arguments
-                args_sorted = [0] * len(args)
-                for i, v in zip(arg_inds, args):
-                    args_sorted[i] = v
-
-                # Determine the phase, i.e., lcm of length of all consumption
-                # and production rates of current node
-                ratelengths = []
+            # perform single iteration of DF graph
+            for n in self.nodes():
+                canfire = True
+                source_nodes = []
                 for src in self.predecessors(n):
-                    ratelengths.append(len(self[src][n]['crates']))
-                for dst in self.successors(n):
-                    ratelengths.append(len(self[n][dst]['prates']))
-                phase = self.node[n]['firecount'] % sdfmath.lcm(ratelengths)
+                    source_nodes.append(src)
+                    phase = self.node[n]['firecount'] % len(self[src][n]['crates'])
+                    canfire &= len(self[src][n]['tkns']) >= self[
+                        src][n]['crates'][phase]
+                if canfire:
+                    # collect arguments
+                    args = []
+                    arg_inds = []
+                    for src in source_nodes:
+                        arg_inds.append(self[src][n]['arg'])
+                        phase = self.node[n]['firecount'] % len(
+                            self[src][n]['crates'])
+                        crate = self[src][n]['crates'][phase]
+                        if crate > 0:
+                            args.append(self[src][n]['tkns'][-crate:])
+                            self[src][n]['tkns'] = self[src][n]['tkns'][:-crate]                      
+                        else:
+                            args.append([])
+                    # order arguments
+                    args_sorted = [0] * len(args)
+                    for i, v in zip(arg_inds, args):
+                        args_sorted[i] = v
 
-                # execute node function where clockcount and firecount are
-                # variables that can be used inside the function of a node
-                res = self.node[n]['func'](
-                    *args_sorted, firecounter=self.node[n]['firecount'],
-                    phase=phase)
-                if type(res) is tuple:
-                    results = list(res)
-                else:
-                    results = [res]
+                    # Determine the phase, i.e., lcm of length of all consumption
+                    # and production rates of current node
+                    ratelengths = []
+                    for src in self.predecessors(n):
+                        ratelengths.append(len(self[src][n]['crates']))
+                    for dst in self.successors(n):
+                        ratelengths.append(len(self[n][dst]['prates']))
+                    phase = self.node[n]['firecount'] % sdfmath.lcm(ratelengths)
 
-                # add result to intermediate buffers connected to succeeding
-                # nodes
-                for dest in self.successors(n):
-                    phase = self.node[n]['firecount'] % len(self[n][dest]['prates'])
-                    prate = self[n][dest]['prates'][phase]
-                    resnr = self[n][dest]['res']
-                    if len(results[resnr]) != prate:
-                        raise ValueError('Mismatch between number of tokens produced and production rate: ', 'edge: ', (n, dest), 'prate: ', prate, 'rescount', len(results[resnr]) )
-                    self[n][dest]['itkns'] = results[self[n][dest]['res']]
+                    # execute node function where clockcount and firecount are
+                    # variables that can be used inside the function of a node
+                    res = self.node[n]['func'](
+                        *args_sorted, firecounter=self.node[n]['firecount'],
+                        phase=phase)
+                    if type(res) is tuple:
+                        results = list(res)
+                    else:
+                        results = [res]
 
-                # Firing of node complete
-                self.node[n]['firecount'] += 1
+                    # add result to intermediate buffers connected to succeeding
+                    # nodes
+                    for dest in self.successors(n):
+                        phase = self.node[n]['firecount'] % len(self[n][dest]['prates'])
+                        prate = self[n][dest]['prates'][phase]
+                        resnr = self[n][dest]['res']
+                        if len(results[resnr]) != prate:
+                            raise ValueError('Mismatch between number of tokens produced and production rate: ', 'edge: ', (n, dest), 'prate: ', prate, 'rescount', len(results[resnr]) )
+                        self[n][dest]['itkns'] = results[self[n][dest]['res']]
 
-        # add all the intermediate buffers to buffers
-        for src, dst in self.edges():
-            itkns = self[src][dst]['itkns']
-            self[src][dst]['tkns'] = itkns + self[src][dst]['tkns']
-            self[src][dst]['itkns'] = []
+                    # Firing of node complete
+                    self.node[n]['firecount'] += 1
 
-        # store the new state for backtracking
-        self._storestate()
+            # add all the intermediate buffers to buffers
+            for src, dst in self.edges():
+                itkns = self[src][dst]['itkns']
+                self[src][dst]['tkns'] = itkns + self[src][dst]['tkns']
+                self[src][dst]['itkns'] = []
 
-        # increase clock for the global clock
-        self.clockcount += 1
+            # store the new state for backtracking
+            self._storestate()
+
+            # increase clock for the global clock
+            self.clockcount += 1
+        except:
+            print('Error during step')
 
     # This function converts a list of production/consumption
     # rates to the flat variant: [1, "2*4", 3, "3*2"] becomes:

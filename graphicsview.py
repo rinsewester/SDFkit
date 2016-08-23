@@ -254,6 +254,10 @@ class GraphWidget(QWidget):
         self.graphData.updateCRates((src, dst), newCRates)
 
 
+    def getFireCount(self, src_dst, node):
+        return self.graphData.node[src_dst]['firecount']
+
+
     def resetView(self):
         self.zoomSlider.setValue(250)
         self.setupMatrix()

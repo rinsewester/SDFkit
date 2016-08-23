@@ -28,7 +28,7 @@ class TokenCluster(QGraphicsItem):
         self.tokensAreClusterd = False
         self.setAcceptHoverEvents(True)
         self.hover = False
-        self.setAcceptHoverEvents(True)
+        #self.setAcceptHoverEvents(True)
         self.clusterWidth = 20
         self.clusterHeight = 20
         self.clusterColor = QColor(240, 240, 240)
@@ -162,6 +162,7 @@ class TokenCluster(QGraphicsItem):
         
         self.tokenValues = newTokens
         self.updateTokens()
+        self.edge.update()
 
 
     def deleteTokens(self):
@@ -247,6 +248,12 @@ class TokenCluster(QGraphicsItem):
             # self.widget.editTokens(self.src, self.dst, newTokens)  
 
 
+    def getFireCount(self, src_dst):
+        if src_dst == 'src':
+            return self.widget.getFireCount(self.src, self.src)
+        else:
+            return self.widget.getFireCount(self.dst, self.dst)
+
 
 
 class Token(QGraphicsItem):
@@ -264,7 +271,7 @@ class Token(QGraphicsItem):
         self.tokenHeight = 15
         self.tokenColor = QColor(255, 255, 255)
 
-        self.setAcceptHoverEvents(True)
+        #self.setAcceptHoverEvents(True)
         self.hover = False
 
 
@@ -441,6 +448,9 @@ class Token(QGraphicsItem):
 
     def updateRowLength(self, length):
         self.rowLength = length
+
+
+    
 
 
     

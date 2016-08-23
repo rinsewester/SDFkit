@@ -155,7 +155,7 @@ class Graph(QWidget):
         return newEdge
 
 
-    def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide, src = '', dst = '', tokenValues = [], pRates = 0, cRates = 0):
+    def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide, src = '', dst = '', tokenValues = [], pRates = [0], cRates = [0]):
         beginNode = self.nodeList[beginNodeIndex]
         endNode = self.nodeList[endNodeIndex]
 
@@ -203,3 +203,7 @@ class Graph(QWidget):
 
     def editCRates(self, src, dst, newCRates):
         self.graphWidget.editCRates(src, dst, newCRates)
+
+
+    def getFireCount(self, src_dst, node):
+        return self.graphWidget.getFireCount(src_dst, node)
