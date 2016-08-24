@@ -200,8 +200,9 @@ class GraphWidget(QWidget):
             #Place nodes
             x, y = self.graphData.node[n]['pos']
             func = self.graphData.node[n]['funcstr']
+            clashCode = self.graphData.node[n]['clashcode']
 
-            self.graph.addNode(x, y, n, func)
+            self.graph.addNode(x, y, n, func, clashCode)
             nPoint = [x, y]
             nodeList.append(n)
             nodePoints.append(nPoint)
@@ -267,6 +268,12 @@ class GraphWidget(QWidget):
         print('Update function to: ' + str(newFunction))
         self.graphData.node[nodeName]['funcstr'] = newFunction
         self.graphData.updateNodeFunction(nodeName, newFunction)
+
+
+    def editClashCode(self, nodeName, newClashCode):
+        print('Update CLaSH code to: ' + str(newClashCode))
+        self.graphData.node[nodeName]['clashcode'] = newClashCode
+        self.graphData.updateClashCode(nodeName, newClashCode)
 
     
     def editPRates(self, src, dst, newPRates):

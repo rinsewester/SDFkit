@@ -68,6 +68,8 @@ class Edge(QGraphicsItem):
         return path
 
 
+#---------------------
+#---Painting & path--- 
     def paint(self, painter, option, widget):
         lod = option.levelOfDetailFromTransform(painter.worldTransform())
 
@@ -356,6 +358,8 @@ class Edge(QGraphicsItem):
         self.curvePoint2 = QPointF(xPoint2, self.endPoint.y() + self.yTranslation)
 
 
+#------------------
+#---Mouse events--- 
     def hoverEnterEvent(self, event):
         self.hover = True
         self.setCursor(Qt.PointingHandCursor)
@@ -400,6 +404,8 @@ class Edge(QGraphicsItem):
         self.update()
 
 
+#---------------------
+#---Points & zValue--- 
     def setZValueEdge(self, zValue):
         self.setZValue(zValue)
         self.tokenCluster.setZValueTokenCluster(zValue + 1)
@@ -436,9 +442,9 @@ class Edge(QGraphicsItem):
         self.tokenCluster = tokenCluster
 
 
+#------------------------------------
+#---Production & Consumption rates--- 
     def updatePCRects(self):
-        #textWidthP = len(self.pRates[0]) * 10
-        #print(self.pRates)
         if self.beginSide == 'left':
             self.pRect = QRectF(self.beginPoint.x() - 20, self.beginPoint.y() - 15, 20, 10)
         else:

@@ -127,8 +127,8 @@ class Graph(QWidget):
         self.clusterList.clear()
             
     
-    def addNode(self, x, y, name, func = []):
-        newNode = Node(self, self.view, name, func)
+    def addNode(self, x, y, name, func = [], clashCode = ''):
+        newNode = Node(self, self.view, name, func, clashCode)
         newNode.setPos(x, y)
         newNode.setZValue(0)
         
@@ -195,6 +195,9 @@ class Graph(QWidget):
 
     def editNodeFunction(self, name, newFunction):
         self.graphWidget.editNodeFunction(name, newFunction)
+
+    def editClashCode(self, name, newClashCode):
+        self.graphWidget.editClashCode(name, newClashCode)
 
     
     def editPRates(self, src, dst, newPRates):

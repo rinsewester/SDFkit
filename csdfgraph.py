@@ -261,6 +261,9 @@ class CSDFGraph(nx.DiGraph):
         self.node[nodename]['funcstr'] = funcstr
         self.node[nodename]['func'] = eval(funcstr)
 
+    def updateClashCode(self, nodename, clashcode):
+        self.node[nodename]['clashcode'] = clashcode
+
     def updateTokens(self, edge, tokenstr):
         src, dst = edge
         newtokens = eval(tokenstr)
