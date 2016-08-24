@@ -24,11 +24,10 @@ class TokenCluster(QGraphicsItem):
         self.src = src
         self.dst = dst
         self.addReferenceToEdge()
-        self.tokenValues = tokenValues
+        self.tokenValues = tokenValues  #Contains all the values of the tokens on an edge
         self.tokensAreClusterd = False
         self.setAcceptHoverEvents(True)
         self.hover = False
-        #self.setAcceptHoverEvents(True)
         self.clusterWidth = 20
         self.clusterHeight = 20
         self.clusterColor = QColor(240, 240, 240)
@@ -61,9 +60,11 @@ class TokenCluster(QGraphicsItem):
 
     def boundingRect(self):
         #Used for collision detection and repaint
-        rect = self.getClusterRect()
-        if self.hover:
-            rect = self.getClusterRectHover()
+        # rect = self.getClusterRect()
+        # if self.hover:
+        #     rect = self.getClusterRectHover()
+
+        rect = self.getClusterRectHover()
 
         return rect
 
@@ -120,8 +121,11 @@ class TokenCluster(QGraphicsItem):
 
 
     def getClusterRectHover(self):
-        return QRectF(-self.clusterWidth * 0.75, -self.clusterHeight * 0.75, self.clusterWidth * 1.5, self.clusterHeight * 1.5)
-        
+        if len(self.tokenList) > 0:
+            rect = QRectF(-self.clusterWidth * 0.75, -self.clusterHeight * 0.75, self.clusterWidth * 1.5, self.clusterHeight * 1.5)
+        else:
+            rect = QRectF(0, 0, 0, 0)
+        return rect       
 
 
     def addToken(self, value):
@@ -152,7 +156,6 @@ class TokenCluster(QGraphicsItem):
     def updateTokens(self):
         for i in range(len(self.tokenList)):
             self.tokenList[i].updatePos()
-
         self.prepareGeometryChange()
         self.setPos(self.edge.getPointOnEdge(0.5))
 
@@ -188,7 +191,8 @@ class TokenCluster(QGraphicsItem):
 #------------------
 #---Mouse Events---
     def mousePressEvent(self, event):
-        print('Token Values: ' + str(self.tokenValues))  
+        if self.tokensAreClusterd:
+            print('Token Values: ' + str(self.tokenValues))  
 
         super().mousePressEvent(event)
         self.update()
@@ -196,6 +200,7 @@ class TokenCluster(QGraphicsItem):
 
     def hoverEnterEvent(self, event):
         self.hover = True
+        self.setCursor(Qt.PointingHandCursor)
         self.setZValue(self.zValue() + 4)
 
         super().hoverEnterEvent(event)
@@ -204,13 +209,14 @@ class TokenCluster(QGraphicsItem):
 
     def hoverLeaveEvent(self, event):
         self.hover = False
+        self.setCursor(Qt.ArrowCursor)
 
         if self.zValue() == 7:
             self.setZValue(7)
         else:            
             self.setZValue(self.zValue() - 4)
 
-        self.prepareGeometryChange()
+        #self.prepareGeometryChange()
 
         super().hoverLeaveEvent(event)
         self.update()
@@ -239,16 +245,13 @@ class TokenCluster(QGraphicsItem):
         if ok:
             try:
                 newTokens = eval(newTokenStr)
-                print('Updated tokens to: ' + str(newTokenStr))
                 self.newTokenValues(newTokens)
                 self.widget.editTokens(self.src, self.dst, newTokens)
             except:
                 print('Invalid token entry')
             
 
-            # newTokens = newTokenStr
             # newTokens = eval(newTokenStr)
-            # print('Updated tokens to: ' + str(newTokenStr))
             # self.newTokenValues(newTokens)
             # self.widget.editTokens(self.src, self.dst, newTokens)  
 
@@ -280,12 +283,13 @@ class Token(QGraphicsItem):
         self.hover = False
 
 
-
     def boundingRect(self):
         #Used for collision detection and repaint
-        rect = self.getTokenRect()
-        if self.hover:
-            rect = self.getTokenRectHover()
+        # rect = self.getTokenRect()
+        # if self.hover:
+        #     rect = self.getTokenRectHover()
+
+        rect = self.getTokenRectHover()
 
         return rect
 
@@ -366,9 +370,8 @@ class Token(QGraphicsItem):
 
     def hoverEnterEvent(self, event):
         self.hover = True
+        self.setCursor(Qt.PointingHandCursor)
         self.setZValue(self.zValue() + 4)   
-        
-        self.prepareGeometryChange()  
 
         super().hoverEnterEvent(event)
         self.update()
@@ -376,14 +379,15 @@ class Token(QGraphicsItem):
 
     def hoverLeaveEvent(self, event):
         self.hover = False
+        self.setCursor(Qt.ArrowCursor)
 
         if self.zValue() == 8:
             self.setZValue(8)
         else:            
             self.setZValue(self.zValue() - 4)
 
-        self.prepareGeometryChange()
-
+        #self.prepareGeometryChange()   #Causes an unknown crash in specific cases
+                                        #Instead always use the larger hoverRect for boundingRect
         super().hoverLeaveEvent(event)
         self.update()
 
@@ -416,7 +420,6 @@ class Token(QGraphicsItem):
         self.cluster.tokensAreClusterd = False
         self.cluster.setAcceptHoverEvents(False)
         self.setVisible(True)
-        self.prepareGeometryChange()
 
         if self.rowLength == 0:
             self.setPos(self.getPointOnEdge(0.5))

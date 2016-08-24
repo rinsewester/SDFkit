@@ -265,9 +265,16 @@ class Node(QGraphicsItem):
         self.setFlag(QGraphicsItem.ItemIsMovable, True)
 
 
+    def hoverEnterEvent(self, event):
+        self.setCursor(Qt.PointingHandCursor)
+        super().hoverEnterEvent(event)
+        self.update()
+
+
     def hoverLeaveEvent(self, event):
         self.hover = False
         self.setHoveringToFalse()
+        self.setCursor(Qt.ArrowCursor)
 
         super().hoverLeaveEvent(event)
         self.update()

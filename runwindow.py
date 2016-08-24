@@ -79,7 +79,7 @@ class RunWindow(QWidget):
         self.vbox.addStretch()
         self.setLayout(self.vbox)
 
-        self.setGraph(G0)
+        #self.setGraph(G0)
 
         self.setGeometry(300, 300, 300, 500)
         self.show()

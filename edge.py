@@ -358,6 +358,7 @@ class Edge(QGraphicsItem):
 
     def hoverEnterEvent(self, event):
         self.hover = True
+        self.setCursor(Qt.PointingHandCursor)
 
         super().hoverEnterEvent(event)
         self.update()
@@ -365,6 +366,7 @@ class Edge(QGraphicsItem):
 
     def hoverLeaveEvent(self, event):
         self.hover = False
+        self.setCursor(Qt.ArrowCursor)
 
         super().hoverLeaveEvent(event)
         self.update()

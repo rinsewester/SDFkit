@@ -34,6 +34,23 @@ class GraphicsView(QGraphicsView):
             super().wheelEvent(event)
 
 
+    def keyPressEvent(self, event):
+        if event.modifiers() & Qt.ShiftModifier:
+            self.setInteractive(False)
+            self.setDragMode(True)           
+
+        super().keyPressEvent(event)
+
+
+    def keyReleaseEvent(self, event):
+        self.setInteractive(True)
+        self.setDragMode(False)
+        self.setDragMode(QGraphicsView.RubberBandDrag)
+
+        super().keyReleaseEvent(event)
+
+
+
 
 class GraphicsScene(QGraphicsScene):
 
@@ -66,6 +83,7 @@ class GraphWidget(QWidget):
 
         #setFrameStyle(Sunken | StyledPanel)
         self.graphicsView = GraphicsView(self)
+
         self.graphicsView.setDragMode(QGraphicsView.RubberBandDrag)
         self.graphicsView.setOptimizationFlags(QGraphicsView.DontSavePainterState)
         self.graphicsView.setViewportUpdateMode(QGraphicsView.SmartViewportUpdate)
@@ -125,6 +143,7 @@ class GraphWidget(QWidget):
 
 
 
+
     def setGraph(self, graphData):
         if graphData != None:
             self.graphData = graphData
@@ -141,17 +160,28 @@ class GraphWidget(QWidget):
                     maxX = max(maxX, x)
                     maxY = max(maxY, y)
 
-                self.setMinimumWidth(maxX + 128)
-                self.setMinimumHeight(maxY + 128)
+                #Sets minimum width of the scene window, not of the canvas
+                # self.setMinimumWidth(maxX + 256)  
+                # self.setMinimumHeight(maxY + 128)
+                self.setMinimumWidth(256)
+                self.setMinimumHeight(128)
 
                 #Determine the center of the graph
                 self.centerOfGraph = QPointF((minX + maxX) / 2, (minY + maxY) / 2)
 
             else:
-                self.setMinimumWidth(128)
+                self.setMinimumWidth(256)
                 self.setMinimumHeight(128)
 
             self.placeGraphObjects()
+
+            #Resize scene to be slightly larger than the graph
+            self.scene.setSceneRect(0, 0 , maxX + 128, maxY + 128)
+            
+            #Try to fit the graph in the view of the scene
+            #self.graphicsView.fitInView(self.scene.sceneRect(), Qt.IgnoreAspectRatio)
+
+            self.resetView()
 
             self.update()
 
@@ -213,7 +243,6 @@ class GraphWidget(QWidget):
                         self.graph.addEdgeToNodes(node1, node2, 'right', 'right', src, dst, tokenValues, pRates, cRates)
                     else:
                         self.graph.addEdgeToNodes(node1, node2, 'left', 'left', src, dst, tokenValues, pRates, cRates)
-            
 
 
     def updateTokensGraph(self):
