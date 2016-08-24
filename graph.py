@@ -27,7 +27,7 @@ class Graph(QWidget):
 
         # Test scenes only work when not overruled by
         # "self.graphWidget.setGraph(self.graph)" in mainwindow.py
-        testScene = 1   #0 = empty, 1 = complex, 2 = grid, 3 = simple
+        testScene = 2   #0 = empty, 1 = complex, 2 = grid, 3 = simple
       
         self.edgeList = []
         self.nodeList = []

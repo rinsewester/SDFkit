@@ -105,6 +105,11 @@ class TokenCluster(QGraphicsItem):
             painter.drawEllipse(smallRect3)
             painter.drawEllipse(smallRect4)
 
+        # #Debug
+        # painter.setPen(QColor(255, 0, 0, 100))
+        # painter.setBrush(QColor(255, 0, 0, 50))
+        # painter.drawRect(self.boundingRect())
+
 
     def getClusterRect(self):
         if len(self.tokenList) > 0:
@@ -157,7 +162,7 @@ class TokenCluster(QGraphicsItem):
         self.deleteTokens()
         self.tokenList.clear()
 
-        for i in range(len(newTokens)):
+        for i in reversed(range(len(newTokens))):   #For normal order of tokens, remove 'reversed'
             self.addToken(newTokens[i])
         
         self.tokenValues = newTokens
@@ -271,7 +276,7 @@ class Token(QGraphicsItem):
         self.tokenHeight = 15
         self.tokenColor = QColor(255, 255, 255)
 
-        #self.setAcceptHoverEvents(True)
+        self.setAcceptHoverEvents(True)
         self.hover = False
 
 
@@ -345,6 +350,10 @@ class Token(QGraphicsItem):
                         rect.setY(rect.y() + 5)
                         painter.drawText(rect, Qt.AlignCenter, '..')
 
+        # #Debug
+        # painter.setPen(QColor(0, 255, 0, 100))
+        # painter.setBrush(QColor(0, 255, 0, 50))
+        # painter.drawRect(self.boundingRect())
 
 #------------------
 #---Mouse Events---
@@ -405,6 +414,7 @@ class Token(QGraphicsItem):
     def updatePos(self):          
         #Update postion of the token based on its position in the row
         self.cluster.tokensAreClusterd = False
+        self.cluster.setAcceptHoverEvents(False)
         self.setVisible(True)
         self.prepareGeometryChange()
 
@@ -434,6 +444,7 @@ class Token(QGraphicsItem):
                 self.setVisible(False)
             #Draw a cluster instead of all the tokens in the middle
             self.cluster.tokensAreClusterd = True
+            self.cluster.setAcceptHoverEvents(True)
         
         self.prepareGeometryChange()
         self.update()
