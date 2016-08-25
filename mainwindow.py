@@ -80,7 +80,7 @@ class MainWindow(QMainWindow):
 
         self.graph = G0
 
-        self.graphWidget = GraphWidget(self.graph)
+        self.graphWidget = GraphWidget()
         self.graphWidget.setGraph(self.graph) #Comment this line to enable test scenes in graph.py
         
         self.dwRunWindow = QDockWidget('Simulate graph', self)
@@ -134,8 +134,7 @@ class MainWindow(QMainWindow):
             self, 'Open graph', './examples')
         try:
             self.graph = CSDFGraph()
-            self.graph.loadFromFile(graphfile)
-
+            self.graph.loadFromFile(graphfile)           
             self.runWindow.setGraph(self.graph)
             self.graphWidget.setGraph(self.graph)
             self._updateLogWindow()

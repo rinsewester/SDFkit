@@ -34,6 +34,23 @@ class GraphicsView(QGraphicsView):
             super().wheelEvent(event)
 
 
+    def keyPressEvent(self, event):
+        if event.modifiers() & Qt.ShiftModifier:
+            self.setInteractive(False)
+            self.setDragMode(True)           
+
+        super().keyPressEvent(event)
+
+
+    def keyReleaseEvent(self, event):
+        self.setInteractive(True)
+        self.setDragMode(False)
+        self.setDragMode(QGraphicsView.RubberBandDrag)
+
+        super().keyReleaseEvent(event)
+
+
+
 
 class GraphicsScene(QGraphicsScene):
 
@@ -56,17 +73,17 @@ class GraphicsScene(QGraphicsScene):
 
 class GraphWidget(QWidget):
 
-    def __init__(self, csdfGraph):
+    def __init__(self):
         super().__init__()
 
         self.initUI()
-        self.csdfGraph = csdfGraph
 
         
     def initUI(self):
 
         #setFrameStyle(Sunken | StyledPanel)
         self.graphicsView = GraphicsView(self)
+
         self.graphicsView.setDragMode(QGraphicsView.RubberBandDrag)
         self.graphicsView.setOptimizationFlags(QGraphicsView.DontSavePainterState)
         self.graphicsView.setViewportUpdateMode(QGraphicsView.SmartViewportUpdate)
@@ -79,6 +96,7 @@ class GraphWidget(QWidget):
 
         #Create a graph that can contain nodes and edges
         self.graph = Graph(self, self.scene, self.graphicsView)
+        self.tokensInScene = []
 
         #UI for the graphicsView
         iconSize = QSize(16, 16)
@@ -125,6 +143,7 @@ class GraphWidget(QWidget):
 
 
 
+
     def setGraph(self, graphData):
         if graphData != None:
             self.graphData = graphData
@@ -136,21 +155,34 @@ class GraphWidget(QWidget):
 
                 for n in self.graphData.nodes():
                     x, y = self.graphData.node[n]['pos']
-                    minX = min(minX, x)
-                    minY = min(minY, y)
-                    maxX = max(maxX, x)
-                    maxY = max(maxY, y)
+                    minX = min(minX, x - 50)
+                    minY = min(minY, y - 50)
+                    maxX = max(maxX, x + 50)
+                    maxY = max(maxY, y + 50)
 
-                self.setMinimumWidth(maxX + 128)
-                self.setMinimumHeight(maxY + 128)
+                #Sets minimum width of the scene window, not of the canvas
+                #self.setMinimumWidth(maxX + 256)  
+                #self.setMinimumHeight(maxY + 128)
+                self.setMinimumWidth(256)
+                self.setMinimumHeight(128)
 
                 #Determine the center of the graph
                 self.centerOfGraph = QPointF((minX + maxX) / 2, (minY + maxY) / 2)
+
             else:
-                self.setMinimumWidth(128)
+                self.setMinimumWidth(256)
                 self.setMinimumHeight(128)
 
             self.placeGraphObjects()
+
+            #Resize scene to be slightly larger than the graph
+            #Stops scene from dianamically resizing when nodes are moved
+            #self.scene.setSceneRect(-10, -10 , maxX + 256, maxY + 256)
+            
+            #Try to fit the graph in the view of the scene
+            #self.graphicsView.fitInView(self.scene.sceneRect(), Qt.IgnoreAspectRatio)
+
+            self.resetView()
 
             self.update()
 
@@ -160,6 +192,7 @@ class GraphWidget(QWidget):
         self.graph.clearGraph()
         #Make sure every scene items is deleted
         self.scene.clear()
+        self.tokensInScene.clear()
 
         #Place graph objects based on the graph data
         nodeList = []
@@ -168,14 +201,12 @@ class GraphWidget(QWidget):
             #Place nodes
             x, y = self.graphData.node[n]['pos']
             func = self.graphData.node[n]['funcstr']
+            clashCode = self.graphData.node[n]['clashcode']
 
-            self.graph.addNode(x, y, n, func)
+            self.graph.addNode(x, y, n, func, clashCode)
             nPoint = [x, y]
             nodeList.append(n)
             nodePoints.append(nPoint)
-
-        print(nodeList)
-        print(nodePoints)
 
 
         #Check for self-looping edges first
@@ -185,8 +216,14 @@ class GraphWidget(QWidget):
             node2 = nodeList.index(dst)
             
             if src == dst:
-                tokenValues = self.graphData[src][dst]['tkns']         
-                self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues)
+                tokenValues = self.graphData[src][dst]['tkns']
+                pRates = self.graphData[src][dst]['prates']
+                cRates = self.graphData[src][dst]['crates']
+                resnr = self.graphData[src][dst]['res']
+                argnr = self.graphData[src][dst]['arg']
+                self.tokensInScene.append((src, dst))    
+                    
+                self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues, pRates, cRates, resnr, argnr)
                 
         #Then place the rest of the edges (not self-looping)
         for src, dst in self.graphData.edges():
@@ -196,38 +233,70 @@ class GraphWidget(QWidget):
             
             if src != dst:
                 tokenValues = self.graphData[src][dst]['tkns']
+                pRates = self.graphData[src][dst]['prates']
+                cRates = self.graphData[src][dst]['crates']
+                resnr = self.graphData[src][dst]['res']
+                argnr = self.graphData[src][dst]['arg']
+                self.tokensInScene.append((src, dst))    
 
                 #If begin node is left of end node
                 if nodePoints[node1][0] < nodePoints[node2][0]:
-                    self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues)
+                    self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues, pRates, cRates, resnr, argnr)
                 elif nodePoints[node1][0] > nodePoints[node2][0]:
-                    self.graph.addEdgeToNodes(node1, node2, 'left', 'right', src, dst, tokenValues)
+                    self.graph.addEdgeToNodes(node1, node2, 'left', 'right', src, dst, tokenValues, pRates, cRates, resnr, argnr)
                 else:
                     if nodePoints[node1][0] > self.centerOfGraph.x():
-                        self.graph.addEdgeToNodes(node1, node2, 'right', 'right', src, dst, tokenValues)
+                        self.graph.addEdgeToNodes(node1, node2, 'right', 'right', src, dst, tokenValues, pRates, cRates, resnr, argnr)
                     else:
-                        self.graph.addEdgeToNodes(node1, node2, 'left', 'left', src, dst, tokenValues)
-            
-        
+                        self.graph.addEdgeToNodes(node1, node2, 'left', 'left', src, dst, tokenValues, pRates, cRates, resnr, argnr)
 
 
     def updateTokensGraph(self):
         #Update tokens after a step
         i = 0
-        for src, dst in self.graphData.edges():
+        for src, dst in self.tokensInScene:
             self.graph.updateTokens(i, self.graphData[src][dst]['tkns'])
             i = i + 1
 
 
     def editTokens(self, src, dst, newTokens):
+        print('Update tokens between: ' + str(src) + '--->' + str(dst) + ' to: ' + str(newTokens))
         self.graphData[src][dst]['tkns'] = newTokens
-        self.csdfGraph.editTokens(src, dst, newTokens)
+        newTokens = str(newTokens)
+        self.graphData.updateTokens((src, dst), newTokens)
+
+        #Also store the state after the change (Makes it more visual and makes it possible to step back to)
+        self.graphData._storestate()
         
         
     def editNodeFunction(self, nodeName, newFunction):
+        print('Update function to: ' + str(newFunction))
         self.graphData.node[nodeName]['funcstr'] = newFunction
-        self.csdfGraph.editNodeFunction(nodeName, newFunction)
-        #self.graphData.node[nodename]['func'] = eval(str(newFunction))
+        self.graphData.updateNodeFunction(nodeName, newFunction)
+
+
+    def editClashCode(self, nodeName, newClashCode):
+        print('Update CLaSH code to: ' + str(newClashCode))
+        self.graphData.node[nodeName]['clashcode'] = newClashCode
+        self.graphData.updateClashCode(nodeName, newClashCode)
+
+    
+    def editPRates(self, src, dst, newPRates):
+        print('Update pRates to: ' + str(newPRates))
+        self.graphData[src][dst]['prates'] = newPRates
+        newPRates = str(newPRates)
+        self.graphData.updatePRates((src, dst), newPRates)
+
+
+    def editCRates(self, src, dst, newCRates):
+        print('Update cRates to: ' + str(newCRates))
+        self.graphData[src][dst]['crates'] = newCRates
+        newCRates = str(newCRates)
+        self.graphData.updateCRates((src, dst), newCRates)
+
+
+    def getFireCount(self, src_dst, node):
+        return self.graphData.node[src_dst]['firecount']
 
 
     def resetView(self):

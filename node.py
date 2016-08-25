@@ -16,7 +16,7 @@ from collections import Counter
 
 class Node(QGraphicsItem):
 
-    def __init__(self, widget, view, nodeName, function):
+    def __init__(self, widget, view, nodeName, function, clashCode):
         super().__init__()
         
         self.ioWidth = 15
@@ -40,12 +40,13 @@ class Node(QGraphicsItem):
         self.snappingIsOn = True
         self.showNeutralIO = False
         self.nodeFunction = function
+        self.clashCode = clashCode
 
 
         self.widget = widget
         self.view = view
-        self.nodeText = nodeName
-        self.nodeTextDisplayed = ''
+        self.nodeName = nodeName
+        self.nodeNameDisplayed = ''
 
         self.edgeList = []
         self.ioList = []
@@ -56,9 +57,12 @@ class Node(QGraphicsItem):
 
         self.setNodeAction = QAction('Edit node function', self.widget)
         self.setNodeAction.triggered.connect(self.setNodeActiontriggered)
+        self.setClashCodeAction = QAction('Edit CLaSH code', self.widget)
+        self.setClashCodeAction.triggered.connect(self.setClashCodeActionTriggered)
 
         self.nodeMenu = QMenu()
         self.nodeMenu.addAction(self.setNodeAction)
+        self.nodeMenu.addAction(self.setClashCodeAction)
         
 
         self.setYTranslationLeftIO()
@@ -94,7 +98,7 @@ class Node(QGraphicsItem):
         #Paint all elments based on the level of detail
         self.paintNodeBody(painter, lod)
         if lod > 0.2:
-            self.paintNodeIO(painter)
+            self.paintNodeIO(painter, lod)
         if lod > 0.4:
             self.paintNodeName(painter)
 
@@ -125,7 +129,7 @@ class Node(QGraphicsItem):
         	painter.drawRect(0, 0, self.nodeBodyWidth, self.nodeBodyHeight)
 
 
-    def paintNodeIO(self, painter):
+    def paintNodeIO(self, painter, lod):
         #Draw all IO
         for i in range(0, len(self.ioList)):
             #Center io if one side contains less io
@@ -172,15 +176,23 @@ class Node(QGraphicsItem):
                 painter.setBrush(brush)
                 path = self.getRoundedRectPath(i, yTranslation, self.ioList[i][3])
                 painter.drawPath(path.simplified())
-        
+
+                #Paint IO name
+                if lod > 0.4:
+                    painter.setFont(QFont("Arial", 6))
+                    if self.ioList[i][3] == 'left':
+                        painter.drawText(self.getIONameRect(i, yTranslation, self.ioList[i][3]), Qt.AlignLeft, str(self.ioList[i][6]))
+                    else:
+                        painter.drawText(self.getIONameRect(i, yTranslation, self.ioList[i][3]), Qt.AlignRight, str(self.ioList[i][6]))
+
         painter.setPen(QColor(0, 0, 0))
 
     def paintNodeName(self, painter):
-        if self.nodeTextDisplayed == '':
+        if self.nodeNameDisplayed == '':
             self.setNodeName()
         
         painter.setFont(QFont("Arial", 8))
-        painter.drawText(self.rectNodeName, Qt.AlignCenter, self.nodeTextDisplayed) 
+        painter.drawText(self.rectNodeName, Qt.AlignCenter, self.nodeNameDisplayed) 
 
 
 #------------------
@@ -265,9 +277,16 @@ class Node(QGraphicsItem):
         self.setFlag(QGraphicsItem.ItemIsMovable, True)
 
 
+    def hoverEnterEvent(self, event):
+        self.setCursor(Qt.PointingHandCursor)
+        super().hoverEnterEvent(event)
+        self.update()
+
+
     def hoverLeaveEvent(self, event):
         self.hover = False
         self.setHoveringToFalse()
+        self.setCursor(Qt.ArrowCursor)
 
         super().hoverLeaveEvent(event)
         self.update()
@@ -295,14 +314,30 @@ class Node(QGraphicsItem):
 
         if ok:
             try:
-                newFunction = eval(newFunctionStr)
-                print('Updated function to: ' + str(newFunctionStr))
+                newFunction = eval(newFunctionStr)               
                 self.nodeFunction = newFunctionStr
-                self.widget.editNodeFunction(self.nodeText, newFunctionStr)
+                self.widget.editNodeFunction(self.nodeName, newFunctionStr)
             except:
-                print('Invalid token entry')
-            
+                print('Invalid function entry')
 
+            # newFunction = eval(newFunctionStr)
+            # self.nodeFunction = newFunctionStr
+            # self.widget.editNodeFunction(self.nodeName, newFunctionStr)
+
+
+    def setClashCodeActionTriggered(self):
+        node = self.nodeName
+
+        clashCodeStr = self.clashCode
+        newClashCode, ok = QInputDialog.getMultiLineText(self.widget, 'CLaSH code for ' + node, 'CLaSH code:', text=clashCodeStr)
+        if ok:
+            try:
+                # TODO add validation of code
+                self.clashCode = newClashCode
+                self.widget.editClashCode(self.nodeName, newClashCode)
+            except:
+                print('Invalid clashcode entry')
+            
 
 #------------------
 #---In/Outputs-----
@@ -347,19 +382,19 @@ class Node(QGraphicsItem):
         else:
             i = self.getLengthRightSide()
 
-        #---newIO = (ioPoint.x, ioPoint.y, hasEdge, side, ioType, mouseHover)---
-        newIO = (self.getIOPoint(i, side).x(), self.getIOPoint(i, side).y(), False, side, ioType, False)
+        #---newIO = (ioPoint.x, ioPoint.y, hasEdge, side, ioType, mouseHover, name)---
+        newIO = (self.getIOPoint(i, side).x(), self.getIOPoint(i, side).y(), False, side, ioType, False, '')
         self.ioList.append(newIO)
 
         #Update the nodeBodyHeight
         self.updateNode()
 
         
-    def setIOType(self, side, ioType):    
+    def setIOType(self, side, ioType, name):    
         #Update the type paramater of the IO
         i = self.getLastIOSide(side)
 
-        self.ioList.insert(i, (self.ioList[i][0], self.ioList[i][1], self.ioList[i][2], self.ioList[i][3], ioType, self.ioList[i][5]))
+        self.ioList.insert(i, (self.ioList[i][0], self.ioList[i][1], self.ioList[i][2], self.ioList[i][3], ioType, self.ioList[i][5], name))
         del self.ioList[i + 1]
 
 
@@ -382,7 +417,7 @@ class Node(QGraphicsItem):
                         print('mouse on IO: ' + str(i) + ' (' + str(self.ioList[i][3]) + ', ' + str(self.ioList[i][4]) + ')')
                     
                     #Update the hover paramater of the IO
-                    self.ioList.insert(i, (self.ioList[i][0], self.ioList[i][1], self.ioList[i][2], self.ioList[i][3], self.ioList[i][4], True))
+                    self.ioList.insert(i, (self.ioList[i][0], self.ioList[i][1], self.ioList[i][2], self.ioList[i][3], self.ioList[i][4], True, self.ioList[i][6]))
                     del self.ioList[i + 1]
 
                     self.setFlag(QGraphicsItem.ItemIsSelectable, False)
@@ -398,7 +433,7 @@ class Node(QGraphicsItem):
     def setHoveringToFalse(self):
         for i in range(0, len(self.ioList)):
         	#Set all hover parameters to false
-            self.ioList.insert(i, (self.ioList[i][0], self.ioList[i][1], self.ioList[i][2], self.ioList[i][3], self.ioList[i][4], False))
+            self.ioList.insert(i, (self.ioList[i][0], self.ioList[i][1], self.ioList[i][2], self.ioList[i][3], self.ioList[i][4], False, self.ioList[i][6]))
             del self.ioList[i + 1]
 
 
@@ -509,12 +544,12 @@ class Node(QGraphicsItem):
 
     def setNodeName(self):
     	#Determine the displayed name of the node and its location once
-        self.nodeTextDisplayed = self.nodeText 
+        self.nodeNameDisplayed = self.nodeName 
 
-        if len(self.nodeText) > self.maxNameLength:
+        if len(self.nodeName) > self.maxNameLength:
             #Cutoff text if the name is too long
-            self.nodeTextDisplayed = self.nodeText[:self.maxNameLength]
-            self.nodeTextDisplayed += '..'
+            self.nodeNameDisplayed = self.nodeName[:self.maxNameLength]
+            self.nodeNameDisplayed += '..'
 
         textPoint = QPoint(self.ioWidth + 4, 3)
         textWidth = self.nodeBodyWidth - self.ioWidth * 2 - 8
@@ -537,6 +572,15 @@ class Node(QGraphicsItem):
             path.addRect(self.ioList[i][0] + self.ioWidth - 2, self.ioList[i][1] + yTranslation + self.ioHeight - 2, 2, 2)
 
         return path
+
+
+    def getIONameRect(self, i, yTranslation, side):
+        if side == 'left':
+            rect = QRectF(self.ioList[i][0] + self.ioWidth + 2, self.ioList[i][1] + yTranslation, self.ioWidth, self.ioHeight)
+        else:
+            rect = QRectF(self.ioList[i][0] - self.ioWidth - 2, self.ioList[i][1] + yTranslation, self.ioWidth, self.ioHeight)
+
+        return rect
 
 
     def addEdge(self, edge, edgeSide):

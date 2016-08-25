@@ -9,13 +9,13 @@ author: Sander Giesselink
 """
 
 import sys
-from PyQt5.QtWidgets import QWidget, QGraphicsItem
-from PyQt5.QtCore import Qt, QPoint, QRectF, QEvent, QPointF
-from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath
+from PyQt5.QtWidgets import QWidget, QGraphicsItem, QInputDialog
+from PyQt5.QtCore import Qt, QPoint, QRect, QRectF, QEvent, QPointF
+from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont
 
 class Edge(QGraphicsItem):
 
-    def __init__(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops):
+    def __init__(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, pRates, cRates):
         super().__init__()
 
         self.edgeSelfLoops = edgeSelfLoops
@@ -25,6 +25,9 @@ class Edge(QGraphicsItem):
         self.beginPoint = beginPoint
         self.endPoint = endPoint
         self.calculateCurvePoints(beginPoint, endPoint)
+        self.cRates = cRates
+        self.pRates = pRates
+        self.updatePCRects()
         
 
         self.edgeColor = QColor(160, 160, 160)
@@ -34,12 +37,19 @@ class Edge(QGraphicsItem):
         #self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
         self.hover = False
-        self.debugOn = True
+        self.debugOn = False
 
 
     def boundingRect(self):
         #Used for collision detection and repaint
         path = self.getEdgePath()
+        path.setFillRule(Qt.WindingFill)
+        
+        path.addRect(self.cRect)
+        path.addRect(self.pRect)
+
+        path.addPath(self.getLargerEdgePath())
+
         rect = path.boundingRect()
 
         return rect
@@ -47,25 +57,30 @@ class Edge(QGraphicsItem):
     
     def shape(self):
         #Determines the collision area
-        # path = QPainterPath(self.beginPoint)
-        # path.cubicTo(self.curvePoint1, self.curvePoint2, self.endPoint) 
-
         path = self.getEdgePath()
+        path.setFillRule(Qt.WindingFill)
+        
+        path.addRect(self.cRect)
+        path.addRect(self.pRect)
+
+        path.addPath(self.getLargerEdgePath())
 
         return path
 
 
+#---------------------
+#---Painting & path--- 
     def paint(self, painter, option, widget):
         lod = option.levelOfDetailFromTransform(painter.worldTransform())
 
         if lod > 0.05:
-            self.paintEdge(painter)
+            self.paintEdge(painter, lod)
 
         if lod > 0.15 and self.debugOn:
             self.debug(painter) #Uncomment to turn on debug mode
 
 
-    def paintEdge(self, painter):
+    def paintEdge(self, painter, lod):
         pen = QPen(QColor(0, 0, 0))
         pen.setWidth(1)
         pen.setCapStyle(Qt.RoundCap)
@@ -85,13 +100,53 @@ class Edge(QGraphicsItem):
         edgePath = self.getEdgePath()       
         edgePath = edgePath.simplified()
 
-
-
-        # edgePath = QPainterPath(self.beginPoint)
-        # edgePath.cubicTo(self.curvePoint1, self.curvePoint2, self.endPoint)
-
-
         painter.drawPath(edgePath)
+
+        if lod > 0.4:
+            self.drawPCRates(painter)
+
+
+    def drawPCRates(self, painter):
+        #Draw production and consumption rates above begin and end of edge
+        pen = QPen(QColor(0, 0, 100))
+        painter.setPen(pen)
+        painter.setFont(QFont("Arial", 8))
+
+        #Only display rates if larger than 1 or more than 1, and max 1 rate at the time
+        #Build string for production rate
+        pPhase = self.tokenCluster.getFireCount('src') % len(self.pRates)
+
+        if len(self.pRates) == 1:
+            if self.pRates == [1]:
+                pRateStr = ''
+            else:
+                pRateStr = str(self.pRates[0])
+        elif pPhase == 0:
+            pRateStr = str(self.pRates[pPhase]) + ',..'
+        elif pPhase == len(self.pRates) - 1:
+            pRateStr = '..,' + str(self.pRates[pPhase])
+        else:
+            pRateStr = '..,' + str(self.pRates[pPhase]) + ',..'
+
+        #Same for consumption string
+        cPhase = self.tokenCluster.getFireCount('dst') % len(self.cRates)
+
+        if len(self.cRates) == 1:
+            if self.cRates == [1]:
+                cRateStr = ''
+            else:
+                cRateStr = str(self.cRates[0])
+        elif cPhase == 0:
+            cRateStr = str(self.cRates[cPhase]) + ',..'
+        elif cPhase == len(self.cRates) - 1:
+            cRateStr = '..,' + str(self.cRates[cPhase])
+        else:
+            cRateStr = '..,' + str(self.cRates[cPhase]) + ',..'
+
+        if len(self.pRates) > 1 or self.pRates[0] > 1:   
+            painter.drawText(self.pRect, Qt.AlignCenter, pRateStr)
+        if len(self.cRates) > 1 or self.cRates[0] > 1:        
+            painter.drawText(self.cRect, Qt.AlignCenter, cRateStr)
 
 
     def getEdgePath(self):
@@ -126,14 +181,50 @@ class Edge(QGraphicsItem):
         point2 = QPointF(curvePoint2.x(), curvePoint2.y())
         path.cubicTo(point1, point2, endPoint) 
 
-        #Cap
-        # if self.beginSide == 'right':
-        #     path.lineTo(QPointF(self.beginPoint.x() - 5, self.beginPoint.y() - 4))
-        #     path.lineTo(QPointF(self.beginPoint.x() - 5, self.beginPoint.y() + 4))            
-        # else:
-        #     path.lineTo(QPointF(self.beginPoint.x() + 5, self.beginPoint.y() - 4))
-        #     path.lineTo(QPointF(self.beginPoint.x() + 5, self.beginPoint.y() + 4))
-        # path.lineTo(QPointF(self.beginPoint.x(), self.beginPoint.y() + 2))
+        if self.beginSide == 'right':
+            path.lineTo(QPointF(self.beginPoint.x() - 10, self.beginPoint.y() - 2))
+            path.lineTo(QPointF(self.beginPoint.x() - 10, self.beginPoint.y() + 2))            
+        else:
+            path.lineTo(QPointF(self.beginPoint.x() + 10, self.beginPoint.y() - 2))
+            path.lineTo(QPointF(self.beginPoint.x() + 10, self.beginPoint.y() + 2))
+        path.lineTo(QPointF(self.beginPoint.x(), self.beginPoint.y() + 2))
+
+        return path
+
+
+    def getLargerEdgePath(self):
+        #Used to fill in the small areas on the edge
+        #This makes it easier to select the edge
+        yTranslation = 2
+
+        #Curve 1
+        beginPoint = QPointF(self.beginPoint.x(), self.beginPoint.y() + yTranslation)
+        curvePoint1 = QPointF(self.curvePoint1.x()+4, self.curvePoint1.y() + yTranslation)
+        curvePoint2 = QPointF(self.curvePoint2.x()+4, self.curvePoint2.y() + yTranslation)
+        endPoint = QPointF(self.endPoint.x(), self.endPoint.y() + yTranslation)
+        path = QPainterPath(beginPoint)
+        point1 = QPointF(curvePoint1.x(), curvePoint1.y())
+        point2 = QPointF(curvePoint2.x(), curvePoint2.y())
+        path.cubicTo(point1, point2, endPoint)
+
+        #Arrow
+        arrowBeginPoint = QPointF(self.endPoint.x(), self.endPoint.y() + 4)
+        path.lineTo(arrowBeginPoint)
+        if self.endSide == 'right':
+            path.lineTo(QPointF(self.endPoint.x() - 10, self.endPoint.y()))
+        else:
+            path.lineTo(QPointF(self.endPoint.x() + 10, self.endPoint.y()))
+        path.lineTo(QPointF(self.endPoint.x(), self.endPoint.y() - 4))
+        path.lineTo(QPointF(self.endPoint.x(), self.endPoint.y() - 2))
+
+        #Curve 2 (back)
+        endPoint = QPointF(self.beginPoint.x(), self.beginPoint.y() - yTranslation)
+        curvePoint2 = QPointF(self.curvePoint1.x(), self.curvePoint1.y() - yTranslation)
+        curvePoint1 = QPointF(self.curvePoint2.x(), self.curvePoint2.y() - yTranslation)
+        beginPoint = QPointF(self.endPoint.x(), self.endPoint.y() - yTranslation)
+        point1 = QPointF(curvePoint1.x(), curvePoint1.y())
+        point2 = QPointF(curvePoint2.x(), curvePoint2.y())
+        path.cubicTo(point1, point2, endPoint) 
 
         if self.beginSide == 'right':
             path.lineTo(QPointF(self.beginPoint.x() - 10, self.beginPoint.y() - 2))
@@ -185,12 +276,12 @@ class Edge(QGraphicsItem):
         xPoint1 = self.midPoint.x()
         xPoint2 = self.midPoint.x()
 
-        #If beginPoint and endPoint are the same, move the endPoint by 1
+        #If beginPoint and endPoint are the same, move the endPoint by 0.01
         if self.beginPoint == self.endPoint:
             if self.beginSide == 'left':
-                self.endPoint = QPointF(self.endPoint.x() + 1, self.endPoint.y())       
+                self.endPoint = QPointF(self.endPoint.x() + 0.01, self.endPoint.y())       
             else:
-                self.endPoint = QPointF(self.endPoint.x() - 1, self.endPoint.y())
+                self.endPoint = QPointF(self.endPoint.x() - 0.01, self.endPoint.y())
             self.calculateCurvePoints(self.beginPoint, self.endPoint)
 
         #Calculate curvePoints based on the position of the nodes
@@ -267,8 +358,11 @@ class Edge(QGraphicsItem):
         self.curvePoint2 = QPointF(xPoint2, self.endPoint.y() + self.yTranslation)
 
 
+#------------------
+#---Mouse events--- 
     def hoverEnterEvent(self, event):
         self.hover = True
+        self.setCursor(Qt.PointingHandCursor)
 
         super().hoverEnterEvent(event)
         self.update()
@@ -276,6 +370,7 @@ class Edge(QGraphicsItem):
 
     def hoverLeaveEvent(self, event):
         self.hover = False
+        self.setCursor(Qt.ArrowCursor)
 
         super().hoverLeaveEvent(event)
         self.update()
@@ -300,12 +395,17 @@ class Edge(QGraphicsItem):
 
         #Update tokens on the edge
         self.tokenCluster.updateTokens()
+
+        #Update P & C rate rects
+        self.updatePCRects()
        
         #Prepare the painter for a geometry change, so it repaints correctly
         self.prepareGeometryChange()
         self.update()
 
 
+#---------------------
+#---Points & zValue--- 
     def setZValueEdge(self, zValue):
         self.setZValue(zValue)
         self.tokenCluster.setZValueTokenCluster(zValue + 1)
@@ -340,4 +440,51 @@ class Edge(QGraphicsItem):
 
     def setTokenCluster(self, tokenCluster):
         self.tokenCluster = tokenCluster
+
+
+#------------------------------------
+#---Production & Consumption rates--- 
+    def updatePCRects(self):
+        if self.beginSide == 'left':
+            self.pRect = QRectF(self.beginPoint.x() - 20, self.beginPoint.y() - 15, 20, 10)
+        else:
+            self.pRect = QRectF(self.beginPoint.x(), self.beginPoint.y() - 15, 20, 10)
         
+        if self.endSide == 'left':
+            self.cRect = QRectF(self.endPoint.x() - 20, self.endPoint.y() - 15, 20, 10)
+        else:
+            self.cRect = QRectF(self.endPoint.x(), self.endPoint.y() - 15, 20, 10)
+
+
+    def setPRatesActiontriggered(self):
+        pRatesStr = str(self.pRates)
+        newPRatesStr, ok = QInputDialog.getText(self.tokenCluster.widget, 'Edit production rates', 'Production rate:', text = pRatesStr)
+        
+        if ok:
+            try:
+                newPRates = eval(newPRatesStr)
+                self.pRates = newPRates
+                self.tokenCluster.widget.editPRates(self.tokenCluster.src, self.tokenCluster.dst, newPRates)
+            except:
+                print('Invalid pRate entry')
+
+            # newPRates = eval(newPRatesStr)
+            # self.pRates = newPRates
+            # self.tokenCluster.widget.editPRates(self.tokenCluster.src, self.tokenCluster.dst, newPRates)
+
+
+    def setCRatesActiontriggered(self):
+        cRatesStr = str(self.cRates)
+        newCRatesStr, ok = QInputDialog.getText(self.tokenCluster.widget, 'Edit consumption rates', 'Consumption rate:', text = cRatesStr)
+        
+        if ok:
+            try:
+                newCRates = eval(newCRatesStr)
+                self.cRates = newCRates
+                self.tokenCluster.widget.editCRates(self.tokenCluster.src, self.tokenCluster.dst, newCRates)
+            except:
+                print('Invalid cRate entry')
+
+            # newCRates = eval(newCRatesStr)
+            # self.cRates = newCRates
+            # self.tokenCluster.widget.editCRates(self.tokenCluster.src, self.tokenCluster.dst, newCRates)
