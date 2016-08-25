@@ -27,7 +27,7 @@ class Graph(QWidget):
 
         # Test scenes only work when not overruled by
         # "self.graphWidget.setGraph(self.graph)" in mainwindow.py
-        testScene = 0   #0 = empty, 1 = complex, 2 = grid, 3 = simple
+        testScene = 1   #0 = empty, 1 = complex, 2 = grid, 3 = simple
       
         self.edgeList = []
         self.nodeList = []
@@ -127,8 +127,8 @@ class Graph(QWidget):
         self.clusterList.clear()
             
     
-    def addNode(self, x, y, name, func = [], clashCode = ''):
-        newNode = Node(self, self.view, name, func, clashCode)
+    def addNode(self, x, y, name, func = []):
+        newNode = Node(self, self.view, name, func)
         newNode.setPos(x, y)
         newNode.setZValue(0)
         
@@ -137,8 +137,8 @@ class Graph(QWidget):
         self.nodeList.append(newNode)
 
 
-    def addEdge(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues, pRates, cRates):        
-        newEdge = Edge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, pRates, cRates)
+    def addEdge(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues = []):        
+        newEdge = Edge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops)
 
         #Place edges always behind nodes
         newEdge.setZValue(1)
@@ -155,7 +155,7 @@ class Graph(QWidget):
         return newEdge
 
 
-    def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide, src = '', dst = '', tokenValues = [], pRates = [0], cRates = [0]):
+    def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide, src = '', dst = '', tokenValues = []):
         beginNode = self.nodeList[beginNodeIndex]
         endNode = self.nodeList[endNodeIndex]
 
@@ -178,7 +178,7 @@ class Graph(QWidget):
         endNode.addNewIO(endSide, 0)
         
         #Create edge between the 2 nodes
-        edge = self.addEdge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues, pRates, cRates)
+        edge = self.addEdge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues)
 
         #Give both nodes a reference to the created edge
         beginNode.addEdge(edge, 'begin')
@@ -195,18 +195,3 @@ class Graph(QWidget):
 
     def editNodeFunction(self, name, newFunction):
         self.graphWidget.editNodeFunction(name, newFunction)
-
-    def editClashCode(self, name, newClashCode):
-        self.graphWidget.editClashCode(name, newClashCode)
-
-    
-    def editPRates(self, src, dst, newPRates):
-        self.graphWidget.editPRates(src, dst, newPRates)
-
-
-    def editCRates(self, src, dst, newCRates):
-        self.graphWidget.editCRates(src, dst, newCRates)
-
-
-    def getFireCount(self, src_dst, node):
-        return self.graphWidget.getFireCount(src_dst, node)

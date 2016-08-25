@@ -16,7 +16,7 @@ from collections import Counter
 
 class Node(QGraphicsItem):
 
-    def __init__(self, widget, view, nodeName, function, clashCode):
+    def __init__(self, widget, view, nodeName, function):
         super().__init__()
         
         self.ioWidth = 15
@@ -40,13 +40,12 @@ class Node(QGraphicsItem):
         self.snappingIsOn = True
         self.showNeutralIO = False
         self.nodeFunction = function
-        self.clashCode = clashCode
 
 
         self.widget = widget
         self.view = view
-        self.nodeName = nodeName
-        self.nodeNameDisplayed = ''
+        self.nodeText = nodeName
+        self.nodeTextDisplayed = ''
 
         self.edgeList = []
         self.ioList = []
@@ -57,12 +56,9 @@ class Node(QGraphicsItem):
 
         self.setNodeAction = QAction('Edit node function', self.widget)
         self.setNodeAction.triggered.connect(self.setNodeActiontriggered)
-        self.setClashCodeAction = QAction('Edit CLaSH code', self.widget)
-        self.setClashCodeAction.triggered.connect(self.setClashCodeActionTriggered)
 
         self.nodeMenu = QMenu()
         self.nodeMenu.addAction(self.setNodeAction)
-        self.nodeMenu.addAction(self.setClashCodeAction)
         
 
         self.setYTranslationLeftIO()
@@ -180,11 +176,11 @@ class Node(QGraphicsItem):
         painter.setPen(QColor(0, 0, 0))
 
     def paintNodeName(self, painter):
-        if self.nodeNameDisplayed == '':
+        if self.nodeTextDisplayed == '':
             self.setNodeName()
         
         painter.setFont(QFont("Arial", 8))
-        painter.drawText(self.rectNodeName, Qt.AlignCenter, self.nodeNameDisplayed) 
+        painter.drawText(self.rectNodeName, Qt.AlignCenter, self.nodeTextDisplayed) 
 
 
 #------------------
@@ -269,16 +265,9 @@ class Node(QGraphicsItem):
         self.setFlag(QGraphicsItem.ItemIsMovable, True)
 
 
-    def hoverEnterEvent(self, event):
-        self.setCursor(Qt.PointingHandCursor)
-        super().hoverEnterEvent(event)
-        self.update()
-
-
     def hoverLeaveEvent(self, event):
         self.hover = False
         self.setHoveringToFalse()
-        self.setCursor(Qt.ArrowCursor)
 
         super().hoverLeaveEvent(event)
         self.update()
@@ -306,30 +295,14 @@ class Node(QGraphicsItem):
 
         if ok:
             try:
-                newFunction = eval(newFunctionStr)               
+                newFunction = eval(newFunctionStr)
+                print('Updated function to: ' + str(newFunctionStr))
                 self.nodeFunction = newFunctionStr
-                self.widget.editNodeFunction(self.nodeName, newFunctionStr)
+                self.widget.editNodeFunction(self.nodeText, newFunctionStr)
             except:
-                print('Invalid function entry')
-
-            # newFunction = eval(newFunctionStr)
-            # self.nodeFunction = newFunctionStr
-            # self.widget.editNodeFunction(self.nodeName, newFunctionStr)
-
-
-    def setClashCodeActionTriggered(self):
-        node = self.nodeName
-
-        clashCodeStr = self.clashCode
-        newClashCode, ok = QInputDialog.getMultiLineText(self.widget, 'CLaSH code for ' + node, 'CLaSH code:', text=clashCodeStr)
-        if ok:
-            try:
-                # TODO add validation of code
-                self.clashCode = newClashCode
-                self.widget.editClashCode(self.nodeName, newClashCode)
-            except:
-                print('Invalid clashcode entry')
+                print('Invalid token entry')
             
+
 
 #------------------
 #---In/Outputs-----
@@ -536,12 +509,12 @@ class Node(QGraphicsItem):
 
     def setNodeName(self):
     	#Determine the displayed name of the node and its location once
-        self.nodeNameDisplayed = self.nodeName 
+        self.nodeTextDisplayed = self.nodeText 
 
-        if len(self.nodeName) > self.maxNameLength:
+        if len(self.nodeText) > self.maxNameLength:
             #Cutoff text if the name is too long
-            self.nodeNameDisplayed = self.nodeName[:self.maxNameLength]
-            self.nodeNameDisplayed += '..'
+            self.nodeTextDisplayed = self.nodeText[:self.maxNameLength]
+            self.nodeTextDisplayed += '..'
 
         textPoint = QPoint(self.ioWidth + 4, 3)
         textWidth = self.nodeBodyWidth - self.ioWidth * 2 - 8
