@@ -132,22 +132,20 @@ class MainWindow(QMainWindow):
 
         graphfile, _ = QFileDialog.getOpenFileName(
             self, 'Open graph', './examples')
-        try:
-            self.graph = CSDFGraph()
-            self.graph.loadFromFile(graphfile)           
+
+        if graphfile != '':
+            try:
+                self.graph = CSDFGraph()
+                self.graph.loadFromFile(graphfile)
+            except (FileNotFoundError, ValueError, KeyError) as e:
+                QMessageBox.critical(
+                    self, 'Error opening file',
+                    '<b>Error opening file:</b>' + '\n\n' + str(e))
+                self.graph = None
+
             self.runWindow.setGraph(self.graph)
             self.graphWidget.setGraph(self.graph)
             self._updateLogWindow()
-        except (FileNotFoundError, ValueError, KeyError) as e:
-            QMessageBox.critical(
-                self, 'Error opening file',
-                '<b>Error opening file:</b>' + '\n\n' + str(e))
-            #If there is an error, don't reset the graph but keep the old one
-            #self.graph = None
-
-        # self.runWindow.setGraph(self.graph)
-        # self.graphWidget.setGraph(self.graph)
-        # self._updateLogWindow()
 
     def clashcodegenActionTriggered(self):
         try:
@@ -156,6 +154,8 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(
                 self, 'Generate CLaSH code',
                 '<b>Error generating CLaSH code:</b> ' + str(e))
+            # TODO: Remove the following line when clash codegen completed
+            raise e
 
     # def softcodegenActionTriggered(self):
     #     try:
@@ -178,6 +178,7 @@ class MainWindow(QMainWindow):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon('images/logo.png'))
     ex = MainWindow()
     app.exec_()
     app.deleteLater()

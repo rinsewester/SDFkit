@@ -1,0 +1,33 @@
+{ 
+	"name": "Simple CSDF producer consumer",
+
+	"clashtypes" :{
+		"Bytev3" : "Vec 3 Byte",
+		"Bytev2" : "Vec 2 Byte"
+	},
+
+	"nodes" : [
+		{
+			"name" : "Pr",
+			"function" : "lambda firecounter, phase: [] if (phase == 0) else [firecounter, firecounter + 1, firecounter + 2]",
+			"pos" : [100, 100]
+		},
+		{
+			"name" : "Cr",
+			"function" : "lambda xs, firecounter, phase: []",
+			"pos" : [300, 100]
+		}
+	],
+
+	"edges": [
+		{
+			"src" : "Pr",
+			"dst" : "Cr",
+			"resnr" : 0,
+			"argnr" : 0,
+			"prates" : [0, 3],
+			"crates" : [1, 2],
+			"tkns" : []
+		}
+	]
+}

@@ -21,9 +21,14 @@ class CSDFGraph(nx.DiGraph):
 
         super().__init__()
 
+        # name of the CSDFGraph
         self.name = name
 
         # state storage for backtracking in simulations (tokens and counters)
+        # list of clash type definitions 
+        self.clashtypes = None
+
+        # state sorage for backtracking in simulations (tokens and counters)
         self.edgestates = {}
         self.nodestates = {}
 
@@ -229,6 +234,10 @@ class CSDFGraph(nx.DiGraph):
         namestr = string.capwords(namestr)
         namestr = namestr.replace(' ', '')
         self.name = namestr
+
+        # Load the predefined clash types when available
+        if 'clashtypes' in jsondata.keys():
+            self.clashtypes = jsondata['clashtypes']
 
         for jsnode in jsondata['nodes']:
             nodeName = jsnode['name']

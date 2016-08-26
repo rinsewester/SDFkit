@@ -48,7 +48,7 @@ class Graph(QWidget):
             
     
     def addNode(self, x, y, name, func = [], clashCode = ''):
-        newNode = Node(self, self.view, name, func, clashCode)
+        newNode = Node(self, self.view, name, func, clashCode, QColor(232, 232, 255))
         newNode.setPos(x, y)
         newNode.setZValue(0)
         

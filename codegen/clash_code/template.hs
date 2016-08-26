@@ -10,6 +10,8 @@ import qualified Data.List as L
 import HSDFTypes
 import HSDFEdge
 
+-- Predefined types
+<PREDEFINED_TYPES>
 
 -- Definitions for the node functions:
 <NODE_FUNC_DEFS>

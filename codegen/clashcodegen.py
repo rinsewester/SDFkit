@@ -27,6 +27,8 @@ class ClashCodeGen(object):
         else:
             edgeTypes = ClashCodeGen._getEdgeTypes(graph)
 
+            predefTypes = ClashCodeGen._generatePredfinedTypes(graph.clashtypes)
+
             nodeFuncDefs = ClashCodeGen._generateNodeFuncDefs(graph)
             nodeDefs = ClashCodeGen._generateNodeDefs(graph)
             edgeDefs = ClashCodeGen._generateEdgeDefs(graph, edgeTypes)
@@ -41,6 +43,7 @@ class ClashCodeGen(object):
                 templatestr = f.read()
 
             # Now replace the variables in the code template
+            templatestr = templatestr.replace('<PREDEFINED_TYPES>', predefTypes)
             templatestr = templatestr.replace('<GRAPH_NAME>', graph.name)
             templatestr = templatestr.replace('<NODE_FUNC_DEFS>', nodeFuncDefs)
             templatestr = templatestr.replace('<NODE_DEFS>', nodeDefs)
@@ -68,6 +71,14 @@ class ClashCodeGen(object):
             
         return edgeTypes
 
+    def _generatePredfinedTypes(types):
+        resstr = ''
+        if types is not None:
+            for name, defn in types.items():
+                resstr += 'type' + name + ' = ' + defn + '\n'
+        else:
+            resstr = '--      no predefined types'
+        return resstr
 
     def _getCLasHOutputTypes(graph, node, code):
         # Get the first line: should be the type definition
