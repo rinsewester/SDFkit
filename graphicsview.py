@@ -54,20 +54,39 @@ class GraphicsView(QGraphicsView):
 
 class GraphicsScene(QGraphicsScene):
 
+    def __init__(self):
+        super().__init__()
+
+        self.drawGrid = True
+        self.lockScene = False
+
+        self.changed.connect(self.updateSceneRect)
+
     def drawBackground(self, painter, rect):
-        painter.setPen(Qt.lightGray)
-        #rect = self.sceneRect()
+        if self.drawGrid:
+            painter.setPen(Qt.lightGray)
 
-        xGridSize = 512
-        yGridSize = 512
-        
-        for i in range(yGridSize * 2):
-            y = i * 20 - (yGridSize) * 20
-            painter.drawLine(-xGridSize * 40, y, xGridSize * 40, y)
+            xGridSize = 512
+            yGridSize = 512
+            
+            for i in range(yGridSize * 2):
+                y = i * 20 - (yGridSize) * 20
+                painter.drawLine(-xGridSize * 40, y, xGridSize * 40, y)
 
-        for i in range(xGridSize * 2):
-            x = i * 40  - (xGridSize) * 40
-            painter.drawLine(x, -yGridSize * 20, x, yGridSize * 20)
+            for i in range(xGridSize * 2):
+                x = i * 40  - (xGridSize) * 40
+                painter.drawLine(x, -yGridSize * 20, x, yGridSize * 20)
+
+
+    def updateSceneRect(self):
+        #Is called when there is a change in the scene
+        #Update scene size to fit the current layout of the graph
+        if not self.lockScene:
+            rect = self.itemsBoundingRect()
+            rect = QRectF(rect.x() - 50, rect.y() - 50, rect.width() + 100, rect.height() + 100)
+            self.setSceneRect(rect)
+        else:
+            self.lockScene = False
 
 
 
@@ -121,7 +140,6 @@ class GraphWidget(QWidget):
         #Zoom slider layout
         self.resetButton = QToolButton()
         self.resetButton.setText('reset')
-        self.resetButton.setEnabled(False)
 
         zoomSliderLayout = QVBoxLayout()
         zoomSliderLayout.addWidget(self.zoomInButton)
@@ -176,16 +194,10 @@ class GraphWidget(QWidget):
             self.placeGraphObjects()
 
             #Resize scene to be slightly larger than the graph
-            #Stops scene from dianamically resizing when nodes are moved
-            #self.scene.setSceneRect(-10, -10 , maxX + 256, maxY + 256)
-            
-            #Try to fit the graph in the view of the scene
-            #self.graphicsView.fitInView(self.scene.sceneRect(), Qt.IgnoreAspectRatio)
-
-            self.resetView()
+            self.scene.updateSceneRect()
 
             self.update()
-
+     
 
     def placeGraphObjects(self):
         #Delete existing objects
@@ -304,12 +316,6 @@ class GraphWidget(QWidget):
         self.setupMatrix()
         self.graphicsView.ensureVisible(QRectF(0,0,0,0))
 
-        self.resetButton.setEnabled(False)
-
-
-    def setResetButtonEnabled(self):
-    	self.resetButton.setEnabled(True)
-
 
     def setupMatrix(self):
         scale = 2.0 ** ((self.zoomSlider.value() - 250) / 50.0)
@@ -318,7 +324,6 @@ class GraphWidget(QWidget):
         transform.scale(scale, scale)
 
         self.graphicsView.setTransform(transform)
-        self.setResetButtonEnabled()
 
 
     def zoomIn(self, level = 1):

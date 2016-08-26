@@ -106,6 +106,7 @@ class Graph(QWidget):
 
 
     def updateTokens(self, edgeIndex, tokenValues):
+        self.scene.lockScene = True
         self.clusterList[edgeIndex].newTokenValues(tokenValues)
 
 
