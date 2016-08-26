@@ -16,7 +16,7 @@ from collections import Counter
 
 class Node(QGraphicsItem):
 
-    def __init__(self, widget, view, nodeName, function, clashCode):
+    def __init__(self, widget, view, nodeName, function, clashCode, color = QColor(210, 210, 210)):
         super().__init__()
         
         self.ioWidth = 15
@@ -24,16 +24,7 @@ class Node(QGraphicsItem):
         self.ioHeightDifference = 10
         self.nodeBodyWidth = 80
         self.maxNameLength = 6        
-        self.nodeBodyColor = QColor(210, 210, 210)
-        self.nodeBodyColorGradient = QColor(180, 180, 180)
-        self.nodeBodyColorSelected = QColor(150, 150, 150)
-        self.nodeBodyColorHover = QColor(180, 180, 180)
-        self.nodeInputColor = QColor(230, 230, 230)
-        self.nodeInputColorHover = QColor(255, 255, 255)
-        self.nodeOutputColor = QColor(120, 120, 120)
-        self.nodeOutputColorHover = QColor(80, 80, 80)
-        self.nodeNeutralColor = QColor(180, 180, 180, 100)
-        self.nodeNeutralColorHover = QColor(180, 180, 180)
+        self.calculateNodeColors(color)
         self.lastPos = QPointF(0, 0)
         self.yTranslationLeftIO = 0
         self.yTranslationRightIO = 0
@@ -605,3 +596,30 @@ class Node(QGraphicsItem):
     def setZValueEdges(self, zValue):
         for i in range(len(self.edgeList)):
         	self.edgeList[i][0].setZValueEdge(zValue)
+
+
+    def calculateNodeColors(self, color):
+        #Calculate all node colors based on a given color
+        r = color.red()
+        g = color.green()
+        b = color.blue()
+
+        if r < 60:
+            r = 60
+        if g < 60:
+            g = 60
+        if b < 60:
+            b = 60
+
+        self.nodeBodyColor = QColor(r, g, b)
+        self.nodeBodyColorGradient = QColor(r - 30, g - 30, b - 30)
+        self.nodeBodyColorSelected = QColor(r - 60, g - 60, b - 60)
+        self.nodeBodyColorHover = QColor(r - 30, g - 30, b - 30)
+        
+        #Colors of IO (fixed colors)
+        self.nodeInputColor = QColor(230, 230, 230)
+        self.nodeInputColorHover = QColor(255, 255, 255)
+        self.nodeOutputColor = QColor(120, 120, 120)
+        self.nodeOutputColorHover = QColor(80, 80, 80)
+        self.nodeNeutralColor = QColor(180, 180, 180, 100)
+        self.nodeNeutralColorHover = QColor(180, 180, 180)

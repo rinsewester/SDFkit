@@ -196,6 +196,7 @@ class GraphWidget(QWidget):
             #Resize scene to be slightly larger than the graph
             self.scene.updateSceneRect()
 
+            self.resetView()
             self.update()
      
 

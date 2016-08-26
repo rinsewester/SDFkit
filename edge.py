@@ -15,7 +15,7 @@ from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont
 
 class Edge(QGraphicsItem):
 
-    def __init__(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, pRates, cRates):
+    def __init__(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, pRates, cRates, color = QColor(160, 160, 160)):
         super().__init__()
 
         self.edgeSelfLoops = edgeSelfLoops
@@ -29,10 +29,7 @@ class Edge(QGraphicsItem):
         self.pRates = pRates
         self.updatePCRects()
         
-
-        self.edgeColor = QColor(160, 160, 160)
-        self.edgeColorSelected = QColor(0, 0, 0)
-        self.edgeColorHover = QColor(50, 50, 50)
+        self.calculateEdgeColors(color)
 
         #self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
@@ -488,3 +485,21 @@ class Edge(QGraphicsItem):
             # newCRates = eval(newCRatesStr)
             # self.cRates = newCRates
             # self.tokenCluster.widget.editCRates(self.tokenCluster.src, self.tokenCluster.dst, newCRates)
+
+
+    def calculateEdgeColors(self, color):
+        #Calculate all edge colors based on a given color
+        r = color.red()
+        g = color.green()
+        b = color.blue()
+
+        if r < 80:
+            r = 80
+        if g < 80:
+            g = 80
+        if b < 80:
+            b = 80
+
+        self.edgeColor = QColor(r, g, b)
+        self.edgeColorSelected = QColor(0, 0, 0)
+        self.edgeColorHover = QColor(r - 80, g - 80, b - 80)
