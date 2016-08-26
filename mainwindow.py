@@ -16,7 +16,8 @@ from PyQt5.QtGui import QIcon
 from csdfgraph import *
 from runwindow import *
 from logwindow import LogWidget
-from graphwidget import GraphWidget
+#from graphwidget import GraphWidget        #Version of Rinse
+from graphicsview import GraphWidget    #Version of Sander
 
 from codegen.clashcodegen import *
 from codegen.ccodegen import *
@@ -79,8 +80,11 @@ class MainWindow(QMainWindow):
 
         self.graph = G0
 
+        self.graphWidget = GraphWidget()
+        self.graphWidget.setGraph(self.graph) #Comment this line to enable test scenes in graph.py
+        
         self.dwRunWindow = QDockWidget('Simulate graph', self)
-        self.runWindow = RunWindow()
+        self.runWindow = RunWindow(self.graphWidget)
         self.runWindow.setGraph(self.graph)
         self.dwRunWindow.setAllowedAreas(Qt.LeftDockWidgetArea)
         self.dwRunWindow.setWidget(self.runWindow)
@@ -95,20 +99,22 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dwLogWindow)
         self.runWindow.setLogWidget(self.logWindow)
 
-        self.graphWidget = GraphWidget()
-        self.graphWidget.setGraph(self.graph)
         self.runWindow.setGraphWidget(self.graphWidget)
+        self.setCentralWidget(self.graphWidget)
 
-        self.scrlarea = QScrollArea(self)
-        self.scrlarea.setAutoFillBackground(True)
-        p = self.scrlarea.palette()
-        p.setColor(self.scrlarea.backgroundRole(), Qt.white)
-        self.scrlarea.setPalette(p)
-        self.scrlarea.setWidget(self.graphWidget)
-        self.setCentralWidget(self.scrlarea)
+        
+
+
+        # self.scrlarea = QScrollArea(self)
+        # self.scrlarea.setAutoFillBackground(True)
+        # p = self.scrlarea.palette()
+        # p.setColor(self.scrlarea.backgroundRole(), Qt.white)
+        # self.scrlarea.setPalette(p)
+        # self.scrlarea.setWidget(self.graphWidget)
+        # self.setCentralWidget(self.scrlarea)
 
         self.setWindowTitle('SDFkit')
-        self.setGeometry(300, 300, 1300, 750)
+        self.setGeometry(0, 30, 1300, 750)
         self.show()
 
     def _updateLogWindow(self):
@@ -126,6 +132,7 @@ class MainWindow(QMainWindow):
 
         graphfile, _ = QFileDialog.getOpenFileName(
             self, 'Open graph', './examples')
+
         if graphfile != '':
             try:
                 self.graph = CSDFGraph()

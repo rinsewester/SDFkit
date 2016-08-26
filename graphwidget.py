@@ -43,6 +43,8 @@ class GraphWidget(QWidget):
         p.setColor(self.backgroundRole(), Qt.white)
         self.setPalette(p)
 
+        #self.setGeometry(0, 0, 600, 600)
+            
         self.setMouseTracking(True)
 
         self.ednodefuncAction = QAction('Edit node function', self)

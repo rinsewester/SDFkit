@@ -24,6 +24,7 @@ class CSDFGraph(nx.DiGraph):
         # name of the CSDFGraph
         self.name = name
 
+        # state storage for backtracking in simulations (tokens and counters)
         # list of clash type definitions 
         self.clashtypes = None
 
@@ -45,6 +46,7 @@ class CSDFGraph(nx.DiGraph):
         self.edge[src][dst]['tkns'] = tkns
         self.edge[src][dst]['itkns'] = []
         self.edgestates[(src, dst)] = [tkns]
+
 
     def add_self_edge(self, n, resnr, argnr, prates, crates, tkns=[], angle=0.6):
 
@@ -146,7 +148,7 @@ class CSDFGraph(nx.DiGraph):
                     crate = self[src][n]['crates'][phase]
                     if crate > 0:
                         args.append(self[src][n]['tkns'][-crate:])
-                        self[src][n]['tkns'] = self[src][n]['tkns'][:-crate]
+                        self[src][n]['tkns'] = self[src][n]['tkns'][:-crate]                      
                     else:
                         args.append([])
                 # order arguments
@@ -198,6 +200,7 @@ class CSDFGraph(nx.DiGraph):
         # increase clock for the global clock
         self.clockcount += 1
 
+
     # This function converts a list of production/consumption
     # rates to the flat variant: [1, "2*4", 3, "3*2"] becomes:
     # [1, 4, 4, 3, 2, 2, 2]
@@ -220,6 +223,7 @@ class CSDFGraph(nx.DiGraph):
         #  at least two nodes and one edge, proper connections
         #  and check wether all edges are connected consistenly
         #  to nodearguments and results
+        print('load file in csdfgraph: ' + str(filename))
         with open(filename, 'r') as f:
             jsonstr = f.read()
 
@@ -263,14 +267,16 @@ class CSDFGraph(nx.DiGraph):
                     edgePRates, edgeCRates, edgeTokens)
 
     def updateNodeFunction(self, nodename, funcstr):
-
         self.node[nodename]['funcstr'] = funcstr
         self.node[nodename]['func'] = eval(funcstr)
+
+    def updateClashCode(self, nodename, clashcode):
+        self.node[nodename]['clashcode'] = clashcode
 
     def updateTokens(self, edge, tokenstr):
         src, dst = edge
         newtokens = eval(tokenstr)
-        self[src][dst]['tkns'] = newtokens
+        self[src][dst]['tkns'] = newtokens       
 
     def updatePRates(self, edge, pratesstr):
         src, dst = edge
@@ -320,4 +326,6 @@ class CSDFGraph(nx.DiGraph):
 # The default SDF graph
 G0 = CSDFGraph()
 G0.loadFromFile('examples/SDF/simple graph.json')
+#G0.loadFromFile('examples/HSDF/nine counter.json')
+#G0.loadFromFile('examples/CSDF/sliding window.json')
 # G0.test()
