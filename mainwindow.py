@@ -36,6 +36,11 @@ class MainWindow(QMainWindow):
         openAction.setStatusTip('Open graph')
         openAction.triggered.connect(self.openActionTriggered)
 
+        saveAction = QAction(QIcon('images/save.png'), '&Save', self)
+        saveAction.setShortcut('Ctrl+S')
+        saveAction.setStatusTip('Save graph')
+        saveAction.triggered.connect(self.saveActionTriggered)
+
         exitAction = QAction(QIcon('images/exit.png'), '&Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
@@ -43,6 +48,7 @@ class MainWindow(QMainWindow):
 
         graphmenu = self.menuBar().addMenu('&Graph')
         graphmenu.addAction(openAction)
+        graphmenu.addAction(saveAction)
         graphmenu.addAction(exitAction)
 
         clashcodegenAction = QAction(
@@ -70,6 +76,7 @@ class MainWindow(QMainWindow):
 
         self.toolbar = self.addToolBar('Exit')
         self.toolbar.addAction(openAction)
+        self.toolbar.addAction(saveAction)
         self.toolbar.addAction(clashcodegenAction)
         # self.toolbar.addAction(softcodegenAction)
         # self.toolbar.addAction(gpucodegenAction)
@@ -145,6 +152,9 @@ class MainWindow(QMainWindow):
             self.runWindow.setGraph(self.graph)
             self.graphWidget.setGraph(self.graph)
             self._updateLogWindow()
+
+    def saveActionTriggered(self):
+        self.graph.storeToFile()
 
     def clashcodegenActionTriggered(self):
         try:

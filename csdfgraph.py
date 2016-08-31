@@ -24,6 +24,9 @@ class CSDFGraph(nx.DiGraph):
         # name of the CSDFGraph
         self.name = name
 
+        # file from which the graph is loaden and to which chenges are saved
+        self.filename = ''
+
         # state storage for backtracking in simulations (tokens and counters)
         # list of clash type definitions 
         self.clashtypes = None
@@ -223,7 +226,8 @@ class CSDFGraph(nx.DiGraph):
         #  at least two nodes and one edge, proper connections
         #  and check wether all edges are connected consistenly
         #  to nodearguments and results
-        print('load file in csdfgraph: ' + str(filename))
+        print('load file in csdfgraph: ' + filename)
+        self.filename = filename
         with open(filename, 'r') as f:
             jsonstr = f.read()
 
@@ -265,6 +269,17 @@ class CSDFGraph(nx.DiGraph):
                 self.add_edge(
                     edgeSource, edgeDestination, edgeResNumber, edgeArgNumber,
                     edgePRates, edgeCRates, edgeTokens)
+
+    
+    def storeToFile(self, filename=''):
+        if filename == '':
+            # no file name given so use file from which this graph is made
+            fname = self.filename
+        else:
+            fname = filename
+
+        print('Save graph in:', fname)
+
 
     def updateNodeFunction(self, nodename, funcstr):
         self.node[nodename]['funcstr'] = funcstr
