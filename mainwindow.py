@@ -75,6 +75,7 @@ class MainWindow(QMainWindow):
         # codegenmenu.addAction(gpucodegenAction)
 
         self.toolbar = self.addToolBar('Exit')
+        self.toolbar.setMovable(False)
         self.toolbar.addAction(openAction)
         self.toolbar.addAction(saveAction)
         self.toolbar.addAction(clashcodegenAction)
@@ -82,7 +83,7 @@ class MainWindow(QMainWindow):
         # self.toolbar.addAction(gpucodegenAction)
         self.toolbar.addAction(exitAction)
 
-        self.sbar = self.statusBar()
+        self.setUnifiedTitleAndToolBarOnMac(True)
 
         self.graph = G0
 
