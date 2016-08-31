@@ -50,12 +50,6 @@ class CSDFGraph(nx.DiGraph):
         self.edge[src][dst]['itkns'] = []
         self.edgestates[(src, dst)] = [tkns]
 
-
-    def add_self_edge(self, n, resnr, argnr, prates, crates, tkns=[], angle=0.6):
-
-        self.add_edge(n, n, resnr, argnr, prates, crates, tkns)
-        self.edge[n][n]['angle'] = angle
-
     def add_node(self, n, f, pos, clashcode=''):
 
         super(CSDFGraph, self).add_node(n)
@@ -260,17 +254,10 @@ class CSDFGraph(nx.DiGraph):
             edgePRates = CSDFGraph._flattenRateList(jsedge['prates'])
             edgeCRates = CSDFGraph._flattenRateList(jsedge['crates'])
             edgeTokens = jsedge['tkns']
-            if edgeSource == edgeDestination:
-                edgeAngle = jsedge['angle']
-                self.add_self_edge(
-                    edgeSource, edgeResNumber, edgeArgNumber, edgePRates,
-                    edgeCRates, edgeTokens, edgeAngle)
-            else:
-                self.add_edge(
+            self.add_edge(
                     edgeSource, edgeDestination, edgeResNumber, edgeArgNumber,
                     edgePRates, edgeCRates, edgeTokens)
-
-    
+            
     def storeToFile(self, filename=''):
         if filename == '':
             # no file name given so use file from which this graph is made

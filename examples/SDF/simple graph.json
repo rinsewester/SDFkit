@@ -88,8 +88,7 @@
 			"argnr" : 1,
 			"prates" : [1],
 			"crates" : [1],
-			"tkns" : [0],
-			"angle" : 5.5
+			"tkns" : [0]
 		}
 	]
 }
