@@ -110,6 +110,9 @@ class Graph(QWidget):
     def editNodeFunction(self, name, newFunction):
         self.graphWidget.editNodeFunction(name, newFunction)
 
+    def editNodePosition(self, name, newPos):
+        self.graphWidget.editNodePosition(name, newPos)
+
     def editClashCode(self, name, newClashCode):
         self.graphWidget.editClashCode(name, newClashCode)
 

@@ -152,9 +152,6 @@ class GraphWidget(QWidget):
         self.zoomInButton.clicked.connect(self.zoomIn)
         self.zoomOutButton.clicked.connect(self.zoomOut)
 
-
-
-
     def setGraph(self, graphData):
         if graphData != None:
             self.graphData = graphData
@@ -192,7 +189,6 @@ class GraphWidget(QWidget):
             self.resetView()
             self.update()
      
-
     def placeGraphObjects(self):
         #Delete existing objects
         self.graph.clearGraph()
@@ -280,6 +276,10 @@ class GraphWidget(QWidget):
         self.graphData.node[nodeName]['funcstr'] = newFunction
         self.graphData.updateNodeFunction(nodeName, newFunction)
 
+
+    def editNodePosition(self, nodeName, newPos):
+        print('Node', nodeName, 'moved to:', newPos)
+        self.graphData.node[nodeName]['pos'] = newPos.x(), newPos.y()
 
     def editClashCode(self, nodeName, newClashCode):
         print('Update CLaSH code to: ' + str(newClashCode))

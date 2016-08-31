@@ -222,10 +222,11 @@ class Node(QGraphicsItem):
             if self.snappingIsOn:
                 newPos = self.snapToGrid(newPos)
             posChange = newPos - self.lastPos
-            self.moveEdges(posChange)
-            self.lastPos = newPos
+            # Due to the grid snapping, only process when node actually moved 
             if not posChange.isNull():
-                print('Node', self.nodeName, 'move to', newPos)
+                self.moveEdges(posChange)
+                self.lastPos = newPos
+                self.widget.editNodePosition(self.nodeName, newPos)
 
         return super(Node, self).itemChange(change, newPos)
 
@@ -283,7 +284,6 @@ class Node(QGraphicsItem):
         point = self.view.mapToGlobal(point)
         self.nodeMenu.exec(point)
 
-
     def setNodeActiontriggered(self):
         functionStr = str(self.nodeFunction)
         newFunctionStr, ok = QInputDialog.getText(self.widget, 'Edit node function', 'Function:', text = functionStr)
@@ -296,16 +296,9 @@ class Node(QGraphicsItem):
             except:
                 print('Invalid function entry')
 
-            # newFunction = eval(newFunctionStr)
-            # self.nodeFunction = newFunctionStr
-            # self.widget.editNodeFunction(self.nodeName, newFunctionStr)
-
-
     def setClashCodeActionTriggered(self):
-        node = self.nodeName
-
         clashCodeStr = self.clashCode
-        newClashCode, ok = QInputDialog.getMultiLineText(self.widget, 'CLaSH code for ' + node, 'CLaSH code:', text=clashCodeStr)
+        newClashCode, ok = QInputDialog.getMultiLineText(self.widget, 'CLaSH code for ' + self.nodeName, 'CLaSH code:', text=clashCodeStr)
         if ok:
             try:
                 # TODO add validation of code
@@ -315,8 +308,6 @@ class Node(QGraphicsItem):
                 print('Invalid clashcode entry')
             
 
-#------------------
-#---In/Outputs-----
     def getIOPoint(self, sideIndex, side):
     	#Gets the point from where the IO rectangle is drawn
         addWidthForRightSide = 0
