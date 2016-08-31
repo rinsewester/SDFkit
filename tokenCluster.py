@@ -223,8 +223,8 @@ class TokenCluster(QGraphicsItem):
 
 
     def contextMenuEvent(self, event):
-        #Gets point of right click and converts it to a position on the scene
-        self.contextMenu(event.scenePos())
+        # Show a context menu when right-clicking on TokenCluster
+        pos = event.scenePos()
 
 
     def contextMenu(self, pos):

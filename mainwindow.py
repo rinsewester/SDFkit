@@ -16,8 +16,7 @@ from PyQt5.QtGui import QIcon
 from csdfgraph import *
 from runwindow import *
 from logwindow import LogWidget
-#from graphwidget import GraphWidget        #Version of Rinse
-from graphicsview import GraphWidget    #Version of Sander
+from graphicsview import GraphWidget
 
 from codegen.clashcodegen import *
 from codegen.ccodegen import *

@@ -33,7 +33,6 @@ class Node(QGraphicsItem):
         self.nodeFunction = function
         self.clashCode = clashCode
 
-
         self.widget = widget
         self.view = view
         self.nodeName = nodeName
@@ -45,7 +44,6 @@ class Node(QGraphicsItem):
         self.addNewIO('left', 0)
         self.addNewIO('right', 0)
 
-
         self.setNodeAction = QAction('Edit node function', self.widget)
         self.setNodeAction.triggered.connect(self.setNodeActiontriggered)
         self.setClashCodeAction = QAction('Edit CLaSH code', self.widget)
@@ -55,7 +53,6 @@ class Node(QGraphicsItem):
         self.nodeMenu.addAction(self.setNodeAction)
         self.nodeMenu.addAction(self.setClashCodeAction)
         
-
         self.setYTranslationLeftIO()
         self.setYTranslationRightIO()
 
@@ -63,9 +60,6 @@ class Node(QGraphicsItem):
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable | QGraphicsItem.ItemSendsGeometryChanges)
         self.setAcceptHoverEvents(True)
         self.hover = False
-
-        #print('node succesfully created: "' + nodeName + '"')
-
 
     def boundingRect(self):
         #Used for collision detection and repaint
@@ -226,12 +220,12 @@ class Node(QGraphicsItem):
 
         if change == QGraphicsItem.ItemPositionChange:
             if self.snappingIsOn:
-            	#Snap node to closest grid point
                 newPos = self.snapToGrid(newPos)
-
             posChange = newPos - self.lastPos
             self.moveEdges(posChange)
-            self.lastPos = newPos        
+            self.lastPos = newPos
+            if not posChange.isNull():
+                print('Node', self.nodeName, 'move to', newPos)
 
         return super(Node, self).itemChange(change, newPos)
 
@@ -284,18 +278,9 @@ class Node(QGraphicsItem):
 
     
     def contextMenuEvent(self, event):
-        #Gets point of right click and converts it to a position on the scene
-        self.contextMenu(event.scenePos())
-
-
-    def contextMenu(self, pos):
-        #Get point from scene
+        pos = event.scenePos()
         point = self.view.mapFromScene(pos)
-
-        #Convert point to global point
         point = self.view.mapToGlobal(point)
-
-        #Execute context menu
         self.nodeMenu.exec(point)
 
 

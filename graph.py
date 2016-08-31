@@ -8,13 +8,11 @@ author: Sander Giesselink
 
 """
 
-import sys
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import QPoint, QRectF
-from node import*
-from edge import*
-from tokenCluster import*
-from csdfgraph import*
+from node import *
+from edge import *
+from tokenCluster import *
+from csdfgraph import *
 
 class Graph(QWidget):
 
@@ -78,12 +76,7 @@ class Graph(QWidget):
     def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide, src = '', dst = '', tokenValues = [], pRates = [0], cRates = [0], resnr = '', argnr = ''):
         beginNode = self.nodeList[beginNodeIndex]
         endNode = self.nodeList[endNodeIndex]
-
-        edgeSelfLoops = False
-        if beginNode == endNode:
-            edgeSelfLoops = True
-
-
+        
         #Get points on the nodes that the edge can connect to
         beginPoint = beginNode.getIOPointForEdge(beginSide, 2)
         endPoint = endNode.getIOPointForEdge(endSide, 1)
@@ -98,7 +91,7 @@ class Graph(QWidget):
         endNode.addNewIO(endSide, 0)
         
         #Create edge between the 2 nodes
-        edge = self.addEdge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues, pRates, cRates)
+        edge = self.addEdge(beginPoint, endPoint, beginSide, endSide, beginNode == endNode, src, dst, tokenValues, pRates, cRates)
 
         #Give both nodes a reference to the created edge
         beginNode.addEdge(edge, 'begin')

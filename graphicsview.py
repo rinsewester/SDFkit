@@ -12,7 +12,7 @@ import sys
 from PyQt5.QtWidgets import QWidget, QDockWidget, QGraphicsView, QGraphicsScene, QApplication, QSplitter, QSlider, QHBoxLayout, QVBoxLayout, QGridLayout, QFrame, QLabel, QToolButton, QButtonGroup, QGraphicsScene, QGraphicsItem
 from PyQt5.QtCore import Qt, QSize, QObject, pyqtSignal, QRectF, QPointF
 from PyQt5.QtGui import QIcon, QTransform, QColor, QPainter, QBrush, QFont
-from graph import*
+from graph import *
 
 
 class GraphicsView(QGraphicsView):
@@ -99,8 +99,6 @@ class GraphWidget(QWidget):
 
         
     def initUI(self):
-
-        #setFrameStyle(Sunken | StyledPanel)
         self.graphicsView = GraphicsView(self)
 
         self.graphicsView.setDragMode(QGraphicsView.RubberBandDrag)
@@ -138,14 +136,10 @@ class GraphWidget(QWidget):
         self.zoomSlider.setValue(250)
 
         #Zoom slider layout
-        self.resetButton = QToolButton()
-        self.resetButton.setText('reset')
-
         zoomSliderLayout = QVBoxLayout()
         zoomSliderLayout.addWidget(self.zoomInButton)
         zoomSliderLayout.addWidget(self.zoomSlider)
         zoomSliderLayout.addWidget(self.zoomOutButton)
-        zoomSliderLayout.addWidget(self.resetButton)       
 
         #Final layout
         topLayout = QGridLayout()
@@ -154,7 +148,6 @@ class GraphWidget(QWidget):
         self.setLayout(topLayout)
 
         #Connecting
-        self.resetButton.clicked.connect(self.resetView)
         self.zoomSlider.valueChanged.connect(self.setupMatrix)
         self.zoomInButton.clicked.connect(self.zoomIn)
         self.zoomOutButton.clicked.connect(self.zoomOut)
