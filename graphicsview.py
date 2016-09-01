@@ -160,7 +160,6 @@ class GraphWidget(QWidget):
             if not self.graphData is None:
                 minX, minY = sys.maxsize, sys.maxsize
                 maxX, maxY = 0, 0
-
                 for n in self.graphData.nodes():
                     x, y = self.graphData.node[n]['pos']
                     minX = min(minX, x - 50)
@@ -168,18 +167,8 @@ class GraphWidget(QWidget):
                     maxX = max(maxX, x + 50)
                     maxY = max(maxY, y + 50)
 
-                #Sets minimum width of the scene window, not of the canvas
-                #self.setMinimumWidth(maxX + 256)  
-                #self.setMinimumHeight(maxY + 128)
-                self.setMinimumWidth(256)
-                self.setMinimumHeight(128)
-
-                #Determine the center of the graph
+                # Determine the center of the graph
                 self.centerOfGraph = QPointF((minX + maxX) / 2, (minY + maxY) / 2)
-
-            else:
-                self.setMinimumWidth(256)
-                self.setMinimumHeight(128)
 
             self.placeGraphObjects()
 
@@ -190,9 +179,8 @@ class GraphWidget(QWidget):
             self.update()
      
     def placeGraphObjects(self):
-        #Delete existing objects
+        
         self.graph.clearGraph()
-        #Make sure every scene items is deleted
         self.scene.clear()
         self.tokensInScene.clear()
 
@@ -209,7 +197,6 @@ class GraphWidget(QWidget):
             nPoint = [x, y]
             nodeList.append(n)
             nodePoints.append(nPoint)
-
 
         #Check for self-looping edges first
         for src, dst in self.graphData.edges():
