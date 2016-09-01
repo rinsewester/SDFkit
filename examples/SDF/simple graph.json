@@ -1,94 +1,123 @@
-{ 
-	"name": "Producer integrator consumer",
-
-	"nodes" : [
-		{
-			"name" : "n0",
-			"function" : "lambda xs, firecounter, phase: [xs[0], xs[0]]",
-			"pos" : [100, 100]
-		},
-		{
-			"name" : "n1",
-			"function" : "lambda xs, y, firecounter, phase: [((xs[0] + xs[1]) * y[0]) % 27]",
-			"pos" : [100, 300]
-		},
-		{
-			"name" : "n2",
-			"function" : "lambda xs, firecounter, phase: xs",
-			"pos" : [300, 300]
-		},
-		{
-			"name" : "n3",
-			"function" : "lambda x, y, firecounter, phase: [x[0] + y[0]]",
-			"pos" : [300, 100]
-		}
-	],
-
-	"edges": [
-		{
-			"name" : "Alpha",
-			"src" : "n0",
-			"dst" : "n1",
-			"resnr" : 0,
-			"argnr" : 0,
-			"prates" : [2],
-			"crates" : [2],
-			"tkns" : []
-		},
-
-		{
-			"name" : "Beta",
-			"src" : "n1",
-			"dst" : "n2",
-			"resnr" : 0,
-			"argnr" : 0,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : []
-		},
-
-		{
-			"name" : "Gamma",
-			"src" : "n2",
-			"dst" : "n1",
-			"resnr" : 0,
-			"argnr" : 1,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : [1]
-		},
-
-		{
-			"name" : "Delta",
-			"src" : "n2",
-			"dst" : "n3",
-			"resnr" : 0,
-			"argnr" : 0,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : []
-		},
-
-		{
-			"name" : "Epsilon",
-			"src" : "n3",
-			"dst" : "n0",
-			"resnr" : 0,
-			"argnr" : 0,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : [1]
-		},
-
-		{
-			"name" : "Zeta",
-			"src" : "n3",
-			"dst" : "n3",
-			"resnr" : 0,
-			"argnr" : 1,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : [0]
-		}
-	]
+{
+    "nodes": [
+        {
+            "function": "lambda xs, y, firecounter, phase: [((xs[0] + xs[1]) * y[0]) % 27]",
+            "name": "n1",
+            "pos": [
+                120,
+                300
+            ]
+        },
+        {
+            "function": "lambda xs, firecounter, phase: [xs[0], xs[0]]",
+            "name": "n0",
+            "pos": [
+                120,
+                200
+            ]
+        },
+        {
+            "function": "lambda x, y, firecounter, phase: [x[0] + y[0]]",
+            "name": "n3",
+            "pos": [
+                320,
+                180
+            ]
+        },
+        {
+            "function": "lambda xs, firecounter, phase: xs",
+            "name": "n2",
+            "pos": [
+                320,
+                300
+            ]
+        }
+    ],
+    "edges": [
+        {
+            "dst": "n2",
+            "crates": [
+                1
+            ],
+            "argnr": 0,
+            "prates": [
+                1
+            ],
+            "resnr": 0,
+            "tkns": [],
+            "src": "n1"
+        },
+        {
+            "dst": "n1",
+            "crates": [
+                2
+            ],
+            "argnr": 0,
+            "prates": [
+                2
+            ],
+            "resnr": 0,
+            "tkns": [],
+            "src": "n0"
+        },
+        {
+            "dst": "n0",
+            "crates": [
+                1
+            ],
+            "argnr": 0,
+            "prates": [
+                1
+            ],
+            "resnr": 0,
+            "tkns": [
+                1
+            ],
+            "src": "n3"
+        },
+        {
+            "dst": "n3",
+            "crates": [
+                1
+            ],
+            "argnr": 1,
+            "prates": [
+                1
+            ],
+            "resnr": 0,
+            "tkns": [
+                0
+            ],
+            "src": "n3"
+        },
+        {
+            "dst": "n1",
+            "crates": [
+                1
+            ],
+            "argnr": 1,
+            "prates": [
+                1
+            ],
+            "resnr": 0,
+            "tkns": [
+                1
+            ],
+            "src": "n2"
+        },
+        {
+            "dst": "n3",
+            "crates": [
+                1
+            ],
+            "argnr": 0,
+            "prates": [
+                1
+            ],
+            "resnr": 0,
+            "tkns": [],
+            "src": "n2"
+        }
+    ],
+    "name": "SimpleGraph"
 }

@@ -74,14 +74,14 @@ class MainWindow(QMainWindow):
         # codegenmenu.addAction(softcodegenAction)
         # codegenmenu.addAction(gpucodegenAction)
 
-        self.toolbar = self.addToolBar('Exit')
+        self.toolbar = self.addToolBar('toolbar')
         self.toolbar.setMovable(False)
         self.toolbar.addAction(openAction)
         self.toolbar.addAction(saveAction)
         self.toolbar.addAction(clashcodegenAction)
         # self.toolbar.addAction(softcodegenAction)
         # self.toolbar.addAction(gpucodegenAction)
-        self.toolbar.addAction(exitAction)
+        # self.toolbar.addAction(exitAction)
 
         self.setUnifiedTitleAndToolBarOnMac(True)
 

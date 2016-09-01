@@ -14,6 +14,7 @@ import string
 import sdfmath
 from copy import deepcopy
 
+# TODO: add support for change tracking: weather file has changed -> to enable/disable save button in GUI
 
 class CSDFGraph(nx.DiGraph):
 
@@ -237,6 +238,7 @@ class CSDFGraph(nx.DiGraph):
         if 'clashtypes' in jsondata.keys():
             self.clashtypes = jsondata['clashtypes']
 
+        # Load all nodes and their attributes
         for jsnode in jsondata['nodes']:
             nodeName = jsnode['name']
             nodeFunction = jsnode['function']
@@ -246,6 +248,7 @@ class CSDFGraph(nx.DiGraph):
             nodePosition = jsnode['pos'][0], jsnode['pos'][1]
             self.add_node(nodeName, nodeFunction, nodePosition, clashcode=nodeClashCode)
 
+        # Load all edges and their attributes
         for jsedge in jsondata['edges']:
             edgeSource = jsedge['src']
             edgeDestination = jsedge['dst']
@@ -265,7 +268,50 @@ class CSDFGraph(nx.DiGraph):
         else:
             fname = filename
 
-        print('Save graph in:', fname)
+        # Put all info into a temporary dictionary which will be transformed into a json string
+        graphDict = {}
+
+        # First save graph properties/attributes: name and predefined CLaSH types
+        graphDict['name'] = self.name
+        if self.clashtypes is not None:
+            graphDict['clashtypes'] = self.clashtypes
+
+        # Store all the nodes of the graph in the temporary dictionary
+        nodesList = []
+        for nname in self.nodes():
+            nodedict = {}
+            nodedict['name'] = nname
+            nodedict['function'] = self.node[nname]['funcstr']
+            if self.node[nname]['clashcode'] != '':
+                nodedict['clashcode'] = self.node[nname]['clashcode']
+            nodedict['pos'] = list(self.node[nname]['pos'])
+            nodesList.append(nodedict)
+
+        # add all nodes to temporary dict in form of a list
+        graphDict['nodes'] = nodesList
+
+        # Store all the edges of the graph in the temporary dictionary
+        edgesList = []
+        for srcname, dstname in self.edges():
+            edgedict = {}
+            edgedict['src'] = srcname
+            edgedict['dst'] = dstname
+            edgedict['resnr'] = self.edge[srcname][dstname]['res']
+            edgedict['argnr'] = self.edge[srcname][dstname]['arg']
+            edgedict['prates'] = self.edge[srcname][dstname]['prates']
+            edgedict['crates'] = self.edge[srcname][dstname]['crates']
+            edgedict['tkns'] = self.edge[srcname][dstname]['tkns']
+            edgesList.append(edgedict)
+
+        # add all edges to temporary dict in form of a list
+        graphDict['edges'] = edgesList
+
+        # print(json.dumps(graphDict, sort_keys=False, indent=4))
+
+        # Last but not leat, write the graph to the file
+        with open(fname, 'w') as outfile:
+            json.dump(graphDict, outfile, sort_keys=False, indent=4)
+            print('Saved graph in: ' + fname)
 
 
     def updateNodeFunction(self, nodename, funcstr):
