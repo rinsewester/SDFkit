@@ -70,7 +70,6 @@ class Node(QGraphicsItem):
         #Determines the collision area
         path = QPainterPath()
         path.addRect(0, 0, self.nodeBodyWidth, self.nodeBodyHeight)
-
         return path
 
 
@@ -78,9 +77,6 @@ class Node(QGraphicsItem):
 #---Painting---    
     def paint(self, painter, option, widget):
         lod = option.levelOfDetailFromTransform(painter.worldTransform())
-        #print (lod)
-
-        #Paint all elments based on the level of detail
         self.paintNodeBody(painter, lod)
         if lod > 0.2:
             self.paintNodeIO(painter, lod)
@@ -176,8 +172,13 @@ class Node(QGraphicsItem):
         if self.nodeNameDisplayed == '':
             self.setNodeName()
         
-        painter.setFont(QFont("Arial", 8))
-        painter.drawText(self.rectNodeName, Qt.AlignCenter, self.nodeNameDisplayed) 
+        font = QFont("Arial", 12)
+        font.setItalic(True)
+        # font.setBold(True)
+        painter.setFont(font)
+        rect = QRectF(0, 0, self.nodeBodyWidth, self.nodeBodyHeight)
+        painter.drawText(rect, Qt.AlignCenter, self.nodeNameDisplayed)
+        
 
 
 #------------------
