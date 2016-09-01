@@ -174,7 +174,6 @@ class Node(QGraphicsItem):
         
         font = QFont("Arial", 12)
         font.setItalic(True)
-        # font.setBold(True)
         painter.setFont(font)
         rect = QRectF(0, 0, self.nodeBodyWidth, self.nodeBodyHeight)
         painter.drawText(rect, Qt.AlignCenter, self.nodeNameDisplayed)
@@ -519,11 +518,6 @@ class Node(QGraphicsItem):
             self.nodeNameDisplayed = self.nodeName[:self.maxNameLength]
             self.nodeNameDisplayed += '..'
 
-        textPoint = QPoint(self.ioWidth + 4, 3)
-        textWidth = self.nodeBodyWidth - self.ioWidth * 2 - 8
-        textEndPoint = QPoint(textPoint.x() + textWidth, textPoint.y() + 12)
-        self.rectNodeName = QRectF(textPoint, textEndPoint)
-
 
     def getRoundedRectPath(self, i, yTranslation, side):
         path = QPainterPath();
@@ -541,7 +535,6 @@ class Node(QGraphicsItem):
 
         return path
 
-
     def getIONameRect(self, i, yTranslation, side):
         if side == 'left':
             rect = QRectF(self.ioList[i][0] + self.ioWidth + 2, self.ioList[i][1] + yTranslation, self.ioWidth, self.ioHeight)
@@ -550,12 +543,10 @@ class Node(QGraphicsItem):
 
         return rect
 
-
     def addEdge(self, edge, edgeSide):
     	#Add new edge with: (reference to edge, 'begin' or 'end')
         newEdge = (edge, edgeSide)
         self.edgeList.append(newEdge)
-
 
     def moveEdges(self, posChange, side = 'both'):
         #Move edges connected to node
@@ -569,11 +560,9 @@ class Node(QGraphicsItem):
                     if side == 'both' or side == self.ioList[i][3]:
                         self.edgeList[i][0].moveEdge(posChange, 'end')
 
-
     def setZValueEdges(self, zValue):
         for i in range(len(self.edgeList)):
         	self.edgeList[i][0].setZValueEdge(zValue)
-
 
     def calculateNodeColors(self, color):
         #Calculate all node colors based on a given color
