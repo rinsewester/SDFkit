@@ -286,7 +286,7 @@ class Node(QGraphicsItem):
 
     def setNodeActiontriggered(self):
         functionStr = str(self.nodeFunction)
-        newFunctionStr, ok = QInputDialog.getText(self.widget, 'Edit node function', 'Function:', text = functionStr)
+        newFunctionStr, ok = QInputDialog.getMultiLineText(self.widget, 'Edit node function', 'Function:', text = functionStr)
 
         if ok:
             try:

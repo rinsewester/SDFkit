@@ -153,7 +153,7 @@ class GraphWidget(QWidget):
 
         node = self.node_right_clicked
         codestr = self.graph.node[node]['funcstr']
-        newcode, ok = QInputDialog.getText(self, 'Code for ' + node, 'Python code:', text=codestr)
+        newcode, ok = QInputDialog.getMultiLineText(self, 'Code for ' + node, 'Python code:', text=codestr)
         if ok:
             # TODO add validation of code
             self.graph.updateNodeFunction(node, newcode)
