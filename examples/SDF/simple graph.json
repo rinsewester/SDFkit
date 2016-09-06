@@ -1,123 +1,123 @@
 {
+    "name": "Simplegraph",
     "nodes": [
         {
-            "function": "lambda xs, y, firecounter, phase: [((xs[0] + xs[1]) * y[0]) % 27]",
-            "name": "n1",
-            "pos": [
-                120,
-                300
-            ]
-        },
-        {
-            "function": "lambda xs, firecounter, phase: [xs[0], xs[0]]",
             "name": "n0",
             "pos": [
                 120,
                 200
-            ]
+            ],
+            "function": "lambda xs, firecounter, phase: [xs[0], xs[0]]"
         },
         {
-            "function": "lambda x, y, firecounter, phase: [x[0] + y[0]]",
-            "name": "n3",
-            "pos": [
-                320,
-                180
-            ]
-        },
-        {
-            "function": "lambda xs, firecounter, phase: xs",
             "name": "n2",
             "pos": [
                 320,
                 300
-            ]
+            ],
+            "function": "lambda xs, firecounter, phase: xs"
+        },
+        {
+            "name": "n3",
+            "pos": [
+                320,
+                180
+            ],
+            "function": "lambda x, y, firecounter, phase: [x[0] + y[0]]"
+        },
+        {
+            "name": "n1",
+            "pos": [
+                120,
+                300
+            ],
+            "function": "lambda xs, y, firecounter, phase: [((xs[0] + xs[1]) * y[0]) % 27]"
         }
     ],
     "edges": [
         {
-            "dst": "n2",
-            "crates": [
-                1
-            ],
-            "argnr": 0,
-            "prates": [
-                1
-            ],
-            "resnr": 0,
             "tkns": [],
-            "src": "n1"
-        },
-        {
+            "src": "n0",
+            "argnr": 0,
+            "crates": [
+                2
+            ],
             "dst": "n1",
-            "crates": [
-                2
-            ],
-            "argnr": 0,
+            "resnr": 0,
             "prates": [
                 2
-            ],
-            "resnr": 0,
-            "tkns": [],
-            "src": "n0"
+            ]
         },
         {
-            "dst": "n0",
+            "tkns": [],
+            "src": "n2",
+            "argnr": 0,
             "crates": [
                 1
             ],
-            "argnr": 0,
+            "dst": "n3",
+            "resnr": 0,
             "prates": [
                 1
-            ],
-            "resnr": 0,
+            ]
+        },
+        {
             "tkns": [
                 1
             ],
-            "src": "n3"
-        },
-        {
-            "dst": "n3",
+            "src": "n2",
+            "argnr": 1,
             "crates": [
                 1
             ],
-            "argnr": 1,
+            "dst": "n1",
+            "resnr": 0,
             "prates": [
                 1
-            ],
-            "resnr": 0,
+            ]
+        },
+        {
             "tkns": [
                 0
             ],
-            "src": "n3"
-        },
-        {
-            "dst": "n1",
+            "src": "n3",
+            "argnr": 1,
             "crates": [
                 1
             ],
-            "argnr": 1,
+            "dst": "n3",
+            "resnr": 0,
             "prates": [
                 1
-            ],
-            "resnr": 0,
+            ]
+        },
+        {
             "tkns": [
                 1
             ],
-            "src": "n2"
-        },
-        {
-            "dst": "n3",
+            "src": "n3",
+            "argnr": 0,
             "crates": [
                 1
             ],
-            "argnr": 0,
+            "dst": "n0",
+            "resnr": 0,
             "prates": [
                 1
-            ],
-            "resnr": 0,
+            ]
+        },
+        {
             "tkns": [],
-            "src": "n2"
+            "src": "n1",
+            "argnr": 0,
+            "crates": [
+                1
+            ],
+            "dst": "n2",
+            "resnr": 0,
+            "prates": [
+                1
+            ]
         }
-    ],
-    "name": "SimpleGraph"
+    ]
 }

@@ -1,56 +1,87 @@
-{ 
-	"name": "Alternating merge",
-
-	"nodes" : [
-		{
-			"name" : "P1",
-			"function" : "lambda firecounter, phase: [firecounter] if (phase == 1) else []",
-			"pos" : [100, 100]
-		},
-		{
-			"name" : "P2",
-			"function" : "lambda firecounter, phase: [firecounter] if (phase == 0) else []",
-			"pos" : [100, 300]
-		},
-		{
-			"name" : "F",
-			"function" : "lambda xs, ys, firecounter, phase: xs if (phase == 0) else ys",
-			"pos" : [300, 200]
-		},
-		{
-			"name" : "C",
-			"function" : "lambda xs, firecounter, phase: []",
-			"pos" : [500, 200]
-		}
-	],
-
-	"edges": [
-		{
-			"src" : "P1",
-			"dst" : "F",
-			"resnr" : 0,
-			"argnr" : 0,
-			"prates" : [0,1],
-			"crates" : [1,0],
-			"tkns" : []
-		},
-		{
-			"src" : "P2",
-			"dst" : "F",
-			"resnr" : 0,
-			"argnr" : 1,
-			"prates" : [1,0],
-			"crates" : [0,1],
-			"tkns" : []
-		},
-		{
-			"src" : "F",
-			"dst" : "C",
-			"resnr" : 0,
-			"argnr" : 0,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : []
-		}
-	]
+{
+    "name": "AlternatingMerge",
+    "nodes": [
+        {
+            "name": "P1",
+            "pos": [
+                80,
+                100
+            ],
+            "function": "lambda firecounter, phase: [firecounter] if (phase == 1) else []"
+        },
+        {
+            "name": "C",
+            "pos": [
+                480,
+                200
+            ],
+            "function": "lambda xs, firecounter, phase: []"
+        },
+        {
+            "name": "P2",
+            "pos": [
+                80,
+                300
+            ],
+            "function": "lambda firecounter, phase: [firecounter] if (phase == 0) else []"
+        },
+        {
+            "name": "F",
+            "pos": [
+                280,
+                200
+            ],
+            "function": "lambda xs, ys, firecounter, phase: xs if (phase == 0) else ys"
+        }
+    ],
+    "edges": [
+        {
+            "tkns": [],
+            "src": "P1",
+            "argnr": 0,
+            "crates": [
+                1,
+                0
+            ],
+            "dst": "F",
+            "resnr": 0,
+            "prates": [
+                0,
+                1
+            ]
+        },
+        {
+            "tkns": [
+                16,
+                14
+            ],
+            "src": "P2",
+            "argnr": 1,
+            "crates": [
+                0,
+                1
+            ],
+            "dst": "F",
+            "resnr": 0,
+            "prates": [
+                1,
+                0
+            ]
+        },
+        {
+            "tkns": [
+                15
+            ],
+            "src": "F",
+            "argnr": 0,
+            "crates": [
+                1
+            ],
+            "dst": "C",
+            "resnr": 0,
+            "prates": [
+                1
+            ]
+        }
+    ]
 }

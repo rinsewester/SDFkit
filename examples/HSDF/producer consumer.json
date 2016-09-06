@@ -1,56 +1,79 @@
-{ 
-	"name": "Producer consumer",
-
-	"nodes" : [
-		{
-			"name" : "Pr",
-			"function" : "lambda firecounter, phase: [firecounter]",
-			"clashcode" : "f_Pr :: Cntr -> Cntr -> Cntr\nf_Pr firecounter phase = res\n  where\n    res = firecounter",
-			"pos" : [100, 100]
-		},
-
-		{
-			"name" : "Int",
-			"function" : "lambda x, y, firecounter, phase: ([x[0] + y[0]], [x[0] + y[0]])",
-			"clashcode" : "f_Int :: Cntr -> Cntr -> Cntr -> Cntr -> (Cntr, Cntr)\nf_Int x y firecounter phase = (res, res)\n  where\n    res = x + y",
-			"pos" : [300, 100]
-		},
-		{
-			"name" : "Cr",
-			"function" : "lambda x, firecounter, phase: []",
-			"clashcode" : "f_Cr :: Cntr -> Cntr -> Cntr -> ()\nf_Cr x firecounter phase = res\n  where\n    res = ()",
-			"pos" : [500, 100]
-		}
-	],
-
-	"edges": [
-		{
-			"src" : "Pr",
-			"dst" : "Int",
-			"resnr" : 0,
-			"argnr" : 0,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : []
-		},
-		{
-			"src" : "Int",
-			"dst" : "Int",
-			"resnr" : 1,
-			"argnr" : 1,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : [0],
-			"angle" : 4.71
-		},
-		{
-			"src" : "Int",
-			"dst" : "Cr",
-			"resnr" : 0,
-			"argnr" : 0,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : []
-		}
-	]
+{
+    "edges": [
+        {
+            "prates": [
+                1
+            ],
+            "crates": [
+                1
+            ],
+            "argnr": 0,
+            "src": "Pr",
+            "tkns": [
+                1
+            ],
+            "resnr": 0,
+            "dst": "Int"
+        },
+        {
+            "prates": [
+                1
+            ],
+            "crates": [
+                1
+            ],
+            "argnr": 1,
+            "src": "Int",
+            "tkns": [
+                0
+            ],
+            "resnr": 1,
+            "dst": "Int"
+        },
+        {
+            "prates": [
+                1
+            ],
+            "crates": [
+                1
+            ],
+            "argnr": 0,
+            "src": "Int",
+            "tkns": [
+                0
+            ],
+            "resnr": 0,
+            "dst": "Cr"
+        }
+    ],
+    "nodes": [
+        {
+            "pos": [
+                80,
+                100
+            ],
+            "clashcode": "f_Pr :: Cntr -> Cntr -> Cntr\nf_Pr firecounter phase = res\n  where\n    res = firecounter",
+            "function": "lambda firecounter, phase: [firecounter]",
+            "name": "Pr"
+        },
+        {
+            "pos": [
+                480,
+                100
+            ],
+            "clashcode": "f_Cr :: Cntr -> Cntr -> Cntr -> ()\nf_Cr x firecounter phase = res\n  where\n    res = ()",
+            "function": "lambda x, firecounter, phase: []",
+            "name": "Cr"
+        },
+        {
+            "pos": [
+                280,
+                80
+            ],
+            "clashcode": "f_Int :: Cntr -> Cntr -> Cntr -> Cntr -> (Cntr, Cntr)\nf_Int x y firecounter phase = (res, res)\n  where\n    res = x + y",
+            "function": "lambda x, y, firecounter, phase: ([x[0] + y[0]], [x[0] + y[0]])",
+            "name": "Int"
+        }
+    ],
+    "name": "ProducerConsumer"
 }

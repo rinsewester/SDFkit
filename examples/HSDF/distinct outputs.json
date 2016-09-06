@@ -1,70 +1,99 @@
-{ 
-	"name": "Distinct outputs",
-
-	"nodes" : [
-		{
-			"name" : "P1",
-			"function" : "lambda firecounter, phase: [firecounter]",
-			"pos" : [100, 100]
-		},
-		{
-			"name" : "P2",
-			"function" : "lambda firecounter, phase: [firecounter * 2]",
-			"pos" : [100, 300]
-		},
-		{
-			"name" : "Op",
-			"function" : "lambda xs, ys, firecounter, phase: ([xs[0] + 3], [ys[0] + 5])",
-			"pos" : [300, 200]
-		},
-		{
-			"name" : "C1",
-			"function" : "lambda xs, firecounter, phase: []",
-			"pos" : [500, 100]
-		},
-		{
-			"name" : "C2",
-			"function" : "lambda xs, firecounter, phase: []",
-			"pos" : [500, 300]
-		}
-	],
-
-	"edges": [
-		{
-			"src" : "P1",
-			"dst" : "Op",
-			"resnr" : 0,
-			"argnr" : 0,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : []
-		},
-		{
-			"src" : "P2",
-			"dst" : "Op",
-			"resnr" : 0,
-			"argnr" : 1,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : []
-		},
-		{
-			"src" : "Op",
-			"dst" : "C1",
-			"resnr" : 0,
-			"argnr" : 0,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : []
-		},
-		{
-			"src" : "Op",
-			"dst" : "C2",
-			"resnr" : 1,
-			"argnr" : 0,
-			"prates" : [1],
-			"crates" : [1],
-			"tkns" : []
-		}
-	]
+{
+    "name": "DistinctOutputs",
+    "nodes": [
+        {
+            "name": "P1",
+            "pos": [
+                80,
+                100
+            ],
+            "function": "lambda firecounter, phase: [firecounter]"
+        },
+        {
+            "name": "Op",
+            "pos": [
+                280,
+                160
+            ],
+            "function": "lambda xs, ys, firecounter, phase: ([xs[0] + 3], [ys[0] + 5])"
+        },
+        {
+            "name": "C1",
+            "pos": [
+                480,
+                100
+            ],
+            "function": "lambda xs, firecounter, phase: []"
+        },
+        {
+            "name": "P2",
+            "pos": [
+                80,
+                240
+            ],
+            "function": "lambda firecounter, phase: [firecounter * 2]"
+        },
+        {
+            "name": "C2",
+            "pos": [
+                480,
+                240
+            ],
+            "function": "lambda xs, firecounter, phase: []"
+        }
+    ],
+    "edges": [
+        {
+            "tkns": [],
+            "src": "P1",
+            "argnr": 0,
+            "crates": [
+                1
+            ],
+            "dst": "Op",
+            "resnr": 0,
+            "prates": [
+                1
+            ]
+        },
+        {
+            "tkns": [],
+            "src": "Op",
+            "argnr": 0,
+            "crates": [
+                1
+            ],
+            "dst": "C1",
+            "resnr": 0,
+            "prates": [
+                1
+            ]
+        },
+        {
+            "tkns": [],
+            "src": "Op",
+            "argnr": 0,
+            "crates": [
+                1
+            ],
+            "dst": "C2",
+            "resnr": 1,
+            "prates": [
+                1
+            ]
+        },
+        {
+            "tkns": [],
+            "src": "P2",
+            "argnr": 1,
+            "crates": [
+                1
+            ],
+            "dst": "Op",
+            "resnr": 0,
+            "prates": [
+                1
+            ]
+        }
+    ]
 }
