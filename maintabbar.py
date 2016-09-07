@@ -9,7 +9,7 @@ author: Rinse Wester
 """
 
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QLabel, QPushButton
+from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt5.QtGui import QPalette, QColor, QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSize
 
@@ -21,30 +21,39 @@ class MainTabBar(QWidget):
         self.initUI()
 
     def initUI(self):
-        # self.wTabsWidget = QWidget(self)
-        # self.wTabsWidget.setMinimumSize
+        self.wTabsWidget = QWidget(self)
+        self.wTabsWidget.setObjectName('wTabsWidget')
+        self.wTabsWidget.setFixedWidth(200)
 
-
-        self.pbDesign = QPushButton('Design', self)
+        self.pbDesign = QPushButton('Design', self.wTabsWidget)
         self.pbDesign.setCheckable(True)
         self.pbDesign.setIcon(QIcon('images/design.png'))
         self.pbDesign.clicked.connect(self._buttonClicked)
 
-        self.pbSimulate = QPushButton('Simulate', self)
+        self.pbSimulate = QPushButton('Simulate', self.wTabsWidget)
         self.pbSimulate.setCheckable(True)
         self.pbSimulate.setIcon(QIcon('images/simulate.png'))
         self.pbSimulate.clicked.connect(self._buttonClicked)
 
-        self.pbGenCode = QPushButton('Generate code', self)
+        self.pbGenCode = QPushButton('Generate code', self.wTabsWidget)
         self.pbGenCode.setCheckable(True)
         self.pbGenCode.setIcon(QIcon('images/codegen.png'))
         self.pbGenCode.clicked.connect(self._buttonClicked)
 
-        self.pbLog = QPushButton('Log', self)
+        self.pbLog = QPushButton('Log', self.wTabsWidget)
         self.pbLog.setObjectName('logbtn')
         self.pbLog.setCheckable(True)
         self.pbLog.setIcon(QIcon('images/log.png'))
         self.pbLog.clicked.connect(self._buttonClicked)
+
+        self.lblContents = QLabel('Main contents', self)
+        self.lblContents.setStyleSheet("""
+            font: bold;
+            font-size: 24px;
+            color: rgb(50, 50, 54);
+            background: solid white;
+            qproperty-alignment: AlignCenter;
+        """)
 
         self.vblayout = QVBoxLayout()
         self.vblayout.setContentsMargins(0, 0, 0, 0)
@@ -55,13 +64,21 @@ class MainTabBar(QWidget):
         self.vblayout.addStretch()
         self.vblayout.addWidget(self.pbLog)
         
-        self.setLayout(self.vblayout)
+        self.wTabsWidget.setLayout(self.vblayout)
 
-        self.setAutoFillBackground(True)
-        self.setPalette(QPalette(QColor(50, 50, 54)))
-        self.setMinimumSize(200, 500)
+        self.hblayout = QHBoxLayout()
+        self.hblayout.setContentsMargins(0, 0, 0, 0)
+        self.hblayout.setSpacing(0)
+        self.hblayout.addWidget(self.wTabsWidget)
+        self.hblayout.addWidget(self.lblContents)
+        self.setLayout(self.hblayout)
 
         self.setStyleSheet("""
+            .QWidget#wTabsWidget {
+                background-color: rgb(50, 50, 54);
+                border: none;
+            }
+
             .QPushButton {
                 color: rgb(194, 194, 195);
                 text-align: left;
@@ -86,13 +103,11 @@ class MainTabBar(QWidget):
                 background-color: rgb(74, 73, 80);
                 border-left: 4px solid rgb(194, 194, 195);
             }
-
-            .QPushButton#logbtn {
-                border-right: 3px solid rgb(50, 50, 54);
-            }
         """)
 
         self.swithToTab('design')
+
+        self.setGeometry(200, 200, 600, 400)
 
     def setLogCount(self, count):
         if count == 0:
