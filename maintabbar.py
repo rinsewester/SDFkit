@@ -21,30 +21,29 @@ class MainTabBar(QWidget):
         self.initUI()
 
     def initUI(self):
+        # self.wTabsWidget = QWidget(self)
+        # self.wTabsWidget.setMinimumSize
+
 
         self.pbDesign = QPushButton('Design', self)
         self.pbDesign.setCheckable(True)
         self.pbDesign.setIcon(QIcon('images/design.png'))
-        self.pbDesign.setMinimumSize(200, 40)
         self.pbDesign.clicked.connect(self._buttonClicked)
 
         self.pbSimulate = QPushButton('Simulate', self)
         self.pbSimulate.setCheckable(True)
         self.pbSimulate.setIcon(QIcon('images/simulate.png'))
-        self.pbSimulate.setMinimumSize(200, 40)
         self.pbSimulate.clicked.connect(self._buttonClicked)
 
         self.pbGenCode = QPushButton('Generate code', self)
         self.pbGenCode.setCheckable(True)
         self.pbGenCode.setIcon(QIcon('images/codegen.png'))
-        self.pbGenCode.setMinimumSize(200, 40)
         self.pbGenCode.clicked.connect(self._buttonClicked)
 
         self.pbLog = QPushButton('Log', self)
         self.pbLog.setObjectName('logbtn')
         self.pbLog.setCheckable(True)
         self.pbLog.setIcon(QIcon('images/log.png'))
-        self.pbLog.setMinimumSize(200, 40)
         self.pbLog.clicked.connect(self._buttonClicked)
 
         self.vblayout = QVBoxLayout()
@@ -55,6 +54,7 @@ class MainTabBar(QWidget):
         self.vblayout.addWidget(self.pbGenCode)
         self.vblayout.addStretch()
         self.vblayout.addWidget(self.pbLog)
+        
         self.setLayout(self.vblayout)
 
         self.setAutoFillBackground(True)
@@ -66,9 +66,9 @@ class MainTabBar(QWidget):
                 color: rgb(194, 194, 195);
                 text-align: left;
                 padding-left: 12px;
-                padding-top: 4px;
-                padding-bottom: 4px;
-                padding-right: 4px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                padding-right: 10px;
                 background-color: rgb(50, 50, 54);
                 border-top: none;
                 border-bottom: none;
