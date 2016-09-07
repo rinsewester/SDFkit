@@ -10,17 +10,18 @@ author: Rinse Wester
 
 import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
-from PyQt5.QtGui import QPalette, QColor, QIcon, QPixmap
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QIcon
 
 class MainTabBar(QWidget):
 
-    def __init__(self):
+    def __init__(self, designWidget, simulateWidget, gencodeWidget, logWidget):
         super().__init__()
 
-        self.initUI()
+        self.wDesign = designWidget
+        self.wSimulate = simulateWidget
+        self.wGenCode = gencodeWidget
+        self.wLog = logWidget
 
-    def initUI(self):
         self.wTabsWidget = QWidget(self)
         self.wTabsWidget.setObjectName('wTabsWidget')
         self.wTabsWidget.setFixedWidth(200)
@@ -46,15 +47,6 @@ class MainTabBar(QWidget):
         self.pbLog.setIcon(QIcon('images/log.png'))
         self.pbLog.clicked.connect(self._buttonClicked)
 
-        self.lblContents = QLabel('Main contents', self)
-        self.lblContents.setStyleSheet("""
-            font: bold;
-            font-size: 24px;
-            color: rgb(50, 50, 54);
-            background: solid white;
-            qproperty-alignment: AlignCenter;
-        """)
-
         self.vblayout = QVBoxLayout()
         self.vblayout.setContentsMargins(0, 0, 0, 0)
         self.vblayout.setSpacing(0)
@@ -70,7 +62,10 @@ class MainTabBar(QWidget):
         self.hblayout.setContentsMargins(0, 0, 0, 0)
         self.hblayout.setSpacing(0)
         self.hblayout.addWidget(self.wTabsWidget)
-        self.hblayout.addWidget(self.lblContents)
+        self.hblayout.addWidget(self.wDesign)
+        self.hblayout.addWidget(self.wSimulate)
+        self.hblayout.addWidget(self.wGenCode)
+        self.hblayout.addWidget(self.wLog)
         self.setLayout(self.hblayout)
 
         self.setStyleSheet("""
@@ -126,38 +121,44 @@ class MainTabBar(QWidget):
             # state = 'none'
             self.pbLog.setStyleSheet('border-right: none;')
 
-
     def swithToTab(self, tab):
         if tab == 'design':
             self.pbDesign.setChecked(True)
             self.pbSimulate.setChecked(False)
             self.pbGenCode.setChecked(False)
             self.pbLog.setChecked(False)
-            self.setLogCount(0)
-            self.setLogState('error')
+            self.wDesign.show()
+            self.wSimulate.hide()
+            self.wGenCode.hide()
+            self.wLog.hide()
         elif tab == 'simulate':
             self.pbDesign.setChecked(False)
             self.pbSimulate.setChecked(True)
             self.pbGenCode.setChecked(False)
             self.pbLog.setChecked(False)
-            self.setLogCount(1)
-            self.setLogState('warning')
+            self.wDesign.hide()
+            self.wSimulate.show()
+            self.wGenCode.hide()
+            self.wLog.hide()
         elif tab == 'gencode':
             self.pbDesign.setChecked(False)
             self.pbSimulate.setChecked(False)
             self.pbGenCode.setChecked(True)
             self.pbLog.setChecked(False)
-            self.setLogCount(2)
-            self.setLogState('success')
+            self.wDesign.hide()
+            self.wSimulate.hide()
+            self.wGenCode.show()
+            self.wLog.hide()
         else:
             # tab = 'log'
             self.pbDesign.setChecked(False)
             self.pbSimulate.setChecked(False)
             self.pbGenCode.setChecked(False)
             self.pbLog.setChecked(True)
-            self.setLogCount(3)
-            self.setLogState('none')
-
+            self.wDesign.hide()
+            self.wSimulate.hide()
+            self.wGenCode.hide()
+            self.wLog.show()
 
     def _buttonClicked(self):
 
@@ -174,7 +175,14 @@ class MainTabBar(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    tb = MainTabBar()
+
+    # Create some labels as dummy widgets
+    lblA = QLabel('First')
+    lblB = QLabel('Second')
+    lblC = QLabel('Third')
+    lblD = QLabel('Fourth')
+    
+    tb = MainTabBar( lblA, lblB, lblC, lblD)
     tb.show()
     app.exec_()
     sys.exit()
