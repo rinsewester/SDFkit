@@ -23,9 +23,9 @@ class GraphicsView(QGraphicsView):
         #Catch wheelEvent and zoom instead of scroll when Ctrl is pressed
         if event.modifiers() & Qt.ControlModifier:
             if event.angleDelta().y() > 0:
-                self.widget.zoomIn(6)
+                self.widget.zoomIn()
             else:
-                self.widget.zoomOut(6)
+                self.widget.zoomOut()
 
             event.accept()
         else:
@@ -109,13 +109,14 @@ class GraphWidget(QWidget):
         iconSize = QSize(16, 16)
 
         self.zoomInButton = QToolButton(self)
-        self.zoomInButton.setAutoRepeat(True)
+        self.zoomInButton.setAutoRepeat(False)
         self.zoomInButton.setAutoRepeatInterval(33)
         self.zoomInButton.setAutoRepeatDelay(0);
         self.zoomInButton.setIcon(QIcon('images/zoomin.png'));
         self.zoomInButton.setIconSize(iconSize);
+
         self.zoomOutButton = QToolButton(self)
-        self.zoomOutButton.setAutoRepeat(True);
+        self.zoomOutButton.setAutoRepeat(False);
         self.zoomOutButton.setAutoRepeatInterval(33);
         self.zoomOutButton.setAutoRepeatDelay(0);
         self.zoomOutButton.setIcon(QIcon("images/zoomout.png"));
@@ -287,18 +288,8 @@ class GraphWidget(QWidget):
 
         self.graphicsView.setTransform(transform)
 
-    def zoomIn(self, level = 1):
-        if not level:
-            levelValue = 1
-        else:
-            levelValue = level
+    def zoomIn(self):
+        self.zoomSlider.setValue(self.zoomSlider.value() + 10)
 
-        self.zoomSlider.setValue(self.zoomSlider.value() + levelValue)
-
-    def zoomOut(self, level = 1):
-        if not level:
-            levelValue = 1
-        else:
-            levelValue = level
-
-        self.zoomSlider.setValue(self.zoomSlider.value() - levelValue)
+    def zoomOut(self):
+        self.zoomSlider.setValue(self.zoomSlider.value() - 10)

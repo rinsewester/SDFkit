@@ -13,8 +13,8 @@ from PyQt5.QtWidgets import QDockWidget, QApplication, QMainWindow, QAction, QFi
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
-from csdfgraph import *
-from runwindow import *
+from csdfgraph import CSDFGraph
+from runwindow import RunWindow
 from logwindow import LogWidget
 from graphicsview import GraphWidget
 
@@ -57,31 +57,31 @@ class MainWindow(QMainWindow):
         clashcodegenAction.setStatusTip('Generate CLaSH code')
         clashcodegenAction.triggered.connect(self.clashcodegenActionTriggered)
 
-        # softcodegenAction = QAction(
-        #     QIcon('images/software.png'), 'Generate &software', self)
-        # softcodegenAction.setShortcut('Ctrl+W')
-        # softcodegenAction.setStatusTip('Generate C code')
-        # softcodegenAction.triggered.connect(self.softcodegenActionTriggered)
-
-        # gpucodegenAction = QAction(
-        #     QIcon('images/gpu.png'), '&Generate OpenCL code', self)
-        # gpucodegenAction.setShortcut('Ctrl+L')
-        # gpucodegenAction.setStatusTip('Generate OpenCL code')
-        # gpucodegenAction.triggered.connect(self.gpucodegenActionTriggered)
-
         codegenmenu = self.menuBar().addMenu('&Code generation')
         codegenmenu.addAction(clashcodegenAction)
-        # codegenmenu.addAction(softcodegenAction)
-        # codegenmenu.addAction(gpucodegenAction)
+
+        resetZoomAction = QAction('&Reset zoom', self)
+        resetZoomAction.setShortcut('Ctrl+0')
+        resetZoomAction.setStatusTip('Reset zoom')
+
+        zoomInAction = QAction('Zoom &in', self)
+        zoomInAction.setShortcut('Ctrl+=')
+        zoomInAction.setStatusTip('Zoom in')
+
+        zoomOutAction = QAction('&Zoom out', self)
+        zoomOutAction.setShortcut('Ctrl+-')
+        zoomOutAction.setStatusTip('Zoom out')
+
+        viewmenu = self.menuBar().addMenu('&View')
+        viewmenu.addAction(zoomInAction)
+        viewmenu.addAction(zoomOutAction)
+        viewmenu.addAction(resetZoomAction)
 
         self.toolbar = self.addToolBar('toolbar')
         self.toolbar.setMovable(False)
         self.toolbar.addAction(openAction)
         self.toolbar.addAction(saveAction)
         self.toolbar.addAction(clashcodegenAction)
-        # self.toolbar.addAction(softcodegenAction)
-        # self.toolbar.addAction(gpucodegenAction)
-        # self.toolbar.addAction(exitAction)
 
         self.setUnifiedTitleAndToolBarOnMac(True)
 
@@ -89,6 +89,11 @@ class MainWindow(QMainWindow):
 
         self.graphWidget = GraphWidget()
         self.graphWidget.setGraph(self.graph) #Comment this line to enable test scenes in graph.py
+
+        # connect the view menu actions to the graphwidget
+        zoomInAction.triggered.connect(self.graphWidget.zoomIn)
+        zoomOutAction.triggered.connect(self.graphWidget.zoomOut)
+        resetZoomAction.triggered.connect(self.graphWidget.resetView)
         
         self.dwRunWindow = QDockWidget('Simulate graph', self)
         self.runWindow = RunWindow(self.graphWidget)
@@ -108,17 +113,6 @@ class MainWindow(QMainWindow):
 
         self.runWindow.setGraphWidget(self.graphWidget)
         self.setCentralWidget(self.graphWidget)
-
-        
-
-
-        # self.scrlarea = QScrollArea(self)
-        # self.scrlarea.setAutoFillBackground(True)
-        # p = self.scrlarea.palette()
-        # p.setColor(self.scrlarea.backgroundRole(), Qt.white)
-        # self.scrlarea.setPalette(p)
-        # self.scrlarea.setWidget(self.graphWidget)
-        # self.setCentralWidget(self.scrlarea)
 
         self.setWindowTitle('SDFkit')
         self.setGeometry(0, 30, 1300, 750)
