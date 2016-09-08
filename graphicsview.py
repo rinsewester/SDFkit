@@ -9,15 +9,18 @@ author: Sander Giesselink
 """
 
 import sys
-from PyQt5.QtWidgets import QWidget, QGraphicsView, QGraphicsScene, QSlider, QToolButton, QVBoxLayout, QGridLayout
-from PyQt5.QtCore import Qt, QSize, QRectF, QPointF
-from PyQt5.QtGui import QIcon, QTransform, QPainter
+from PyQt5.QtWidgets import QWidget, QGraphicsView, QGraphicsScene, QHBoxLayout, QFrame
+from PyQt5.QtCore import Qt, QRectF, QPointF
+from PyQt5.QtGui import QTransform, QPainter
 from graph import Graph
 
 class GraphicsView(QGraphicsView):
+
     def __init__(self, widget):
         super().__init__()
         self.widget = widget
+        # Remove ugly one pixel border by changing the framestyle
+        self.setFrameStyle(QFrame.NoFrame); 
 
     def wheelEvent(self, event):
         #Catch wheelEvent and zoom instead of scroll when Ctrl is pressed
@@ -105,43 +108,15 @@ class GraphWidget(QWidget):
         self.graph = Graph(self, self.scene, self.graphicsView)
         self.tokensInScene = []
 
-        #UI for the graphicsView
-        iconSize = QSize(16, 16)
-
-        self.zoomInButton = QToolButton(self)
-        self.zoomInButton.setAutoRepeat(False)
-        self.zoomInButton.setAutoRepeatInterval(33)
-        self.zoomInButton.setAutoRepeatDelay(0);
-        self.zoomInButton.setIcon(QIcon('images/zoomin.png'));
-        self.zoomInButton.setIconSize(iconSize);
-
-        self.zoomOutButton = QToolButton(self)
-        self.zoomOutButton.setAutoRepeat(False);
-        self.zoomOutButton.setAutoRepeatInterval(33);
-        self.zoomOutButton.setAutoRepeatDelay(0);
-        self.zoomOutButton.setIcon(QIcon("images/zoomout.png"));
-        self.zoomOutButton.setIconSize(iconSize);
-
-        self.zoomSlider = QSlider(Qt.Vertical, self)
-        self.zoomSlider.setRange(25, 350)   #Max zoom out, max zoom in
-        self.zoomSlider.setValue(250)
-
-        #Zoom slider layout
-        zoomSliderLayout = QVBoxLayout()
-        zoomSliderLayout.addWidget(self.zoomInButton)
-        zoomSliderLayout.addWidget(self.zoomSlider)
-        zoomSliderLayout.addWidget(self.zoomOutButton)
+        # initial zoomlevel
+        self.zoomLevel = 250
 
         #Final layout
-        topLayout = QGridLayout()
-        topLayout.addWidget(self.graphicsView, 1, 0)
-        topLayout.addLayout(zoomSliderLayout, 1, 1)
+        topLayout = QHBoxLayout()
+        topLayout.setContentsMargins(0, 0, 0, 0)
+        topLayout.setSpacing(0)
+        topLayout.addWidget(self.graphicsView)
         self.setLayout(topLayout)
-
-        #Connecting
-        self.zoomSlider.valueChanged.connect(self.setupMatrix)
-        self.zoomInButton.clicked.connect(self.zoomIn)
-        self.zoomOutButton.clicked.connect(self.zoomOut)
 
     def setGraph(self, graphData):
         if graphData != None:
@@ -276,12 +251,12 @@ class GraphWidget(QWidget):
         return self.graphData.node[src_dst]['firecount']
 
     def resetView(self):
-        self.zoomSlider.setValue(250)
+        self.zoomLevel = 250
         self.setupMatrix()
         self.graphicsView.ensureVisible(QRectF(0,0,0,0))
 
     def setupMatrix(self):
-        scale = 2.0 ** ((self.zoomSlider.value() - 250) / 50.0)
+        scale = 2.0 ** ((self.zoomLevel - 250) / 50.0)
 
         transform = QTransform()
         transform.scale(scale, scale)
@@ -289,7 +264,13 @@ class GraphWidget(QWidget):
         self.graphicsView.setTransform(transform)
 
     def zoomIn(self):
-        self.zoomSlider.setValue(self.zoomSlider.value() + 10)
+        self.zoomLevel += 10
+        if self.zoomLevel > 350:
+            self.zoomLevel = 350
+        self.setupMatrix()
 
     def zoomOut(self):
-        self.zoomSlider.setValue(self.zoomSlider.value() - 10)
+        self.zoomLevel -= 10
+        if self.zoomLevel < 0:
+            self.zoomLevel = 0
+        self.setupMatrix()    
