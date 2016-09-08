@@ -65,16 +65,12 @@ class Node(QGraphicsItem):
         #Used for collision detection and repaint
         return QRectF(0, 0, self.nodeBodyWidth, self.nodeBodyHeight)
 
-    
     def shape(self):
-        #Determines the collision area
+        # Determines the collision area
         path = QPainterPath()
         path.addRect(0, 0, self.nodeBodyWidth, self.nodeBodyHeight)
         return path
-
-
-#--------------
-#---Painting---    
+    
     def paint(self, painter, option, widget):
         lod = option.levelOfDetailFromTransform(painter.worldTransform())
         self.paintNodeBody(painter, lod)
@@ -83,9 +79,8 @@ class Node(QGraphicsItem):
         if lod > 0.4:
             self.paintNodeName(painter)
 
-
     def paintNodeBody(self, painter, lod):
-        painter.setPen(QColor(0, 0, 0))
+        painter.setPen(Qt.black)
       
         #Subtle gradient
         if lod > 0.2:
@@ -124,11 +119,11 @@ class Node(QGraphicsItem):
             painter.setPen(QColor(0, 0, 0, 200))
             
             if self.ioList[i][5]:
-            	painter.setPen(QColor(0, 0, 0))
+            	painter.setPen(Qt.black)
             if self.ioList[i][4] == 0:
                 #neutral
                 if self.ioList[i][5]:
-                    painter.setPen(QColor(0, 0, 0))
+                    painter.setPen(Qt.black)
                     brush = QBrush(self.nodeNeutralColorHover)
                 else:
                     painter.setPen(QColor(0, 0, 0, 60))
@@ -166,7 +161,7 @@ class Node(QGraphicsItem):
                     else:
                         painter.drawText(self.getIONameRect(i, yTranslation, self.ioList[i][3]), Qt.AlignRight, str(self.ioList[i][6]))
 
-        painter.setPen(QColor(0, 0, 0))
+        painter.setPen(Qt.black)
 
     def paintNodeName(self, painter):
         if self.nodeNameDisplayed == '':
@@ -178,10 +173,6 @@ class Node(QGraphicsItem):
         rect = QRectF(0, 0, self.nodeBodyWidth, self.nodeBodyHeight)
         painter.drawText(rect, Qt.AlignCenter, self.nodeNameDisplayed)
         
-
-
-#------------------
-#---Mouse Events---
     def mousePressEvent(self, event):
         self.mouseIsOnIO(event.pos(), True)     
 
@@ -200,11 +191,9 @@ class Node(QGraphicsItem):
         self.update()
         super().mouseMoveEvent(event)
 
-
     def itemChange(self, change, value):
-        #Move selected nodes and edges to the front, untill unselected
+        # Move selected nodes and edges to the front, untill unselected
         if change == QGraphicsItem.ItemSelectedChange:
- 
             if QGraphicsItem.isSelected(self):
             	#Unselected (since the flag is not updated yet)
                 self.setZValue(0)
@@ -230,7 +219,6 @@ class Node(QGraphicsItem):
 
         return super(Node, self).itemChange(change, newPos)
 
-
     def snapToGrid(self, position):
         #Return position of closest grid point
         gridSizeX = 40
@@ -240,14 +228,12 @@ class Node(QGraphicsItem):
 
         return gridPos
 
-
     def mouseReleaseEvent(self, event):
         self.setFlag(QGraphicsItem.ItemIsSelectable, True)
         self.setFlag(QGraphicsItem.ItemIsMovable, True)
 
         super().mouseReleaseEvent(event)
         self.update()
-
 
     def hoverMoveEvent(self, event):
         #Don't execute when the nodeBody is selected in order to prevent unselecting the nodeBody
@@ -262,12 +248,10 @@ class Node(QGraphicsItem):
         self.setFlag(QGraphicsItem.ItemIsSelectable, True)
         self.setFlag(QGraphicsItem.ItemIsMovable, True)
 
-
     def hoverEnterEvent(self, event):
         self.setCursor(Qt.PointingHandCursor)
         super().hoverEnterEvent(event)
         self.update()
-
 
     def hoverLeaveEvent(self, event):
         self.hover = False
@@ -276,7 +260,6 @@ class Node(QGraphicsItem):
 
         super().hoverLeaveEvent(event)
         self.update()
-
     
     def contextMenuEvent(self, event):
         pos = event.scenePos()
@@ -342,7 +325,6 @@ class Node(QGraphicsItem):
 
         return ioPoint
 
-
     def addNewIO(self, side, ioType):
         if side == 'left':
             i = self.getLengthLeftSide()
@@ -355,7 +337,6 @@ class Node(QGraphicsItem):
 
         #Update the nodeBodyHeight
         self.updateNode()
-
         
     def setIOType(self, side, ioType, name):    
         #Update the type paramater of the IO
@@ -363,7 +344,6 @@ class Node(QGraphicsItem):
 
         self.ioList.insert(i, (self.ioList[i][0], self.ioList[i][1], self.ioList[i][2], self.ioList[i][3], ioType, self.ioList[i][5], name))
         del self.ioList[i + 1]
-
 
     def mouseIsOnIO(self, mousePos, click = False):    	
     	#Returns the IO that the mouse is on
@@ -396,13 +376,11 @@ class Node(QGraphicsItem):
         self.setHoveringToFalse()
         return -1
 
-
     def setHoveringToFalse(self):
         for i in range(0, len(self.ioList)):
         	#Set all hover parameters to false
             self.ioList.insert(i, (self.ioList[i][0], self.ioList[i][1], self.ioList[i][2], self.ioList[i][3], self.ioList[i][4], False, self.ioList[i][6]))
             del self.ioList[i + 1]
-
 
     def setYTranslationLeftIO(self):
         i = 1
@@ -453,15 +431,11 @@ class Node(QGraphicsItem):
         # print(self.getLengthRightSide())
         # print(posChange)
 
-
-#------------------
-#---Other----------
     def updateNode(self):
     	#Update the dimentional values of the node and its IO
         self.calculateNodeBodyHeight()
         self.setYTranslationLeftIO()
         self.setYTranslationRightIO()
-
 
     def calculateNodeBodyHeight(self):
         #Get how many inputs/outputs are on each side
@@ -481,22 +455,18 @@ class Node(QGraphicsItem):
         #Set nodeBodyHeight based on longest io side
         self.nodeBodyHeight = (longestSide * (self.ioHeightDifference + self.ioHeight))
 
-
     def getNodeBodyHeigth(self):
     	return self.nodeBodyHeight
-
 
     def getLengthLeftSide(self):
         countSides = Counter(elem[3] for elem in self.ioList)
 
         return countSides['left']
 
-
     def getLengthRightSide(self):
         countSides = Counter(elem[3] for elem in self.ioList)
         
         return countSides['right']
-
 
     def getLastIOSide(self, side):
     	#Returns the index of the last IO on a side
@@ -508,7 +478,6 @@ class Node(QGraphicsItem):
 
         return ioIndex
 
-
     def setNodeName(self):
     	#Determine the displayed name of the node and its location once
         self.nodeNameDisplayed = self.nodeName 
@@ -517,7 +486,6 @@ class Node(QGraphicsItem):
             #Cutoff text if the name is too long
             self.nodeNameDisplayed = self.nodeName[:self.maxNameLength]
             self.nodeNameDisplayed += '..'
-
 
     def getRoundedRectPath(self, i, yTranslation, side):
         path = QPainterPath();

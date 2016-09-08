@@ -9,10 +9,10 @@ author: Sander Giesselink
 """
 
 from PyQt5.QtWidgets import QWidget
-from node import *
-from edge import *
-from tokenCluster import *
-from csdfgraph import *
+from PyQt5.QtGui import QColor
+from node import Node
+from edge import Edge
+from tokenCluster import TokenCluster
 
 class Graph(QWidget):
 
@@ -26,7 +26,6 @@ class Graph(QWidget):
         self.edgeList = []
         self.nodeList = []
         self.clusterList = []
-
 
     def clearGraph(self):
         #Delete all items from the scene and clear lists
@@ -44,7 +43,6 @@ class Graph(QWidget):
         self.edgeList.clear()
         self.clusterList.clear()
             
-    
     def addNode(self, x, y, name, func = [], clashCode = ''):
         newNode = Node(self, self.view, name, func, clashCode, QColor(232, 232, 255))
         newNode.setPos(x, y)
@@ -53,7 +51,6 @@ class Graph(QWidget):
         #Add node to the scene and list
         self.scene.addItem(newNode)
         self.nodeList.append(newNode)
-
 
     def addEdge(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues, pRates, cRates):        
         newEdge = Edge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, pRates, cRates)
@@ -71,7 +68,6 @@ class Graph(QWidget):
         self.edgeList.append(newEdge)
 
         return newEdge
-
 
     def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide, src = '', dst = '', tokenValues = [], pRates = [0], cRates = [0], resnr = '', argnr = ''):
         beginNode = self.nodeList[beginNodeIndex]
@@ -97,15 +93,12 @@ class Graph(QWidget):
         beginNode.addEdge(edge, 'begin')
         endNode.addEdge(edge, 'end')
 
-
     def updateTokens(self, edgeIndex, tokenValues):
         self.scene.lockScene = True
         self.clusterList[edgeIndex].newTokenValues(tokenValues)
 
-
     def editTokens(self, src, dst, newTokens):
         self.graphWidget.editTokens(src, dst, newTokens)
-
 
     def editNodeFunction(self, name, newFunction):
         self.graphWidget.editNodeFunction(name, newFunction)
@@ -115,15 +108,12 @@ class Graph(QWidget):
 
     def editClashCode(self, name, newClashCode):
         self.graphWidget.editClashCode(name, newClashCode)
-
     
     def editPRates(self, src, dst, newPRates):
         self.graphWidget.editPRates(src, dst, newPRates)
 
-
     def editCRates(self, src, dst, newCRates):
         self.graphWidget.editCRates(src, dst, newCRates)
-
 
     def getFireCount(self, src_dst, node):
         return self.graphWidget.getFireCount(src_dst, node)

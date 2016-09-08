@@ -9,17 +9,15 @@ author: Sander Giesselink
 """
 
 import sys
-from PyQt5.QtWidgets import QWidget, QDockWidget, QGraphicsView, QGraphicsScene, QApplication, QSplitter, QSlider, QHBoxLayout, QVBoxLayout, QGridLayout, QFrame, QLabel, QToolButton, QButtonGroup, QGraphicsScene, QGraphicsItem
-from PyQt5.QtCore import Qt, QSize, QObject, pyqtSignal, QRectF, QPointF
-from PyQt5.QtGui import QIcon, QTransform, QColor, QPainter, QBrush, QFont
-from graph import *
-
+from PyQt5.QtWidgets import QWidget, QGraphicsView, QGraphicsScene, QSlider, QToolButton, QVBoxLayout, QGridLayout
+from PyQt5.QtCore import Qt, QSize, QRectF, QPointF
+from PyQt5.QtGui import QIcon, QTransform, QPainter
+from graph import Graph
 
 class GraphicsView(QGraphicsView):
     def __init__(self, widget):
         super().__init__()
         self.widget = widget
-
 
     def wheelEvent(self, event):
         #Catch wheelEvent and zoom instead of scroll when Ctrl is pressed
@@ -33,7 +31,6 @@ class GraphicsView(QGraphicsView):
         else:
             super().wheelEvent(event)
 
-
     def keyPressEvent(self, event):
         if event.modifiers() & Qt.ShiftModifier:
             self.setInteractive(False)
@@ -41,15 +38,12 @@ class GraphicsView(QGraphicsView):
 
         super().keyPressEvent(event)
 
-
     def keyReleaseEvent(self, event):
         self.setInteractive(True)
         self.setDragMode(False)
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
         super().keyReleaseEvent(event)
-
-
 
 
 class GraphicsScene(QGraphicsScene):
@@ -77,7 +71,6 @@ class GraphicsScene(QGraphicsScene):
                 x = i * 40  - (xGridSize) * 40
                 painter.drawLine(x, -yGridSize * 20, x, yGridSize * 20)
 
-
     def updateSceneRect(self):
         #Is called when there is a change in the scene
         #Update scene size to fit the current layout of the graph
@@ -88,15 +81,12 @@ class GraphicsScene(QGraphicsScene):
         else:
             self.lockScene = False
 
-
-
 class GraphWidget(QWidget):
 
     def __init__(self):
         super().__init__()
 
         self.initUI()
-
         
     def initUI(self):
         self.graphicsView = GraphicsView(self)
@@ -239,14 +229,12 @@ class GraphWidget(QWidget):
                     else:
                         self.graph.addEdgeToNodes(node1, node2, 'left', 'left', src, dst, tokenValues, pRates, cRates, resnr, argnr)
 
-
     def updateTokensGraph(self):
         #Update tokens after a step
         i = 0
         for src, dst in self.tokensInScene:
             self.graph.updateTokens(i, self.graphData[src][dst]['tkns'])
             i = i + 1
-
 
     def editTokens(self, src, dst, newTokens):
         print('Update tokens between: ' + str(src) + '--->' + str(dst) + ' to: ' + str(newTokens))
@@ -257,12 +245,10 @@ class GraphWidget(QWidget):
         #Also store the state after the change (Makes it more visual and makes it possible to step back to)
         self.graphData._storestate()
         
-        
     def editNodeFunction(self, nodeName, newFunction):
         print('Update function to: ' + str(newFunction))
         self.graphData.node[nodeName]['funcstr'] = newFunction
         self.graphData.updateNodeFunction(nodeName, newFunction)
-
 
     def editNodePosition(self, nodeName, newPos):
         print('Node', nodeName, 'moved to:', newPos)
@@ -272,7 +258,6 @@ class GraphWidget(QWidget):
         print('Update CLaSH code to: ' + str(newClashCode))
         self.graphData.node[nodeName]['clashcode'] = newClashCode
         self.graphData.updateClashCode(nodeName, newClashCode)
-
     
     def editPRates(self, src, dst, newPRates):
         print('Update pRates to: ' + str(newPRates))
@@ -280,23 +265,19 @@ class GraphWidget(QWidget):
         newPRates = str(newPRates)
         self.graphData.updatePRates((src, dst), newPRates)
 
-
     def editCRates(self, src, dst, newCRates):
         print('Update cRates to: ' + str(newCRates))
         self.graphData[src][dst]['crates'] = newCRates
         newCRates = str(newCRates)
         self.graphData.updateCRates((src, dst), newCRates)
 
-
     def getFireCount(self, src_dst, node):
         return self.graphData.node[src_dst]['firecount']
-
 
     def resetView(self):
         self.zoomSlider.setValue(250)
         self.setupMatrix()
         self.graphicsView.ensureVisible(QRectF(0,0,0,0))
-
 
     def setupMatrix(self):
         scale = 2.0 ** ((self.zoomSlider.value() - 250) / 50.0)
@@ -306,7 +287,6 @@ class GraphWidget(QWidget):
 
         self.graphicsView.setTransform(transform)
 
-
     def zoomIn(self, level = 1):
         if not level:
             levelValue = 1
@@ -315,7 +295,6 @@ class GraphWidget(QWidget):
 
         self.zoomSlider.setValue(self.zoomSlider.value() + levelValue)
 
-
     def zoomOut(self, level = 1):
         if not level:
             levelValue = 1
@@ -323,5 +302,3 @@ class GraphWidget(QWidget):
             levelValue = level
 
         self.zoomSlider.setValue(self.zoomSlider.value() - levelValue)
-
-

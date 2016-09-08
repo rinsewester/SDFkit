@@ -8,10 +8,9 @@ author: Sander Giesselink
 
 """
 
-import sys
-from PyQt5.QtWidgets import QWidget, QGraphicsItem, QInputDialog
-from PyQt5.QtCore import Qt, QPoint, QRect, QRectF, QEvent, QPointF
-from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont
+from PyQt5.QtWidgets import QGraphicsItem, QInputDialog
+from PyQt5.QtCore import Qt, QRectF, QPointF
+from PyQt5.QtGui import QColor, QPen, QBrush, QPainterPath, QFont
 
 class Edge(QGraphicsItem):
 
@@ -36,21 +35,15 @@ class Edge(QGraphicsItem):
         self.hover = False
         self.debugOn = False
 
-
     def boundingRect(self):
         #Used for collision detection and repaint
         path = self.getEdgePath()
         path.setFillRule(Qt.WindingFill)
-        
         path.addRect(self.cRect)
         path.addRect(self.pRect)
-
         path.addPath(self.getLargerEdgePath())
 
-        rect = path.boundingRect()
-
-        return rect
-
+        return path.boundingRect()
     
     def shape(self):
         #Determines the collision area
@@ -64,9 +57,6 @@ class Edge(QGraphicsItem):
 
         return path
 
-
-#---------------------
-#---Painting & path--- 
     def paint(self, painter, option, widget):
         lod = option.levelOfDetailFromTransform(painter.worldTransform())
 
@@ -76,9 +66,8 @@ class Edge(QGraphicsItem):
         if lod > 0.15 and self.debugOn:
             self.debug(painter) #Uncomment to turn on debug mode
 
-
     def paintEdge(self, painter, lod):
-        pen = QPen(QColor(0, 0, 0))
+        pen = QPen(Qt.black)
         pen.setWidth(1)
         pen.setCapStyle(Qt.RoundCap)
         brush = QBrush(self.edgeColor)
@@ -101,7 +90,6 @@ class Edge(QGraphicsItem):
 
         if lod > 0.4:
             self.drawPCRates(painter)
-
 
     def drawPCRates(self, painter):
         #Draw production and consumption rates above begin and end of edge
@@ -145,7 +133,6 @@ class Edge(QGraphicsItem):
         if len(self.cRates) > 1 or self.cRates[0] > 1:        
             painter.drawText(self.cRect, Qt.AlignCenter, cRateStr)
 
-
     def getEdgePath(self):
         yTranslation = 2
 
@@ -187,7 +174,6 @@ class Edge(QGraphicsItem):
         path.lineTo(QPointF(self.beginPoint.x(), self.beginPoint.y() + 2))
 
         return path
-
 
     def getLargerEdgePath(self):
         #Used to fill in the small areas on the edge
@@ -233,7 +219,6 @@ class Edge(QGraphicsItem):
 
         return path
 
-
     def debug(self, painter):
         #Paint path
         painter.setBrush(QBrush(QColor(0, 0, 0, 25)))
@@ -261,8 +246,6 @@ class Edge(QGraphicsItem):
         #Middel point
         painter.setPen(QPen(QColor(0, 0, 255, 100)))
         painter.drawEllipse(self.midPoint, 2, 2)
-   
-
 
     def calculateCurvePoints(self, beginPoint, endPoint):
         x = (beginPoint.x() + endPoint.x()) / 2
@@ -349,21 +332,16 @@ class Edge(QGraphicsItem):
                     xPoint1 = self.beginPoint.x() - 100
                     xPoint2 = self.endPoint.x() + 100
 
-
         #Add curvePoints
         self.curvePoint1 = QPointF(xPoint1, self.beginPoint.y() + self.yTranslation)
         self.curvePoint2 = QPointF(xPoint2, self.endPoint.y() + self.yTranslation)
 
-
-#------------------
-#---Mouse events--- 
     def hoverEnterEvent(self, event):
         self.hover = True
         self.setCursor(Qt.PointingHandCursor)
 
         super().hoverEnterEvent(event)
         self.update()
-
 
     def hoverLeaveEvent(self, event):
         self.hover = False
@@ -372,14 +350,12 @@ class Edge(QGraphicsItem):
         super().hoverLeaveEvent(event)
         self.update()
 
-
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:
             self.tokenCluster.contextMenu(event.scenePos())
 
         super().mousePressEvent(event)
         self.update()
-
 
     def moveEdge(self, delta, edgeSide):
         if edgeSide == 'begin':
@@ -400,22 +376,15 @@ class Edge(QGraphicsItem):
         self.prepareGeometryChange()
         self.update()
 
-
-#---------------------
-#---Points & zValue--- 
     def setZValueEdge(self, zValue):
         self.setZValue(zValue)
         self.tokenCluster.setZValueTokenCluster(zValue + 1)
-
 
     def getPointOnEdge(self, t):
         edgePath = QPainterPath(self.beginPoint)
         edgePath.cubicTo(self.curvePoint1, self.curvePoint2, self.endPoint)
 
-        point = QPointF(edgePath.pointAtPercent(t))
-
-        return point
-
+        return QPointF(edgePath.pointAtPercent(t))
 
     def getPointCloseToCenter(self, distance):
         edgePath = QPainterPath(self.beginPoint)
@@ -434,13 +403,9 @@ class Edge(QGraphicsItem):
 
         return self.getPointOnEdge(percent)
 
-
     def setTokenCluster(self, tokenCluster):
         self.tokenCluster = tokenCluster
 
-
-#------------------------------------
-#---Production & Consumption rates--- 
     def updatePCRects(self):
         if self.beginSide == 'left':
             self.pRect = QRectF(self.beginPoint.x() - 20, self.beginPoint.y() - 15, 20, 10)
@@ -451,7 +416,6 @@ class Edge(QGraphicsItem):
             self.cRect = QRectF(self.endPoint.x() - 20, self.endPoint.y() - 15, 20, 10)
         else:
             self.cRect = QRectF(self.endPoint.x(), self.endPoint.y() - 15, 20, 10)
-
 
     def setPRatesActiontriggered(self):
         pRatesStr = str(self.pRates)
@@ -469,7 +433,6 @@ class Edge(QGraphicsItem):
             # self.pRates = newPRates
             # self.tokenCluster.widget.editPRates(self.tokenCluster.src, self.tokenCluster.dst, newPRates)
 
-
     def setCRatesActiontriggered(self):
         cRatesStr = str(self.cRates)
         newCRatesStr, ok = QInputDialog.getText(self.tokenCluster.widget, 'Edit consumption rates', 'Consumption rate:', text = cRatesStr)
@@ -486,7 +449,6 @@ class Edge(QGraphicsItem):
             # self.cRates = newCRates
             # self.tokenCluster.widget.editCRates(self.tokenCluster.src, self.tokenCluster.dst, newCRates)
 
-
     def calculateEdgeColors(self, color):
         #Calculate all edge colors based on a given color
         r = color.red()
@@ -501,5 +463,5 @@ class Edge(QGraphicsItem):
             b = 80
 
         self.edgeColor = QColor(r, g, b)
-        self.edgeColorSelected = QColor(0, 0, 0)
+        self.edgeColorSelected = Qt.black
         self.edgeColorHover = QColor(r - 80, g - 80, b - 80)

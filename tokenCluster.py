@@ -14,7 +14,8 @@ from PyQt5.QtCore import Qt, QPoint, QPointF, QRectF
 from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont, QContextMenuEvent, QCursor
 
 class TokenCluster(QGraphicsItem):
-    def __init__(self, widget, scene, view, edge, src, dst, tokenValues = []):
+
+    def __init__(self, widget, scene, view, edge, src, dst, tokenValues=[]):
         super().__init__()
 
         self.edge = edge
@@ -42,7 +43,6 @@ class TokenCluster(QGraphicsItem):
         else:
             self.setZValue(6)
         self.updateTokens()      
-       
         
         self.setTokenAction = QAction('Edit tokens', self.widget)
         self.setTokenAction.triggered.connect(self.setTokenActiontriggered)
@@ -55,27 +55,16 @@ class TokenCluster(QGraphicsItem):
         self.edgeMenu.addAction(self.setTokenAction)
         self.edgeMenu.addAction(self.setPRatesAction)
         self.edgeMenu.addAction(self.setCRatesAction)
-        
-
 
     def boundingRect(self):
-        #Used for collision detection and repaint
-        # rect = self.getClusterRect()
-        # if self.hover:
-        #     rect = self.getClusterRectHover()
+        return self.getClusterRectHover()
 
-        rect = self.getClusterRectHover()
-
-        return rect
-
-    
     def shape(self):
         #Determines the collision area
         path = QPainterPath()
         path.addEllipse(self.boundingRect())
 
         return path
-
 
     def paint(self, painter, option, widget):
         self.lod = option.levelOfDetailFromTransform(painter.worldTransform())
@@ -111,14 +100,12 @@ class TokenCluster(QGraphicsItem):
         # painter.setBrush(QColor(255, 0, 0, 50))
         # painter.drawRect(self.boundingRect())
 
-
     def getClusterRect(self):
         if len(self.tokenList) > 0:
             rect = QRectF(-self.clusterWidth * 0.5, -self.clusterHeight * 0.5, self.clusterWidth, self.clusterHeight)
         else:
             rect = QRectF(0, 0, 0, 0)
         return rect
-
 
     def getClusterRectHover(self):
         if len(self.tokenList) > 0:
@@ -127,17 +114,16 @@ class TokenCluster(QGraphicsItem):
             rect = QRectF(0, 0, 0, 0)
         return rect       
 
-
     def addToken(self, value):
         listLength = len(self.tokenList)
         token = Token(value, self.edge, listLength, self)
 
         if listLength >= 1:
-            #Update the row length for all tokens
+            # Update the row length for all tokens
             for i in range(listLength):
                 self.tokenList[i].updateRowLength(listLength)
 
-        #Add token to scene and list
+        # Add token to scene and list
         if self.edge.zValue() == 1:
             token.setZValue(3)
         else:
@@ -146,22 +132,17 @@ class TokenCluster(QGraphicsItem):
         self.tokenList.append(token)
         self.scene.addItem(token)
 
-
     def addReferenceToEdge(self):
         self.edge.setTokenCluster(self)
     
-
-#------------------
-#---Changing tokens---
     def updateTokens(self):
         for i in range(len(self.tokenList)):
             self.tokenList[i].updatePos()
         self.prepareGeometryChange()
         self.setPos(self.edge.getPointOnEdge(0.5))
 
-
     def newTokenValues(self, newTokens):
-    	#Replaces all tokens with new tokens
+    	# Replaces all tokens with new tokens
         self.deleteTokens()
         self.tokenList.clear()
 
@@ -172,12 +153,9 @@ class TokenCluster(QGraphicsItem):
         self.updateTokens()
         self.edge.update()
 
-
     def deleteTokens(self):
         for i in range(len(self.tokenList)):
             self.scene.removeItem(self.tokenList[i])
-            #Might also need to remove the QGraphicsItem itself, but 'delete' doesn't work
-
 
     def setZValueTokenCluster(self, zValue):
         self.setZValue(zValue)
@@ -187,16 +165,12 @@ class TokenCluster(QGraphicsItem):
         for i in range(len(self.tokenList)):
             self.tokenList[i].setZValueToken(zValue + 1)
 
-
-#------------------
-#---Mouse Events---
     def mousePressEvent(self, event):
         if self.tokensAreClusterd:
             print('Token Values: ' + str(self.tokenValues))  
 
         super().mousePressEvent(event)
         self.update()
-
 
     def hoverEnterEvent(self, event):
         self.hover = True
@@ -205,7 +179,6 @@ class TokenCluster(QGraphicsItem):
 
         super().hoverEnterEvent(event)
         self.update()
-
 
     def hoverLeaveEvent(self, event):
         self.hover = False
@@ -216,11 +189,8 @@ class TokenCluster(QGraphicsItem):
         else:            
             self.setZValue(self.zValue() - 4)
 
-        #self.prepareGeometryChange()
-
         super().hoverLeaveEvent(event)
         self.update()
-
 
     def contextMenuEvent(self, event):
         # Show a context menu when right-clicking on TokenCluster
@@ -249,12 +219,6 @@ class TokenCluster(QGraphicsItem):
                 self.widget.editTokens(self.src, self.dst, newTokens)
             except:
                 print('Invalid token entry')
-            
-
-            # newTokens = eval(newTokenStr)
-            # self.newTokenValues(newTokens)
-            # self.widget.editTokens(self.src, self.dst, newTokens)  
-
 
     def getFireCount(self, src_dst):
         if src_dst == 'src':
@@ -359,14 +323,11 @@ class Token(QGraphicsItem):
         # painter.setBrush(QColor(0, 255, 0, 50))
         # painter.drawRect(self.boundingRect())
 
-#------------------
-#---Mouse Events---
     def mousePressEvent(self, event):
         print('Token Value: ' + str(self.value))  
 
         super().mousePressEvent(event)
         self.update()
-
 
     def hoverEnterEvent(self, event):
         self.hover = True
@@ -375,7 +336,6 @@ class Token(QGraphicsItem):
 
         super().hoverEnterEvent(event)
         self.update()
-
 
     def hoverLeaveEvent(self, event):
         self.hover = False
@@ -386,34 +346,24 @@ class Token(QGraphicsItem):
         else:            
             self.setZValue(self.zValue() - 4)
 
-        #self.prepareGeometryChange()   #Causes an unknown crash in specific cases
-                                        #Instead always use the larger hoverRect for boundingRect
         super().hoverLeaveEvent(event)
         self.update()
-
 
     def contextMenuEvent(self, event):
         #Gets point of right click and converts it to a position on the scene
         self.cluster.contextMenu(event.scenePos())
 
-
-#------------------
-#---Other---
     def getTokenRect(self):
         return QRectF(-self.tokenWidth * 0.5, -self.tokenHeight * 0.5, self.tokenWidth, self.tokenHeight)
-
 
     def getTokenRectHover(self):
         return QRectF(-self.tokenWidth * 0.75 , -self.tokenHeight * 0.75, self.tokenWidth * 1.5, self.tokenHeight * 1.5)
 
-
     def getPointOnEdge(self, t):
         return self.edge.getPointOnEdge(t)
 
-
     def getPointCloseToCenter(self, distance):
         return self.edge.getPointCloseToCenter(distance)
-
 
     def updatePos(self):          
         #Update postion of the token based on its position in the row
@@ -423,13 +373,11 @@ class Token(QGraphicsItem):
 
         if self.rowLength == 0:
             self.setPos(self.getPointOnEdge(0.5))
-        
         elif self.rowLength == 1:
             if self.numberInRow == 0:
                 self.setPos(self.getPointCloseToCenter(8))
             else:
                 self.setPos(self.getPointCloseToCenter(-8))
-        
         elif self.rowLength == 2:
             if self.numberInRow == 0:
                 self.setPos(self.getPointCloseToCenter(15))
@@ -437,7 +385,6 @@ class Token(QGraphicsItem):
                 self.setPos(self.getPointOnEdge(0.5))
             else:
                 self.setPos(self.getPointCloseToCenter(-15))
-
         else:
             if self.numberInRow == 0:
                 self.setPos(self.getPointCloseToCenter(20))
@@ -452,20 +399,11 @@ class Token(QGraphicsItem):
         self.prepareGeometryChange()
         self.update()
 
-    
     def setZValueToken(self, zValue):
         self.setZValue(zValue)
 
         if self.hover:
             self.setZValue(8)
 
-
     def updateRowLength(self, length):
         self.rowLength = length
-
-
-    
-
-
-    
-
