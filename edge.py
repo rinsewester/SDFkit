@@ -14,7 +14,7 @@ from PyQt5.QtGui import QColor, QPen, QBrush, QPainterPath, QFont
 
 class Edge(QGraphicsItem):
 
-    def __init__(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, pRates, cRates, color = QColor(160, 160, 160)):
+    def __init__(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, pRates, cRates, color):
         super().__init__()
 
         self.edgeSelfLoops = edgeSelfLoops

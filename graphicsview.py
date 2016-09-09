@@ -11,7 +11,7 @@ author: Sander Giesselink
 import sys
 from PyQt5.QtWidgets import QWidget, QGraphicsView, QGraphicsScene, QHBoxLayout, QFrame
 from PyQt5.QtCore import Qt, QRectF, QPointF
-from PyQt5.QtGui import QTransform, QPainter
+from PyQt5.QtGui import QTransform, QPainter, QColor
 from graph import Graph
 
 class GraphicsView(QGraphicsView):
@@ -158,8 +158,9 @@ class GraphWidget(QWidget):
             x, y = self.graphData.node[n]['pos']
             func = self.graphData.node[n]['funcstr']
             clashCode = self.graphData.node[n]['clashcode']
+            r, g, b = self.graphData.node[n]['color']
 
-            self.graph.addNode(x, y, n, func, clashCode)
+            self.graph.addNode(x, y, n, func, clashCode, QColor(r, g, b))
             nPoint = [x, y]
             nodeList.append(n)
             nodePoints.append(nPoint)
@@ -176,9 +177,11 @@ class GraphWidget(QWidget):
                 cRates = self.graphData[src][dst]['crates']
                 resnr = self.graphData[src][dst]['res']
                 argnr = self.graphData[src][dst]['arg']
+                r, g, b = self.graphData[src][dst]['color']
+                color = QColor(r, g, b)
                 self.tokensInScene.append((src, dst))    
                     
-                self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues, pRates, cRates, resnr, argnr)
+                self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues, pRates, cRates, resnr, argnr, color)
                 
         #Then place the rest of the edges (not self-looping)
         for src, dst in self.graphData.edges():
@@ -192,18 +195,20 @@ class GraphWidget(QWidget):
                 cRates = self.graphData[src][dst]['crates']
                 resnr = self.graphData[src][dst]['res']
                 argnr = self.graphData[src][dst]['arg']
+                r, g, b = self.graphData[src][dst]['color']
+                color = QColor(r, g, b)
                 self.tokensInScene.append((src, dst))    
 
                 #If begin node is left of end node
                 if nodePoints[node1][0] < nodePoints[node2][0]:
-                    self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues, pRates, cRates, resnr, argnr)
+                    self.graph.addEdgeToNodes(node1, node2, 'right', 'left', src, dst, tokenValues, pRates, cRates, resnr, argnr, color)
                 elif nodePoints[node1][0] > nodePoints[node2][0]:
-                    self.graph.addEdgeToNodes(node1, node2, 'left', 'right', src, dst, tokenValues, pRates, cRates, resnr, argnr)
+                    self.graph.addEdgeToNodes(node1, node2, 'left', 'right', src, dst, tokenValues, pRates, cRates, resnr, argnr, color)
                 else:
                     if nodePoints[node1][0] > self.centerOfGraph.x():
-                        self.graph.addEdgeToNodes(node1, node2, 'right', 'right', src, dst, tokenValues, pRates, cRates, resnr, argnr)
+                        self.graph.addEdgeToNodes(node1, node2, 'right', 'right', src, dst, tokenValues, pRates, cRates, resnr, argnr, color)
                     else:
-                        self.graph.addEdgeToNodes(node1, node2, 'left', 'left', src, dst, tokenValues, pRates, cRates, resnr, argnr)
+                        self.graph.addEdgeToNodes(node1, node2, 'left', 'left', src, dst, tokenValues, pRates, cRates, resnr, argnr, color)
 
     def updateTokensGraph(self):
         #Update tokens after a step

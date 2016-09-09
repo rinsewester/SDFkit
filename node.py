@@ -16,7 +16,9 @@ from collections import Counter
 
 class Node(QGraphicsItem):
 
-    def __init__(self, widget, view, nodeName, function, clashCode, color=QColor(210, 210, 210)):
+    NODE_COLOR = QColor(210, 210, 210)
+
+    def __init__(self, widget, view, nodeName, function, clashCode, color):
         super().__init__()
         
         self.ioWidth = 15

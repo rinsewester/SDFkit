@@ -10,6 +10,7 @@ author: Sander Giesselink
 
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QColor
+from PyQt5.QtCore import Qt
 from node import Node
 from edge import Edge
 from tokenCluster import TokenCluster
@@ -43,8 +44,8 @@ class Graph(QWidget):
         self.edgeList.clear()
         self.clusterList.clear()
             
-    def addNode(self, x, y, name, func = [], clashCode = ''):
-        newNode = Node(self, self.view, name, func, clashCode, QColor(232, 232, 255))
+    def addNode(self, x, y, name, func=[], clashCode='', color=Qt.red):
+        newNode = Node(self, self.view, name, func, clashCode, color)
         newNode.setPos(x, y)
         newNode.setZValue(0)
         
@@ -52,8 +53,8 @@ class Graph(QWidget):
         self.scene.addItem(newNode)
         self.nodeList.append(newNode)
 
-    def addEdge(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues, pRates, cRates):        
-        newEdge = Edge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, pRates, cRates)
+    def addEdge(self, beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, src, dst, tokenValues, pRates, cRates, color):
+        newEdge = Edge(beginPoint, endPoint, beginSide, endSide, edgeSelfLoops, pRates, cRates, color)
 
         #Place edges always behind nodes
         newEdge.setZValue(1)
@@ -69,7 +70,7 @@ class Graph(QWidget):
 
         return newEdge
 
-    def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide, src = '', dst = '', tokenValues = [], pRates = [0], cRates = [0], resnr = '', argnr = ''):
+    def addEdgeToNodes(self, beginNodeIndex, endNodeIndex, beginSide, endSide, src = '', dst = '', tokenValues = [], pRates = [0], cRates = [0], resnr = '', argnr = '', color=QColor(200,100,50)):
         beginNode = self.nodeList[beginNodeIndex]
         endNode = self.nodeList[endNodeIndex]
         
@@ -87,7 +88,7 @@ class Graph(QWidget):
         endNode.addNewIO(endSide, 0)
         
         #Create edge between the 2 nodes
-        edge = self.addEdge(beginPoint, endPoint, beginSide, endSide, beginNode == endNode, src, dst, tokenValues, pRates, cRates)
+        edge = self.addEdge(beginPoint, endPoint, beginSide, endSide, beginNode == endNode, src, dst, tokenValues, pRates, cRates, color)
 
         #Give both nodes a reference to the created edge
         beginNode.addEdge(edge, 'begin')

@@ -40,7 +40,7 @@ class CSDFGraph(nx.DiGraph):
         # functions
         self.clockcount = 0
 
-    def add_edge(self, src, dst, resnr, argnr, prates, crates, tkns=[]):
+    def add_edge(self, src, dst, resnr, argnr, prates, crates, tkns=[], color=[160, 160, 160]):
 
         super(CSDFGraph, self).add_edge(src, dst)
         self.edge[src][dst]['res'] = resnr
@@ -48,17 +48,22 @@ class CSDFGraph(nx.DiGraph):
         self.edge[src][dst]['prates'] = prates
         self.edge[src][dst]['crates'] = crates
         self.edge[src][dst]['tkns'] = tkns
+        self.edge[src][dst]['color'] = color
+
         self.edge[src][dst]['itkns'] = []
         self.edgestates[(src, dst)] = [tkns]
 
-    def add_node(self, n, f, pos, clashcode=''):
+    def add_node(self, n, f, pos, clashcode='', color=[232, 232, 255]):
 
         super(CSDFGraph, self).add_node(n)
         self.updateNodeFunction(n, f)
+        self.node[n]['pos'] = pos
         self.node[n]['clashcode'] = clashcode
+        self.node[n]['color'] = color
+
         self.node[n]['firecount'] = 0
         self.nodestates[n] = [0]
-        self.node[n]['pos'] = pos
+        
 
     def add_nodes_from(self, ns):
 
