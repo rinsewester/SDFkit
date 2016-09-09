@@ -18,6 +18,9 @@ from copy import deepcopy
 
 class CSDFGraph(nx.DiGraph):
 
+    DEFAULT_NODE_COLOR = (230, 230, 255)
+    DEFAULT_EDGE_COLOR = (180, 180, 180)
+
     def __init__(self, name=''):
 
         super().__init__()
@@ -40,7 +43,7 @@ class CSDFGraph(nx.DiGraph):
         # functions
         self.clockcount = 0
 
-    def add_edge(self, src, dst, resnr, argnr, prates, crates, tkns=[], color=[160, 160, 160]):
+    def add_edge(self, src, dst, resnr, argnr, prates, crates, tkns=[], color=DEFAULT_EDGE_COLOR):
 
         super(CSDFGraph, self).add_edge(src, dst)
         self.edge[src][dst]['res'] = resnr
@@ -53,7 +56,7 @@ class CSDFGraph(nx.DiGraph):
         self.edge[src][dst]['itkns'] = []
         self.edgestates[(src, dst)] = [tkns]
 
-    def add_node(self, n, f, pos, clashcode='', color=[232, 232, 255]):
+    def add_node(self, n, f, pos, clashcode='', color=DEFAULT_NODE_COLOR):
 
         super(CSDFGraph, self).add_node(n)
         self.updateNodeFunction(n, f)
@@ -64,7 +67,6 @@ class CSDFGraph(nx.DiGraph):
         self.node[n]['firecount'] = 0
         self.nodestates[n] = [0]
         
-
     def add_nodes_from(self, ns):
 
         for n, f, p in ns:
@@ -250,8 +252,11 @@ class CSDFGraph(nx.DiGraph):
             nodeClashCode = ''
             if 'clashcode' in jsnode.keys():
                 nodeClashCode = jsnode['clashcode']
+            nodeColor = self.DEFAULT_NODE_COLOR
+            if 'color' in jsnode.keys():
+                nodeColor = jsnode['color']
             nodePosition = jsnode['pos'][0], jsnode['pos'][1]
-            self.add_node(nodeName, nodeFunction, nodePosition, clashcode=nodeClashCode)
+            self.add_node(nodeName, nodeFunction, nodePosition, clashcode=nodeClashCode, color=nodeColor)
 
         # Load all edges and their attributes
         for jsedge in jsondata['edges']:
@@ -262,9 +267,12 @@ class CSDFGraph(nx.DiGraph):
             edgePRates = CSDFGraph._flattenRateList(jsedge['prates'])
             edgeCRates = CSDFGraph._flattenRateList(jsedge['crates'])
             edgeTokens = jsedge['tkns']
+            edgeColor = self.DEFAULT_EDGE_COLOR
+            if 'color' in jsedge.keys():
+                edgeColor = jsedge['color']
             self.add_edge(
                     edgeSource, edgeDestination, edgeResNumber, edgeArgNumber,
-                    edgePRates, edgeCRates, edgeTokens)
+                    edgePRates, edgeCRates, edgeTokens, color=edgeColor)
             
     def storeToFile(self, filename=''):
         if filename == '':
@@ -290,6 +298,7 @@ class CSDFGraph(nx.DiGraph):
             if self.node[nname]['clashcode'] != '':
                 nodedict['clashcode'] = self.node[nname]['clashcode']
             nodedict['pos'] = list(self.node[nname]['pos'])
+            nodedict['color'] = self.node[nname]['color']
             nodesList.append(nodedict)
 
         # add all nodes to temporary dict in form of a list
@@ -306,6 +315,7 @@ class CSDFGraph(nx.DiGraph):
             edgedict['prates'] = self.edge[srcname][dstname]['prates']
             edgedict['crates'] = self.edge[srcname][dstname]['crates']
             edgedict['tkns'] = self.edge[srcname][dstname]['tkns']
+            edgedict['color'] = self.edge[srcname][dstname]['color']
             edgesList.append(edgedict)
 
         # add all edges to temporary dict in form of a list
