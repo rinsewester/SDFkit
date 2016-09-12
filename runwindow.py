@@ -9,11 +9,8 @@ author: Rinse Wester
 """
 
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QComboBox, QLineEdit
-
-from csdfgraph import *
-from graphicsview import GraphWidget
-
+from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QComboBox, QLineEdit
+from log import Log
 
 class RunWindow(QWidget):
 
@@ -104,7 +101,8 @@ class RunWindow(QWidget):
                 self.graphWidget.updateTokensGraph()
                 n += 1
             if n == MAX_ITERATIONS:
-                print('Condition never met')
+                Log.addLogMessage(Log.CRITICAL, 'Stop condition never met')
+
 
         self.lblStateNr.setText('State: ' + str(self.graph.stateCount() - 1))
         self.btnBack.setEnabled(self.graph.stateCount() > 1)

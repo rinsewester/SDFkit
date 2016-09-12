@@ -9,10 +9,11 @@ author: Sander Giesselink
 """
 
 import sys
-from PyQt5.QtWidgets import QWidget, QGraphicsItem, QPushButton, QVBoxLayout, QMenu, QAction, QInputDialog
+from PyQt5.QtWidgets import QWidget, QGraphicsItem, QPushButton, QVBoxLayout, QMenu, QAction, QInputDialog, QMessageBox
 from PyQt5.QtCore import QRectF, QPointF, QPoint, Qt, QVariant
 from PyQt5.QtGui import QColor, QPainter, QBrush, QPainterPath, QLinearGradient, QFont, QContextMenuEvent
 from collections import Counter
+from log import Log
 
 class Node(QGraphicsItem):
 
@@ -279,7 +280,8 @@ class Node(QGraphicsItem):
                 self.nodeFunction = newFunctionStr
                 self.widget.editNodeFunction(self.nodeName, newFunctionStr)
             except:
-                print('Invalid function entry')
+                Log.addLogMessage(Log.ERROR, 'Invalid node function')
+                QMessageBox.critical(self.widget, 'Error', 'Invalid node function')
 
     def setClashCodeActionTriggered(self):
         clashCodeStr = self.clashCode
@@ -290,9 +292,9 @@ class Node(QGraphicsItem):
                 self.clashCode = newClashCode
                 self.widget.editClashCode(self.nodeName, newClashCode)
             except:
-                print('Invalid clashcode entry')
+                Log.addLogMessage(Log.ERROR, 'Invalid CLaSH code')
+                QMessageBox.critical(self.widget, 'Error', 'Invalid CLaSH code')
             
-
     def getIOPoint(self, sideIndex, side):
     	#Gets the point from where the IO rectangle is drawn
         addWidthForRightSide = 0
@@ -301,9 +303,7 @@ class Node(QGraphicsItem):
 
         ioPoint = QPointF(addWidthForRightSide, sideIndex * (self.ioHeightDifference + self.ioHeight) + self.ioHeight / 2)
 
-        #Returns the point of a specific io
         return ioPoint
-
 
     def getIOPointForEdge(self, side, ioType):
     	#Gets the point where an edge can connect to the IO
@@ -362,8 +362,9 @@ class Node(QGraphicsItem):
             #If mouse is over IO -> return IO
             if mousePos.x() > IOPoint.x() and mousePos.x() < IOPoint.x() + self.ioWidth:
                 if mousePos.y() > IOPoint.y() and mousePos.y() < IOPoint.y() + self.ioHeight:
-                    if click:
-                        print('mouse on IO: ' + str(i) + ' (' + str(self.ioList[i][3]) + ', ' + str(self.ioList[i][4]) + ')')
+                    # entry point for drawing graphs.......
+                    # if click:
+                    #     print('mouse on IO: ' + str(i) + ' (' + str(self.ioList[i][3]) + ', ' + str(self.ioList[i][4]) + ')')
                     
                     #Update the hover paramater of the IO
                     self.ioList.insert(i, (self.ioList[i][0], self.ioList[i][1], self.ioList[i][2], self.ioList[i][3], self.ioList[i][4], True, self.ioList[i][6]))
@@ -386,52 +387,9 @@ class Node(QGraphicsItem):
 
     def setYTranslationLeftIO(self):
         i = 1
-        # #YTranslation is used to center the IO on one side if the other side contains more IO
-        # yTranslationDifference = self.yTranslationLeftIO
-
-        # leftSideLength = self.getLengthLeftSide()
-        # rightSideLength = self.getLengthRightSide()
-
-        # if leftSideLength < rightSideLength:
-        #     totalHeightInputs = (leftSideLength * self.ioHeight + (leftSideLength - 1) * self.ioHeightDifference)
-        #     totalHeightAvailableForInputs = self.nodeBodyHeight - self.ioHeightDifference * 2
-        #     self.yTranslationLeftIO = (totalHeightAvailableForInputs - totalHeightInputs) / 2
-        # else:
-        #     self.yTranslationLeftIO = 0
-
-        # #Update edge positions when the translation is changed
-        # yTranslationDifference += self.yTranslationLeftIO
-        # posChange = QPointF(0, yTranslationDifference)
-        # self.moveEdges(posChange, 'left')
-        # print("info:")
-        # print(self.getLengthLeftSide())
-        # print(self.getLengthRightSide())
-        # print(posChange)
-    
 
     def setYTranslationRightIO(self):
         i = 1
-        # #YTranslation is used to center the IO on one side if the other side contains more IO
-        # yTranslationDifference = self.yTranslationRightIO
-
-        # leftSideLength = self.getLengthLeftSide()
-        # rightSideLength = self.getLengthRightSide()
-
-        # if rightSideLength < leftSideLength:
-        #     totalHeightOutputs = (rightSideLength * self.ioHeight + (rightSideLength - 1) * self.ioHeightDifference)
-        #     totalHeightAvailableForOutputs = self.nodeBodyHeight - self.ioHeightDifference * 2
-        #     self.yTranslationRightIO = (totalHeightAvailableForOutputs - totalHeightOutputs) / 2
-        # else:
-        #     self.yTranslationRightIO = 0
-
-        # #Update edge positions when the translation is changed
-        # yTranslationDifference += self.yTranslationRightIO
-        # posChange = QPointF(0, yTranslationDifference)
-        # self.moveEdges(posChange, 'right')
-        # print("info:")
-        # print(self.getLengthLeftSide())
-        # print(self.getLengthRightSide())
-        # print(posChange)
 
     def updateNode(self):
     	#Update the dimentional values of the node and its IO

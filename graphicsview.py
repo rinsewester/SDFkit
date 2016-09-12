@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QWidget, QGraphicsView, QGraphicsScene, QHBoxLayout,
 from PyQt5.QtCore import Qt, QRectF, QPointF
 from PyQt5.QtGui import QTransform, QPainter, QColor
 from graph import Graph
+from log import Log
 
 class GraphicsView(QGraphicsView):
 
@@ -218,7 +219,7 @@ class GraphWidget(QWidget):
             i = i + 1
 
     def editTokens(self, src, dst, newTokens):
-        print('Update tokens between: ' + str(src) + '--->' + str(dst) + ' to: ' + str(newTokens))
+        Log.addLogMessage(Log.INFO, 'Tokens for edge ' + str((src, dst)) + ' updated to ' + str(newTokens))
         self.graphData[src][dst]['tkns'] = newTokens
         newTokens = str(newTokens)
         self.graphData.updateTokens((src, dst), newTokens)
@@ -227,27 +228,27 @@ class GraphWidget(QWidget):
         self.graphData._storestate()
         
     def editNodeFunction(self, nodeName, newFunction):
-        print('Update function to: ' + str(newFunction))
+        Log.addLogMessage(Log.INFO, 'Function of node ' + nodeName + ' updated to ' + str(newFunction))
         self.graphData.node[nodeName]['funcstr'] = newFunction
         self.graphData.updateNodeFunction(nodeName, newFunction)
 
     def editNodePosition(self, nodeName, newPos):
-        print('Node', nodeName, 'moved to:', newPos)
+        Log.addLogMessage(Log.INFO, 'Position of node ' + nodeName + ' updated to ' + str(newPos))
         self.graphData.node[nodeName]['pos'] = newPos.x(), newPos.y()
 
     def editClashCode(self, nodeName, newClashCode):
-        print('Update CLaSH code to: ' + str(newClashCode))
+        Log.addLogMessage(Log.INFO,'CLaSH code of ' + nodeName + ' updated')
         self.graphData.node[nodeName]['clashcode'] = newClashCode
         self.graphData.updateClashCode(nodeName, newClashCode)
     
     def editPRates(self, src, dst, newPRates):
-        print('Update pRates to: ' + str(newPRates))
+        Log.addLogMessage(Log.INFO, 'Production rates for edge ' + str((src, dst)) + ' updated to ' + str(newPRates))
         self.graphData[src][dst]['prates'] = newPRates
         newPRates = str(newPRates)
         self.graphData.updatePRates((src, dst), newPRates)
 
     def editCRates(self, src, dst, newCRates):
-        print('Update cRates to: ' + str(newCRates))
+        Log.addLogMessage(Log.INFO, 'Consumption rates for edge ' + str((src, dst)) + ' updated to ' + str(newCRates))
         self.graphData[src][dst]['crates'] = newCRates
         newCRates = str(newCRates)
         self.graphData.updateCRates((src, dst), newCRates)

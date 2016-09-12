@@ -12,6 +12,7 @@ import networkx as nx
 import json
 import string
 import sdfmath
+from log import Log
 from copy import deepcopy
 
 # TODO: add support for change tracking: weather file has changed -> to enable/disable save button in GUI
@@ -228,7 +229,7 @@ class CSDFGraph(nx.DiGraph):
         #  at least two nodes and one edge, proper connections
         #  and check wether all edges are connected consistenly
         #  to nodearguments and results
-        print('load file in csdfgraph: ' + filename)
+        Log.addLogMessage(Log.INFO, 'Opened grap ' + filename)
         self.filename = filename
         with open(filename, 'r') as f:
             jsonstr = f.read()
@@ -321,13 +322,10 @@ class CSDFGraph(nx.DiGraph):
         # add all edges to temporary dict in form of a list
         graphDict['edges'] = edgesList
 
-        # print(json.dumps(graphDict, sort_keys=False, indent=4))
-
         # Last but not leat, write the graph to the file
         with open(fname, 'w') as outfile:
-            json.dump(graphDict, outfile, sort_keys=False, indent=4)
-            print('Saved graph in: ' + fname)
-
+            json.dump(graphDict, outfile, sort_keys=True, indent=4)
+            Log.addLogMessage(Log.INFO, 'Saved graph ' + fname)
 
     def updateNodeFunction(self, nodename, funcstr):
         self.node[nodename]['funcstr'] = funcstr

@@ -8,8 +8,6 @@ author: Rinse Wester
 
 """
 
-
-from csdfgraph import *
 import re
 
 class ClashCodeGen(object):

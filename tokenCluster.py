@@ -9,9 +9,10 @@ author: Sander Giesselink
 """
 
 import sys
-from PyQt5.QtWidgets import QGraphicsItem, QMenu, QAction, QInputDialog
+from PyQt5.QtWidgets import QGraphicsItem, QMenu, QAction, QInputDialog, QMessageBox
 from PyQt5.QtCore import Qt, QPoint, QPointF, QRectF
 from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QPainterPath, QFont, QContextMenuEvent, QCursor
+from log import Log
 
 class TokenCluster(QGraphicsItem):
 
@@ -70,26 +71,23 @@ class TokenCluster(QGraphicsItem):
         self.lod = option.levelOfDetailFromTransform(painter.worldTransform())
 
         if self.lod > 0.15 and self.tokensAreClusterd:
-            painter.setPen(QColor(0, 0, 0))
+            painter.setPen(Qt.black)
             painter.setBrush(self.clusterColor)
-            
-            rect = self.getClusterRect()
-            smallRect1 = QRectF(-self.clusterWidth * 0.5, -self.clusterHeight * 0.25, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
-            smallRect2 = QRectF(-self.clusterWidth * 0.25, 0, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
-            smallRect3 = QRectF(-self.clusterWidth * 0.25, -self.clusterHeight * 0.5, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
-            smallRect4 = QRectF(0, -self.clusterHeight * 0.25, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
 
+            #Make token larger when the mouse hovers over it
             if self.hover:
-            	#Make token larger when the mouse hovers over it
                 rect = self.getClusterRectHover()
-                #smallRect = QRectF(-self.clusterWidth * 0.375, -self.clusterHeight * 0.375, self.clusterWidth * 0.75, self.clusterHeight * 0.75)
                 smallRect1 = QRectF(-self.clusterWidth * 0.75, -self.clusterHeight * 0.375, self.clusterWidth * 0.75, self.clusterHeight * 0.75)
                 smallRect2 = QRectF(-self.clusterWidth * 0.375, 0, self.clusterWidth * 0.875, self.clusterHeight * 0.75)
                 smallRect3 = QRectF(-self.clusterWidth * 0.375, -self.clusterHeight * 0.75, self.clusterWidth * 0.75, self.clusterHeight * 0.75)
                 smallRect4 = QRectF(0, -self.clusterHeight * 0.375, self.clusterWidth * 0.75, self.clusterHeight * 0.75)
+            else:
+                smallRect1 = QRectF(-self.clusterWidth * 0.5, -self.clusterHeight * 0.25, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
+                smallRect2 = QRectF(-self.clusterWidth * 0.25, 0, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
+                smallRect3 = QRectF(-self.clusterWidth * 0.25, -self.clusterHeight * 0.5, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
+                smallRect4 = QRectF(0, -self.clusterHeight * 0.25, self.clusterWidth * 0.5, self.clusterHeight * 0.5)
 
             #Paint cluster
-            painter.drawEllipse(rect)
             painter.drawEllipse(smallRect1)
             painter.drawEllipse(smallRect2)
             painter.drawEllipse(smallRect3)
@@ -166,8 +164,8 @@ class TokenCluster(QGraphicsItem):
             self.tokenList[i].setZValueToken(zValue + 1)
 
     def mousePressEvent(self, event):
-        if self.tokensAreClusterd:
-            print('Token Values: ' + str(self.tokenValues))  
+        # if self.tokensAreClusterd:
+        #     print('Token Values: ' + str(self.tokenValues))  
 
         super().mousePressEvent(event)
         self.update()
@@ -196,7 +194,6 @@ class TokenCluster(QGraphicsItem):
         # Show a context menu when right-clicking on TokenCluster
         pos = event.scenePos()
 
-
     def contextMenu(self, pos):
     	#Get point from scene
         point = self.view.mapFromScene(pos)
@@ -206,7 +203,6 @@ class TokenCluster(QGraphicsItem):
 
         #Execute context menu
         self.edgeMenu.exec(point)
-
 
     def setTokenActiontriggered(self):
         tokenStr = str(self.tokenValues)
@@ -218,14 +214,14 @@ class TokenCluster(QGraphicsItem):
                 self.newTokenValues(newTokens)
                 self.widget.editTokens(self.src, self.dst, newTokens)
             except:
-                print('Invalid token entry')
+                Log.addLogMessage(Log.ERROR, 'List of tokens not valid.')
+                QMessageBox.critical(self.widget, 'Error', 'List of tokens not valid.')
 
     def getFireCount(self, src_dst):
         if src_dst == 'src':
             return self.widget.getFireCount(self.src, self.src)
         else:
             return self.widget.getFireCount(self.dst, self.dst)
-
 
 
 class Token(QGraphicsItem):
@@ -242,30 +238,19 @@ class Token(QGraphicsItem):
         self.tokenWidth = 15
         self.tokenHeight = 15
         self.tokenColor = QColor(255, 255, 255)
-
         self.setAcceptHoverEvents(True)
         self.hover = False
 
-
     def boundingRect(self):
         #Used for collision detection and repaint
-        # rect = self.getTokenRect()
-        # if self.hover:
-        #     rect = self.getTokenRectHover()
+        return self.getTokenRectHover()
 
-        rect = self.getTokenRectHover()
-
-        return rect
-
-    
     def shape(self):
         #Determines the collision area
-
         path = QPainterPath()
         path.addEllipse(self.boundingRect())
 
         return path
-
 
     def paint(self, painter, option, widget):
         lod = option.levelOfDetailFromTransform(painter.worldTransform())
@@ -283,7 +268,6 @@ class Token(QGraphicsItem):
 
                 painter.drawEllipse(rectValue)
                 
-
                 #Determine font size based on size of token content
                 if self.hover:
                 	#Larger text when hovering
@@ -307,7 +291,6 @@ class Token(QGraphicsItem):
                         painter.setFont(QFont("Lucida Console", 5))
                     elif valueSize > 3:
                         painter.setFont(QFont("Lucida Console", 4))
-                   
                 
                 if lod > 0.4:
                     painter.drawText(rectValue, Qt.AlignCenter, str(self.value))
@@ -324,8 +307,6 @@ class Token(QGraphicsItem):
         # painter.drawRect(self.boundingRect())
 
     def mousePressEvent(self, event):
-        print('Token Value: ' + str(self.value))  
-
         super().mousePressEvent(event)
         self.update()
 

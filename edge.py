@@ -8,9 +8,10 @@ author: Sander Giesselink
 
 """
 
-from PyQt5.QtWidgets import QGraphicsItem, QInputDialog
+from PyQt5.QtWidgets import QGraphicsItem, QInputDialog, QMessageBox
 from PyQt5.QtCore import Qt, QRectF, QPointF
 from PyQt5.QtGui import QColor, QPen, QBrush, QPainterPath, QFont
+from log import Log
 
 class Edge(QGraphicsItem):
 
@@ -427,11 +428,8 @@ class Edge(QGraphicsItem):
                 self.pRates = newPRates
                 self.tokenCluster.widget.editPRates(self.tokenCluster.src, self.tokenCluster.dst, newPRates)
             except:
-                print('Invalid pRate entry')
-
-            # newPRates = eval(newPRatesStr)
-            # self.pRates = newPRates
-            # self.tokenCluster.widget.editPRates(self.tokenCluster.src, self.tokenCluster.dst, newPRates)
+                Log.addLogMessage(Log.ERROR, 'Production rate not valid.')
+                QMessageBox.critical(self.tokenCluster.widget, 'Error', 'Production rate not valid.')
 
     def setCRatesActiontriggered(self):
         cRatesStr = str(self.cRates)
@@ -443,11 +441,8 @@ class Edge(QGraphicsItem):
                 self.cRates = newCRates
                 self.tokenCluster.widget.editCRates(self.tokenCluster.src, self.tokenCluster.dst, newCRates)
             except:
-                print('Invalid cRate entry')
-
-            # newCRates = eval(newCRatesStr)
-            # self.cRates = newCRates
-            # self.tokenCluster.widget.editCRates(self.tokenCluster.src, self.tokenCluster.dst, newCRates)
+                Log.addLogMessage(Log.ERROR, 'Consumption rate not valid.')
+                QMessageBox.critical(self.tokenCluster.widget, 'Error', 'Consumption rate not valid.')
 
     def calculateEdgeColors(self, color):
         #Calculate all edge colors based on a given color

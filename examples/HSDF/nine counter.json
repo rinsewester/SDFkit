@@ -1,74 +1,104 @@
 {
-    "name": "NineCounter",
-    "nodes": [
-        {
-            "name": "Cnt",
-            "pos": [
-                280,
-                80
-            ],
-            "function": "lambda num_in, cur_cnt, firecounter, phase: ([cur_cnt[0] + 1] if num_in[0] == 9 else [cur_cnt[0]], [cur_cnt[0] + 1] if num_in[0] == 9 else [cur_cnt[0]])",
-            "clashcode": "f_Cnt :: Nibble -> Cntr -> Cntr -> Cntr -> (Cntr, Cntr)\nf_Cnt num_in cur_cnt firecounter phase = (res, res)\n  where\n    res = if num_in == 9 then cur_cnt + 1 else cur_cnt"
-        },
-        {
-            "name": "Pr",
-            "pos": [
-                80,
-                100
-            ],
-            "function": "lambda firecounter, phase: [firecounter % 16]",
-            "clashcode": "f_Pr :: Cntr -> Cntr -> Nibble\nf_Pr firecounter phase = res\n  where\n    res = resize firecounter"
-        },
-        {
-            "name": "Cr",
-            "pos": [
-                480,
-                100
-            ],
-            "function": "lambda cnt_in, firecounter, phase: []",
-            "clashcode": "f_Cr :: Cntr -> Cntr -> Cntr -> ()\nf_Cr cnt_in firecounter phase = res\n  where\n    res = ()"
-        }
-    ],
     "edges": [
         {
-            "tkns": [
-                0
+            "argnr": 0,
+            "color": [
+                180,
+                180,
+                180
             ],
-            "src": "Cnt",
-            "argnr": 1,
             "crates": [
                 1
             ],
             "dst": "Cnt",
-            "resnr": 1,
             "prates": [
                 1
-            ]
+            ],
+            "resnr": 0,
+            "src": "Pr",
+            "tkns": []
         },
         {
-            "tkns": [],
-            "src": "Cnt",
             "argnr": 0,
+            "color": [
+                180,
+                180,
+                180
+            ],
             "crates": [
                 1
             ],
             "dst": "Cr",
-            "resnr": 0,
             "prates": [
                 1
-            ]
+            ],
+            "resnr": 0,
+            "src": "Cnt",
+            "tkns": []
         },
         {
-            "tkns": [],
-            "src": "Pr",
-            "argnr": 0,
+            "argnr": 1,
+            "color": [
+                180,
+                180,
+                180
+            ],
             "crates": [
                 1
             ],
             "dst": "Cnt",
-            "resnr": 0,
             "prates": [
                 1
+            ],
+            "resnr": 1,
+            "src": "Cnt",
+            "tkns": [
+                0
+            ]
+        }
+    ],
+    "name": "Ninecounter",
+    "nodes": [
+        {
+            "clashcode": "f_Pr :: Cntr -> Cntr -> Nibble\nf_Pr firecounter phase = res\n  where\n    res = resize firecounter",
+            "color": [
+                230,
+                230,
+                255
+            ],
+            "function": "lambda firecounter, phase: [firecounter % 16]",
+            "name": "Pr",
+            "pos": [
+                80,
+                100
+            ]
+        },
+        {
+            "clashcode": "f_Cr :: Cntr -> Cntr -> Cntr -> ()\nf_Cr cnt_in firecounter phase = res\n  where\n    res = ()",
+            "color": [
+                230,
+                230,
+                255
+            ],
+            "function": "lambda cnt_in, firecounter, phase: []",
+            "name": "Cr",
+            "pos": [
+                480,
+                100
+            ]
+        },
+        {
+            "clashcode": "f_Cnt :: Nibble -> Cntr -> Cntr -> Cntr -> (Cntr, Cntr)\nf_Cnt num_in cur_cnt firecounter phase = (res, res)\n  where\n    res = if num_in == 9 then cur_cnt + 1 else cur_cnt\n",
+            "color": [
+                230,
+                230,
+                255
+            ],
+            "function": "lambda num_in, cur_cnt, firecounter, phase: ([cur_cnt[0] + 1] if num_in[0] == 9 else [cur_cnt[0]], [cur_cnt[0] + 1] if num_in[0] == 9 else [cur_cnt[0]])",
+            "name": "Cnt",
+            "pos": [
+                280,
+                80
             ]
         }
     ]

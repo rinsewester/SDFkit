@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Widget to display simulation data of a CSDF graph.
+Mainwindow of SDFkit showing all widgets.
 
 author: Rinse Wester
 
@@ -13,14 +13,12 @@ from PyQt5.QtWidgets import QDockWidget, QApplication, QMainWindow, QAction, QFi
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
-from csdfgraph import CSDFGraph
+from csdfgraph import CSDFGraph, G0
 from runwindow import RunWindow
 from logwindow import LogWidget
 from graphicsview import GraphWidget
 
-from codegen.clashcodegen import *
-from codegen.ccodegen import *
-from codegen.openclcodegen import *
+from codegen.clashcodegen import ClashCodeGen
 
 
 class MainWindow(QMainWindow):
