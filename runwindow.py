@@ -101,7 +101,7 @@ class RunWindow(QWidget):
                 self.graphWidget.updateTokensGraph()
                 n += 1
             if n == MAX_ITERATIONS:
-                Log.addLogMessage(Log.CRITICAL, 'Stop condition never met')
+                Log.addLogMessage(Log.WARNING, 'Stop condition never met')
 
 
         self.lblStateNr.setText('State: ' + str(self.graph.stateCount() - 1))

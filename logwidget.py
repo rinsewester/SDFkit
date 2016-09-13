@@ -53,7 +53,7 @@ class LogWidget(QWidget):
         Log.clearMessages()
 
     def _addMClicked(self):
-        msgtype = rdm.choice([Log.INFO, Log.WARNING, Log.CRITICAL, Log.ERROR])
+        msgtype = rdm.choice([Log.INFO, Log.WARNING, Log.ERROR])
         msgtext = 'message ... ' + rdm.choice('ABCDEFGHI')
         Log.addLogMessage(msgtype, msgtext)
 

@@ -13,8 +13,7 @@ import datetime as dt
 class Log(object):
 	"""Log class to store logmessages from SDFkit"""
 
-	ERROR = 4
-	CRITICAL = 3
+	ERROR = 3
 	WARNING = 2
 	INFO = 1
 
@@ -25,8 +24,8 @@ class Log(object):
 	def addLogMessage(msgtype, msgtext):
 		"""Add a message to the list of log messages
 
-		msgtype is the type of message and must be one of: Log.ERROR, Log.CRITICAL,
-		Log.WARNING, Log.INFO.
+		msgtype is the type of message and must be one of: Log.ERROR, Log.WARNING,
+		Log.INFO.
 
 		msgtext contains the actual info message and should be human readable."""
 		Log._msg_list.append((dt.datetime.now(), msgtype, msgtext))
@@ -41,7 +40,7 @@ class Log(object):
 		"""Get all recorded logmessages
 
 		When mintype is given, only message with a minimum severity are returned.
-		For example when mintype = CRITICAL, only CRITICAL and ERROR messages are given.
+		For example when mintype = WARNING, only WARNING and ERROR messages are given.
 		Similarly, when mintype = INFO, all messages are returned"""
 		return list(filter(lambda tpl: tpl[1] >= mintype, Log._msg_list))
 
