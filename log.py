@@ -18,6 +18,8 @@ class Log(object):
 	WARNING = 2
 	INFO = 1
 
+	_newMessageCallback = None
+
 	_msg_list = []
 
 	def addLogMessage(msgtype, msgtext):
@@ -28,6 +30,12 @@ class Log(object):
 
 		msgtext contains the actual info message and should be human readable."""
 		Log._msg_list.append((dt.datetime.now(), msgtype, msgtext))
+
+		if Log._newMessageCallback is not None:
+			Log._newMessageCallback(msgtype, msgtext)
+
+	def setNewMessageCallBack(cbfunc):
+		Log._newMessageCallback = cbfunc
 
 	def getLogMessages(mintype=INFO):
 		"""Get all recorded logmessages
