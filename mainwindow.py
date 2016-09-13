@@ -15,7 +15,7 @@ from PyQt5.QtGui import QIcon
 
 from csdfgraph import CSDFGraph, G0
 from runwindow import RunWindow
-from logwindow import LogWidget
+from signalwindow import SignalWidget
 from graphicsview import GraphWidget
 
 from codegen.clashcodegen import ClashCodeGen
@@ -100,14 +100,14 @@ class MainWindow(QMainWindow):
         self.dwRunWindow.setWidget(self.runWindow)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dwRunWindow)
 
-        self.dwLogWindow = QDockWidget('Edge log', self)
-        self.logWindow = LogWidget()
-        self.logWindow.setMinimumHeight(250)
-        self._updateLogWindow()
-        self.dwLogWindow.setAllowedAreas(Qt.BottomDockWidgetArea)
-        self.dwLogWindow.setWidget(self.logWindow)
-        self.addDockWidget(Qt.BottomDockWidgetArea, self.dwLogWindow)
-        self.runWindow.setLogWidget(self.logWindow)
+        self.dwSignalWindow = QDockWidget('Edge log', self)
+        self.signalWindow = SignalWidget()
+        self.signalWindow.setMinimumHeight(250)
+        self._updateSignalWindow()
+        self.dwSignalWindow.setAllowedAreas(Qt.BottomDockWidgetArea)
+        self.dwSignalWindow.setWidget(self.signalWindow)
+        self.addDockWidget(Qt.BottomDockWidgetArea, self.dwSignalWindow)
+        self.runWindow.setSignalWidget(self.signalWindow)
 
         self.runWindow.setGraphWidget(self.graphWidget)
         self.setCentralWidget(self.graphWidget)
@@ -116,7 +116,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(0, 30, 1300, 750)
         self.show()
 
-    def _updateLogWindow(self):
+    def _updateSignalWindow(self):
 
         edgeNames = []
         edgeData = []
@@ -124,8 +124,8 @@ class MainWindow(QMainWindow):
             for (src, dst), edata in self.graph.edgestates.items():
                 edgeNames.append(src + ' → ' + dst)
                 edgeData.append(edata)
-        self.logWindow.setEdgeLabels(edgeNames)
-        self.logWindow.setEdgeData(edgeData)
+        self.signalWindow.setEdgeLabels(edgeNames)
+        self.signalWindow.setEdgeData(edgeData)
 
     def openActionTriggered(self):
 
@@ -144,7 +144,7 @@ class MainWindow(QMainWindow):
 
             self.runWindow.setGraph(self.graph)
             self.graphWidget.setGraph(self.graph)
-            self._updateLogWindow()
+            self._updateSignalWindow()
 
     def saveActionTriggered(self):
         self.graph.storeToFile()

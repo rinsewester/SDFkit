@@ -20,7 +20,7 @@ from PyQt5.QtGui import QPainter, QFont, QColor, QPen, QBrush, QPainterPath, QPo
 from csdfgraph import *
 
 
-class LogWidget(QWidget):
+class SignalWidget(QWidget):
     NODE_RADIUS = 20
     EDGE_DIST = 26
     EDGE_HEAD_LEN = 32

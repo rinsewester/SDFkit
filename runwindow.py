@@ -113,15 +113,15 @@ class RunWindow(QWidget):
         self.graphWidget.updateTokensGraph()
 
         # update the log window such that all tokens of all states are shown
-        self.lwid.setEdgeData(list(self.graph.edgestates.values()))
+        self.swid.setEdgeData(list(self.graph.edgestates.values()))
 
     def setGraphWidget(self, gwid):
 
         self.gwid = gwid
 
-    def setLogWidget(self, lwid):
+    def setSignalWidget(self, swid):
 
-        self.lwid = lwid
+        self.swid = swid
 
     def setGraph(self, graph):
 
