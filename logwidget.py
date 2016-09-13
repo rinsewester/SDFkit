@@ -9,7 +9,8 @@ author: Rinse Wester
 """
 
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QListWidget
+from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QListWidget, QListWidgetItem
+from PyQt5.QtGui import QIcon
 from log import Log
 import random as rdm 
 
@@ -61,7 +62,14 @@ class LogWidget(QWidget):
         self.addLogItem(msgtype, msgtext)
 
     def addLogItem(self, msgtype, msgtext):
-        self.lwmessages.addItem(str(msgtype) + ' > ' + msgtext)
+        if msgtype == Log.INFO:
+            icon = QIcon('images/information.png')
+        elif msgtype == Log.WARNING:
+            icon = QIcon('images/warning.png')
+        else:
+            icon = QIcon('images/error.png')
+        item = QListWidgetItem(icon, msgtext)
+        self.lwmessages.addItem(item)
 
 
 if __name__ == '__main__':
