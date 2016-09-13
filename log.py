@@ -44,6 +44,17 @@ class Log(object):
 		Similarly, when mintype = INFO, all messages are returned"""
 		return list(filter(lambda tpl: tpl[1] >= mintype, Log._msg_list))
 
+	def messageCount():
+		"""returns the number of messages in the log."""
+		return len(Log._msg_list)
+
+	def lastMessageType():
+		"""returns the type of the last message"""
+		if Log.messageCount() > 0:
+			return Log._msg_list[-1][1]
+		else:
+			return None
+
 	def clearMessages():
 		"""Remove all logmessages."""
 		Log._msg_list.clear()

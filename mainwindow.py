@@ -100,7 +100,7 @@ class MainWindow(QMainWindow):
         self.dwRunWindow.setWidget(self.runWindow)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dwRunWindow)
 
-        self.dwSignalWindow = QDockWidget('Edge log', self)
+        self.dwSignalWindow = QDockWidget('Edge signals', self)
         self.signalWindow = SignalWidget()
         self.signalWindow.setMinimumHeight(250)
         self._updateSignalWindow()
