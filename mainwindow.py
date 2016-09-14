@@ -116,6 +116,8 @@ class MainWindow(QMainWindow):
         self.dwLogWindow.setWidget(self.logWindow)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dwLogWindow)
 
+        self.tabifyDockWidget(self.dwLogWindow, self.dwSignalWindow)
+
         self.runWindow.setGraphWidget(self.graphWidget)
         self.setCentralWidget(self.graphWidget)
 
