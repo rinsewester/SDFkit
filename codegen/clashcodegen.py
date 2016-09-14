@@ -9,6 +9,7 @@ author: Rinse Wester
 """
 
 import re
+from log import Log
 
 class ClashCodeGen(object):
     """docstring for ClashCodeGen"""
@@ -56,7 +57,7 @@ class ClashCodeGen(object):
             filename = graph.name.lower() + '.hs'
             with open('codegen/clash_code/' + filename, 'w') as f:
                 f.write(templatestr)
-                print('Generating CLaSH code in ', filename)
+                Log.addLogMessage( Log.INFO, 'CLaSH code generated in ' + filename)
 
     def _getEdgeTypes(graph):
         edgeTypes = {}

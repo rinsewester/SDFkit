@@ -13,11 +13,9 @@ author: Rinse Wester
 # scrollview stays too wide
 
 import sys
-from PyQt5.QtWidgets import QWidget, QDockWidget, QApplication, QLayout, QVBoxLayout, QHBoxLayout, QLabel, QScrollArea
+from PyQt5.QtWidgets import QWidget, QLayout, QVBoxLayout, QHBoxLayout, QLabel, QScrollArea
 from PyQt5.QtCore import Qt, QRect, QPoint
-from PyQt5.QtGui import QPainter, QFont, QColor, QPen, QBrush, QPainterPath, QPolygon, QPalette
-
-from csdfgraph import *
+from PyQt5.QtGui import QPainter, QFont, QPen, QBrush, QPolygon
 
 
 class SignalWidget(QWidget):
