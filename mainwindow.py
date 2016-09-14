@@ -161,6 +161,7 @@ class MainWindow(QMainWindow):
     def clashcodegenActionTriggered(self):
         try:
             ClashCodeGen.generateCode(self.graph, './output/' + self.graph.name)
+            QMessageBox.information(self, 'CLaSH code generation', 'CLaSH code generation completed')
         except Exception as e:
             QMessageBox.critical(
                 self, 'Generate CLaSH code',
