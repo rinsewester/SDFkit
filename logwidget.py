@@ -33,7 +33,7 @@ class LogWidget(QWidget):
         
         self.lwmessages = QListWidget(self)
         for _, msgtype, msgtext in Log.getLogMessages():
-            self.addLogItem(tp, msg)
+            self.addLogItem(msgtype, msgtext)
 
         self.hboxlayout = QHBoxLayout()
         self.hboxlayout.addWidget(self.btnclear)

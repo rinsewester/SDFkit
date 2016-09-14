@@ -15,6 +15,7 @@ from PyQt5.QtGui import QIcon
 
 from csdfgraph import CSDFGraph, G0
 from runwindow import RunWindow
+from logwidget import LogWidget
 from signalwindow import SignalWidget
 from graphicsview import GraphWidget
 
@@ -108,6 +109,12 @@ class MainWindow(QMainWindow):
         self.dwSignalWindow.setWidget(self.signalWindow)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dwSignalWindow)
         self.runWindow.setSignalWidget(self.signalWindow)
+
+        self.dwLogWindow = QDockWidget('Log', self)
+        self.logWindow = LogWidget()
+        self.dwLogWindow.setAllowedAreas(Qt.BottomDockWidgetArea)
+        self.dwLogWindow.setWidget(self.logWindow)
+        self.addDockWidget(Qt.BottomDockWidgetArea, self.dwLogWindow)
 
         self.runWindow.setGraphWidget(self.graphWidget)
         self.setCentralWidget(self.graphWidget)
