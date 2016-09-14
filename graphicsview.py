@@ -20,6 +20,7 @@ class GraphicsView(QGraphicsView):
     def __init__(self, widget):
         super().__init__()
         self.widget = widget
+        
         # Remove ugly one pixel border by changing the framestyle
         self.setFrameStyle(QFrame.NoFrame); 
 
@@ -233,7 +234,7 @@ class GraphWidget(QWidget):
         self.graphData.updateNodeFunction(nodeName, newFunction)
 
     def editNodePosition(self, nodeName, newPos):
-        Log.addLogMessage(Log.INFO, 'Position of node ' + nodeName + ' updated to ' + str(newPos))
+        # Log.addLogMessage(Log.INFO, 'Position of node ' + nodeName + ' updated to ' + str(newPos))
         self.graphData.node[nodeName]['pos'] = newPos.x(), newPos.y()
 
     def editClashCode(self, nodeName, newClashCode):
