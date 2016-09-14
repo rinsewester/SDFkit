@@ -12,7 +12,6 @@ import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QListWidget, QListWidgetItem
 from PyQt5.QtGui import QIcon
 from log import Log
-import random as rdm 
 
 class LogWidget(QWidget):
 
@@ -27,9 +26,6 @@ class LogWidget(QWidget):
 
         self.btnclear = QPushButton("Clear messages", self)
         self.btnclear.clicked.connect(self._clearClicked)
-
-        self.btnAddM = QPushButton("Add message", self)
-        self.btnAddM.clicked.connect(self._addMClicked)
         
         self.lwmessages = QListWidget(self)
         for _, msgtype, msgtext in Log.getLogMessages():
@@ -38,7 +34,6 @@ class LogWidget(QWidget):
         self.hboxlayout = QHBoxLayout()
         self.hboxlayout.addWidget(self.btnclear)
         self.hboxlayout.addStretch()
-        self.hboxlayout.addWidget(self.btnAddM)
 
         self.vboxlayout = QVBoxLayout()
         self.vboxlayout.addLayout(self.hboxlayout)
@@ -52,11 +47,6 @@ class LogWidget(QWidget):
     def _clearClicked(self):
         self.lwmessages.clear()
         Log.clearMessages()
-
-    def _addMClicked(self):
-        msgtype = rdm.choice([Log.INFO, Log.WARNING, Log.ERROR])
-        msgtext = 'message ... ' + rdm.choice('ABCDEFGHI')
-        Log.addLogMessage(msgtype, msgtext)
 
     def _newMessageAddedToLog(self, msgtype, msgtext):
         self.addLogItem(msgtype, msgtext)
