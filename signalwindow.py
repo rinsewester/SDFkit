@@ -8,20 +8,13 @@ author: Rinse Wester
 
 """
 
-# TODO add a cucle number bar on top
-# TODO fix resize issue after resetting graph, i.e., inner widget of
-# scrollview stays too wide
-
-import sys
-from PyQt5.QtWidgets import QWidget, QLayout, QVBoxLayout, QHBoxLayout, QLabel, QScrollArea
+from PyQt5.QtWidgets import QApplication, QWidget, QLayout, QVBoxLayout, QHBoxLayout, QLabel, QScrollArea, QTableWidget, QAbstractItemView, QHeaderView, QPushButton
 from PyQt5.QtCore import Qt, QRect, QPoint
 from PyQt5.QtGui import QPainter, QFont, QPen, QBrush, QPolygon
+import sys
 
 
 class SignalWidget(QWidget):
-    NODE_RADIUS = 20
-    EDGE_DIST = 26
-    EDGE_HEAD_LEN = 32
 
     def __init__(self):
         super().__init__()
@@ -111,6 +104,65 @@ class SignalWidget(QWidget):
             self.vboxdata.addWidget(elwidget)
         self.vboxdata.addStretch()
 
+class SignalTable(QTableWidget):
+    """Widget for displaying contents of edges and firing of nodes."""
+    def __init__(self):
+        super().__init__()
+
+        self.setRowCount(3)
+        self.setColumnCount(1)
+        self.setVerticalHeaderLabels(['a', 'b', 'c'])
+        self.setGridStyle(Qt.NoPen)
+        self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.setSortingEnabled(True)
+
+        hheader = self.horizontalHeader()
+        hheader.setVisible(False)
+        hheader.setSectionResizeMode(QHeaderView.ResizeToContents)
+
+        vheader = self.verticalHeader()
+        vheader.setSectionResizeMode(QHeaderView.ResizeToContents)
+
+        vheader.setSectionsMovable(True)
+        # vheader.setDragEnabled(True)
+        # vheader.setDragDropMode(QAbstractItemView.InternalMove)
+
+        self.pbButton1 = QPushButton('set width to 100')
+        self.pbButton1.setMinimumWidth(80)
+        self.pbButton1.setFixedHeight(24)
+        self.pbButton1.setStyleSheet('background-color: red;')
+        self.pbButton1.clicked.connect(self.btnClicked)
+        self.pbButton2 = QPushButton('set width to 200')
+        self.pbButton2.setMinimumWidth(80)
+        self.pbButton2.setFixedHeight(24)
+        self.pbButton2.setStyleSheet('background-color: green;')
+        self.pbButton2.clicked.connect(self.btnClicked)
+        self.pbButton3 = QPushButton('set width to 300')
+        self.pbButton3.setMinimumWidth(80)
+        self.pbButton3.setFixedHeight(24)
+        self.pbButton3.setStyleSheet('background-color: blue;')
+        self.pbButton3.clicked.connect(self.btnClicked)
+
+        self.setCellWidget(0, 0, self.pbButton1)
+        self.setCellWidget(1, 0, self.pbButton2)
+        self.setCellWidget(2, 0, self.pbButton3)
+
+    def btnClicked(self):
+        if self.sender() == self.pbButton1:
+            self.pbButton1.setFixedWidth(100)
+            self.pbButton2.setFixedWidth(100)
+            self.pbButton3.setFixedWidth(100)
+        elif self.sender() == self.pbButton2:
+            self.pbButton1.setFixedWidth(200)
+            self.pbButton2.setFixedWidth(200)
+            self.pbButton3.setFixedWidth(200)
+        else:
+            self.pbButton1.setFixedWidth(300)
+            self.pbButton2.setFixedWidth(300)
+            self.pbButton3.setFixedWidth(300)
+        self.resizeColumnsToContents()
+        self.resizeRowsToContents()
+            
 
 class EdgeLogWidget(QWidget):
 
@@ -289,3 +341,13 @@ class EdgeLogWidget(QWidget):
 
             rect = QRect(xpos + 3, 3, width - 3, h - 6)
             qp.drawText(rect, Qt.AlignCenter, str(data)[1:-1])
+
+
+if __name__ == '__main__':
+
+    app = QApplication(sys.argv)
+    ex = SignalTable()
+    ex.show()
+    app.exec_()
+    app.deleteLater()
+    sys.exit()
