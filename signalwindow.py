@@ -10,7 +10,7 @@ author: Rinse Wester
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLayout, QVBoxLayout, QHBoxLayout, QLabel, QScrollArea, QTableWidget, QAbstractItemView, QHeaderView, QPushButton
 from PyQt5.QtCore import Qt, QRect, QPoint
-from PyQt5.QtGui import QPainter, QFont, QPen, QBrush, QPolygon
+from PyQt5.QtGui import QPainter, QFont, QPen, QBrush, QPolygon, QColor
 import sys
 
 
@@ -83,7 +83,7 @@ class SignalWidget(QWidget):
         # Create the edge labels and put in layout
         for lbl in lbls:
             lblwidget = QLabel(lbl)
-            lblwidget.setMinimumHeight(24)
+            lblwidget.setMinimumHeight(20)
             self.vboxlabels.addWidget(lblwidget)
         self.vboxlabels.addStretch()
 
@@ -100,7 +100,7 @@ class SignalWidget(QWidget):
         for edata in data:
             elwidget = EdgeLogWidget()
             elwidget.setTokenData(edata)
-            elwidget.setMinimumHeight(24)
+            elwidget.setMinimumHeight(20)
             self.vboxdata.addWidget(elwidget)
         self.vboxdata.addStretch()
 
@@ -109,9 +109,7 @@ class SignalTable(QTableWidget):
     def __init__(self):
         super().__init__()
 
-        self.setRowCount(3)
         self.setColumnCount(1)
-        self.setVerticalHeaderLabels(['a', 'b', 'c'])
         self.setGridStyle(Qt.NoPen)
         self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.setSortingEnabled(True)
@@ -122,30 +120,51 @@ class SignalTable(QTableWidget):
 
         vheader = self.verticalHeader()
         vheader.setSectionResizeMode(QHeaderView.ResizeToContents)
-
         vheader.setSectionsMovable(True)
-        # vheader.setDragEnabled(True)
-        # vheader.setDragDropMode(QAbstractItemView.InternalMove)
 
-        self.pbButton1 = QPushButton('set width to 100')
-        self.pbButton1.setMinimumWidth(80)
-        self.pbButton1.setFixedHeight(24)
-        self.pbButton1.setStyleSheet('background-color: red;')
-        self.pbButton1.clicked.connect(self.btnClicked)
-        self.pbButton2 = QPushButton('set width to 200')
-        self.pbButton2.setMinimumWidth(80)
-        self.pbButton2.setFixedHeight(24)
-        self.pbButton2.setStyleSheet('background-color: green;')
-        self.pbButton2.clicked.connect(self.btnClicked)
-        self.pbButton3 = QPushButton('set width to 300')
-        self.pbButton3.setMinimumWidth(80)
-        self.pbButton3.setFixedHeight(24)
-        self.pbButton3.setStyleSheet('background-color: blue;')
-        self.pbButton3.clicked.connect(self.btnClicked)
+        # self.pbButton1 = QPushButton('set width to 100')
+        # self.pbButton1.setMinimumWidth(80)
+        # self.pbButton1.setFixedHeight(24)
+        # self.pbButton1.setStyleSheet('background-color: red;')
+        # self.pbButton1.clicked.connect(self.btnClicked)
+        # self.pbButton2 = QPushButton('set width to 200')
+        # self.pbButton2.setMinimumWidth(80)
+        # self.pbButton2.setFixedHeight(24)
+        # self.pbButton2.setStyleSheet('background-color: green;')
+        # self.pbButton2.clicked.connect(self.btnClicked)
+        # self.pbButton3 = QPushButton('set width to 300')
+        # self.pbButton3.setMinimumWidth(80)
+        # self.pbButton3.setFixedHeight(24)
+        # self.pbButton3.setStyleSheet('background-color: blue;')
+        # self.pbButton3.clicked.connect(self.btnClicked)
 
-        self.setCellWidget(0, 0, self.pbButton1)
-        self.setCellWidget(1, 0, self.pbButton2)
-        self.setCellWidget(2, 0, self.pbButton3)
+        # self.setCellWidget(0, 0, self.pbButton1)
+        # self.setCellWidget(1, 0, self.pbButton2)
+        # self.setCellWidget(2, 0, self.pbButton3)
+
+        self.setRowCount(3)
+
+        self.elw1 = EdgeLogWidget()
+        self.elw1.setTokenData([[1,2,3], [1,2,3], [], [4,5,6]])
+        self.elw2 = EdgeLogWidget()
+        self.elw2.setTokenData([[1,2,3], [1,2,3], [], [4,5,6]])
+        self.elw3 = EdgeLogWidget()
+        self.elw3.setTokenData([[1,2,3], [], [], [4,5,6]])
+
+        self.setCellWidget(0, 0, self.elw1)
+        self.setCellWidget(1, 0, self.elw2)
+        self.setCellWidget(2, 0, self.elw3)
+
+        self.setEdgeLabels(['Alpha', 'Beta', 'Gamma'])
+
+    def setEdgeLabels(self, labels):
+        self.setRowCount(len(labels))
+        self.setVerticalHeaderLabels(labels)
+
+    def setEdgeData(self, data):
+        # TODO: fix this
+        pass
+
 
     def btnClicked(self):
         if self.sender() == self.pbButton1:
@@ -162,12 +181,17 @@ class SignalTable(QTableWidget):
             self.pbButton3.setFixedWidth(300)
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
-            
+        
 
 class EdgeLogWidget(QWidget):
 
     STATE_WIDTH = 100
     TRANSITION_WIDTH = 20
+
+    SIGNAL_COLOR = QColor(50, 50, 54)
+    SIGNAL_COLOR_HOVER = QColor(74, 73, 80)
+    TEXT_COLOR = QColor(194, 194, 195)
+
 
     def __init__(self):
 
@@ -178,7 +202,9 @@ class EdgeLogWidget(QWidget):
         p.setColor(self.backgroundRole(), Qt.white)
         self.setPalette(p)
 
-        self.setMinimumHeight(24)
+        self.setMouseTracking(True)
+
+        self.setMinimumHeight(20)
 
         self.tokenData = [[1, 2, 3], [1, 2]]
 
@@ -213,6 +239,10 @@ class EdgeLogWidget(QWidget):
         self._updateMinWidth()
         self.update()
 
+    def mouseMoveEvent(self, event):
+        # TODO: put highlighting code here....
+        pass
+
     def paintEvent(self, e):
 
         curStatewidth = self.STATE_WIDTH * self.zoomFactor
@@ -221,7 +251,7 @@ class EdgeLogWidget(QWidget):
         qp.begin(self)
         qp.setRenderHint(QPainter.Antialiasing)
 
-        font = QFont('Serif', 10, QFont.Light)
+        font = QFont('Serif', 10, QFont.Bold)
         qp.setFont(font)
 
         for i, tokenData in enumerate(self.tokenData[:-1]):
@@ -251,9 +281,9 @@ class EdgeLogWidget(QWidget):
     def _drawTransition(self, qp, xpos, width, ttype):
 
         # Set pen and brush style
-        pen = QPen(Qt.darkGray)
+        pen = QPen(EdgeLogWidget.SIGNAL_COLOR)
         pen.setWidth(2)
-        brush = QBrush(Qt.lightGray)
+        brush = QBrush(EdgeLogWidget.SIGNAL_COLOR)
         qp.setPen(pen)
         qp.setBrush(brush)
 
@@ -316,9 +346,9 @@ class EdgeLogWidget(QWidget):
     def _drawState(self, qp, xpos, width, data):
 
         # Set pen and brush style
-        pen = QPen(Qt.darkGray)
+        pen = QPen(EdgeLogWidget.SIGNAL_COLOR)
         pen.setWidth(2)
-        brush = QBrush(Qt.lightGray)
+        brush = QBrush(EdgeLogWidget.SIGNAL_COLOR)
         qp.setPen(pen)
         qp.setBrush(brush)
 
@@ -336,7 +366,7 @@ class EdgeLogWidget(QWidget):
             qp.drawLine(xpos, 3, xpos + width, 3)
             qp.drawLine(xpos, h - 3, xpos + width, h - 3)
 
-            pen.setColor(Qt.black)
+            pen.setColor(EdgeLogWidget.TEXT_COLOR)
             qp.setPen(pen)
 
             rect = QRect(xpos + 3, 3, width - 3, h - 6)

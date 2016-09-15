@@ -16,7 +16,7 @@ from PyQt5.QtGui import QIcon
 from csdfgraph import CSDFGraph, G0
 from runwindow import RunWindow
 from logwidget import LogWidget
-from signalwindow import SignalWidget
+from signalwindow import SignalWidget, SignalTable
 from graphicsview import GraphWidget
 
 from codegen.clashcodegen import ClashCodeGen
@@ -102,7 +102,7 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dwRunWindow)
 
         self.dwSignalWindow = QDockWidget('Edge signals', self)
-        self.signalWindow = SignalWidget()
+        self.signalWindow = SignalTable()
         self.signalWindow.setMinimumHeight(250)
         self._updateSignalWindow()
         self.dwSignalWindow.setAllowedAreas(Qt.BottomDockWidgetArea)
