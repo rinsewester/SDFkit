@@ -1,4 +1,4 @@
-TARGET = paper
+TARGET = paper_final
 PLTX = pdflatex -halt-on-error --shell-escape
 
 paper:

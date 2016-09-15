@@ -1,0 +1,28 @@
+\begin{tikzpicture}[xscale=0.7]
+
+\tikzstyle{state} = [rectangle, draw=black,fill=white,rounded corners=1mm, inner sep=2mm,minimum width=14pt,font=\scriptsize,text=black]
+
+\tikzstyle{sdfgnode} = [circle,draw=black,fill=white,inner sep=0,minimum width=14pt,font=\scriptsize,text=black]%
+\tikzstyle{sdfgdata} = [sdfgnode, inner sep=1pt,fill=white]%
+\tikzstyle{sdfgmem} = [sdfgnode, rectangle, rounded corners=4pt, inner sep=2pt,fill=white]%
+\tikzstyle{sdfgarc} = [->,minimum width=2pt,>=latex,sloped]%
+
+
+\node[state] (inplang) at (0,0) {Specification};
+\node[state] (csdfgraph) at (5,0) {CSDF graph};
+\node[state] (hardware) at (10,1) {Hardware};
+\node[state] (software) at (10,-1) {Software};
+
+\draw[sdfgarc] (inplang) -- node[above, font=\scriptsize] {Parsing} (csdfgraph);
+\draw[sdfgarc] (csdfgraph) -- node[above, font=\scriptsize] {Code gen.} (hardware);
+\draw[sdfgarc] (csdfgraph) -- node[above, font=\scriptsize] {Code gen.} (software);
+
+
+\draw[sdfgarc] (csdfgraph)
+    .. controls ($(csdfgraph) + (-50:1)$) and ($(csdfgraph) + (0.5,-1)$) .. ($(csdfgraph) + (0, -1)$)
+    node[below, font=\scriptsize] {Transformations}
+    .. controls ($(csdfgraph) + (-0.5,-1)$) and ($(csdfgraph) + (-130:1)$) ..
+    (csdfgraph);
+
+
+\end{tikzpicture}
