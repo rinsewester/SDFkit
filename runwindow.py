@@ -10,6 +10,7 @@ author: Rinse Wester
 
 import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QComboBox, QLineEdit
+from PyQt5.QtCore import QTimer
 from log import Log
 
 class RunWindow(QWidget):
@@ -113,6 +114,11 @@ class RunWindow(QWidget):
         for (src, dst), signaldata in self.graph.edgestates.items():
                 signalname =  src + ' → ' + dst
                 self.swid.updateSignal(signalname, signaldata)
+        
+        # Nasty way to make sure the widget scrolls to the end
+        # required because the max value of the scrollbar is not enought due
+        # to delayed resizing of the tableWidget...
+        QTimer.singleShot(1, self.swid.scrollToEnd)
 
     def setGraphWidget(self, gwid):
 

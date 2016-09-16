@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QScrollArea, QTableWi
 from PyQt5.QtCore import Qt, QRect, QPoint
 from PyQt5.QtGui import QPainter, QFont, QPen, QBrush, QPolygon, QColor
 import sys
+import random as rdm
 from collections import OrderedDict
 
 class SignalTable(QTableWidget):
@@ -34,15 +35,6 @@ class SignalTable(QTableWidget):
 
         # ordered dictionay to keeps refs to data and signal widget
         self.refDict = OrderedDict({})
-
-        self.addSignal('Alpha', [[1], [1,2], [], [3]])
-        self.addSignal('Beta', [[1,2], [1,2], [1], []])
-        self.clearSignals()
-        self.addSignal('Een', [[1,2,3], [], [], []])
-        self.addSignal('Twee', [[1,2,3], [4,5,6], [], []])
-        self.addSignal('Drie', [[1,2,3], [4,5,6], [7,8,9], []])
-        self.removeSignal('Twee')
-        self.updateSignal('Drie', [[1],[1,2],[1,2,3],[1,2,3,4],[1,2,3,4,5]])
 
     def _signalIndex(self, signalname):
         return list(self.refDict.keys()).index(signalname)
@@ -82,7 +74,11 @@ class SignalTable(QTableWidget):
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
 
-            
+    def scrollToEnd(self):
+        hScrollBar = self.horizontalScrollBar()
+        maxval = hScrollBar.maximum()
+        hScrollBar.setValue(maxval)
+
 class SignalLogWidget(QWidget):
 
     STATE_WIDTH = 100
@@ -267,8 +263,18 @@ class SignalLogWidget(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    ex = SignalTable()
-    ex.show()
+    sw = SignalTable()
+    sw.show()
+
+    for i in range(100):
+        signalname = 'Signal-' + str(i)
+        signaldata = []
+        for i in range(100):
+            tokens = [1,2,3,4]
+            rdm.shuffle(tokens)
+            signaldata.append(tokens)
+        sw.addSignal(signalname, signaldata)
+
     app.exec_()
     app.deleteLater()
     sys.exit()
