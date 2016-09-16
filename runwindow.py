@@ -91,7 +91,6 @@ class RunWindow(QWidget):
             self.graph.back()
         elif self.sender() == self.btnNext:
             self.graph.step()           
-
         else:
             # btnRunUntill button clicked
             src, dst = self.cmbEdges.currentText().split(' → ')
@@ -103,17 +102,17 @@ class RunWindow(QWidget):
             if n == MAX_ITERATIONS:
                 Log.addLogMessage(Log.WARNING, 'Stop condition never met')
 
-
         self.lblStateNr.setText('State: ' + str(self.graph.stateCount() - 1))
         self.btnBack.setEnabled(self.graph.stateCount() > 1)
         self.btnReset.setEnabled(self.graph.stateCount() > 1)
 
         # Display the new state of the graph in the GraphWidget
-        #self.gwid.update()
         self.graphWidget.updateTokensGraph()
 
-        # update the log window such that all tokens of all states are shown
-        self.swid.setEdgeData(list(self.graph.edgestates.values()))
+        # update the signal window such that all tokens of all states are shown
+        for (src, dst), signaldata in self.graph.edgestates.items():
+                signalname =  src + ' → ' + dst
+                self.swid.updateSignal(signalname, signaldata)
 
     def setGraphWidget(self, gwid):
 

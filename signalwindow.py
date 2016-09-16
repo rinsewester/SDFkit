@@ -8,101 +8,11 @@ author: Rinse Wester
 
 """
 
-from PyQt5.QtWidgets import QApplication, QWidget, QLayout, QVBoxLayout, QHBoxLayout, QLabel, QScrollArea, QTableWidget, QAbstractItemView, QHeaderView, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QScrollArea, QTableWidget, QAbstractItemView, QHeaderView, QPushButton
 from PyQt5.QtCore import Qt, QRect, QPoint
 from PyQt5.QtGui import QPainter, QFont, QPen, QBrush, QPolygon, QColor
 import sys
-
-
-class SignalWidget(QWidget):
-
-    def __init__(self):
-        super().__init__()
-
-        self.lblEdgesHeader = QLabel('<b>Edge</b>', self)
-        self.lblEdgesHeader.setMinimumWidth(80)
-        self.lblEdgesHeader.setMaximumWidth(80)
-
-        self.lblDataHeader = QLabel('<b>Data</b>', self)
-
-        self.hboxHeader = QHBoxLayout()
-        self.hboxHeader.addWidget(self.lblEdgesHeader)
-        self.hboxHeader.addWidget(self.lblDataHeader)
-
-        # create an empty vbox layout to hold the edge labels
-        self.vboxlabels = QVBoxLayout()
-        self.vboxlabels.setContentsMargins(0, 0, 0, 0)
-        self.vboxlabels.setSizeConstraint(QLayout.SetMinAndMaxSize)
-
-        self.lblswidget = QWidget(self)
-        self.lblswidget.setMinimumWidth(80)
-        self.lblswidget.setMaximumWidth(80)
-        self.lblswidget.setLayout(self.vboxlabels)
-
-        # create an empty vbox
-        self.vboxdata = QVBoxLayout()
-        self.vboxdata.setContentsMargins(0, 0, 0, 0)
-        self.vboxdata.setSizeConstraint(QLayout.SetMinAndMaxSize)
-
-        self.datascrollwidget = QScrollArea()
-        self.datascrollwidget.setAutoFillBackground(True)
-        p = self.datascrollwidget.palette()
-        p.setColor(self.datascrollwidget.backgroundRole(), Qt.white)
-        self.datascrollwidget.setPalette(p)
-        self.datawidget = QWidget()
-        self.datawidget.setLayout(self.vboxdata)
-        self.datascrollwidget.setWidget(self.datawidget)
-
-        self.hboxbody = QHBoxLayout()
-        self.hboxbody.addWidget(self.lblswidget)
-        self.hboxbody.addWidget(self.datascrollwidget)
-
-        self.vboxmain = QVBoxLayout()
-        self.vboxmain.addLayout(self.hboxHeader)
-        self.vboxmain.addLayout(self.hboxbody)
-
-        self.setLayout(self.vboxmain)
-
-        self.setEdgeLabels(['Alpha', 'Beta', 'Gamma'])
-        self.setEdgeData([
-            [[1, 2], [], []],
-            [[1, 2], [], [9, 9]],
-            [[2, 3], [], []]])
-
-        self.setMinimumHeight(6 * 24 + 64)
-
-    def setEdgeLabels(self, lbls):
-
-        # clean the vboxlayout with the labels
-        while self.vboxlabels.count():
-            item = self.vboxlabels.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
-                widget.deleteLater()
-
-        # Create the edge labels and put in layout
-        for lbl in lbls:
-            lblwidget = QLabel(lbl)
-            lblwidget.setMinimumHeight(20)
-            self.vboxlabels.addWidget(lblwidget)
-        self.vboxlabels.addStretch()
-
-    def setEdgeData(self, data):
-
-        # clean the vboxlayout with the labels
-        while self.vboxdata.count():
-            item = self.vboxdata.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
-                widget.deleteLater()
-
-        # Create the edge labels and put in layout
-        for edata in data:
-            elwidget = EdgeLogWidget()
-            elwidget.setTokenData(edata)
-            elwidget.setMinimumHeight(20)
-            self.vboxdata.addWidget(elwidget)
-        self.vboxdata.addStretch()
+from collections import OrderedDict
 
 class SignalTable(QTableWidget):
     """Widget for displaying contents of edges and firing of nodes."""
@@ -122,68 +32,58 @@ class SignalTable(QTableWidget):
         vheader.setSectionResizeMode(QHeaderView.ResizeToContents)
         vheader.setSectionsMovable(True)
 
-        # self.pbButton1 = QPushButton('set width to 100')
-        # self.pbButton1.setMinimumWidth(80)
-        # self.pbButton1.setFixedHeight(24)
-        # self.pbButton1.setStyleSheet('background-color: red;')
-        # self.pbButton1.clicked.connect(self.btnClicked)
-        # self.pbButton2 = QPushButton('set width to 200')
-        # self.pbButton2.setMinimumWidth(80)
-        # self.pbButton2.setFixedHeight(24)
-        # self.pbButton2.setStyleSheet('background-color: green;')
-        # self.pbButton2.clicked.connect(self.btnClicked)
-        # self.pbButton3 = QPushButton('set width to 300')
-        # self.pbButton3.setMinimumWidth(80)
-        # self.pbButton3.setFixedHeight(24)
-        # self.pbButton3.setStyleSheet('background-color: blue;')
-        # self.pbButton3.clicked.connect(self.btnClicked)
+        # ordered dictionay to keeps refs to data and signal widget
+        self.refDict = OrderedDict({})
 
-        # self.setCellWidget(0, 0, self.pbButton1)
-        # self.setCellWidget(1, 0, self.pbButton2)
-        # self.setCellWidget(2, 0, self.pbButton3)
+        self.addSignal('Alpha', [[1], [1,2], [], [3]])
+        self.addSignal('Beta', [[1,2], [1,2], [1], []])
+        self.clearSignals()
+        self.addSignal('Een', [[1,2,3], [], [], []])
+        self.addSignal('Twee', [[1,2,3], [4,5,6], [], []])
+        self.addSignal('Drie', [[1,2,3], [4,5,6], [7,8,9], []])
+        self.removeSignal('Twee')
+        self.updateSignal('Drie', [[1],[1,2],[1,2,3],[1,2,3,4],[1,2,3,4,5]])
 
-        self.setRowCount(3)
+    def _signalIndex(self, signalname):
+        return list(self.refDict.keys()).index(signalname)
 
-        self.elw1 = EdgeLogWidget()
-        self.elw1.setTokenData([[1,2,3], [1,2,3], [], [4,5,6]])
-        self.elw2 = EdgeLogWidget()
-        self.elw2.setTokenData([[1,2,3], [1,2,3], [], [4,5,6]])
-        self.elw3 = EdgeLogWidget()
-        self.elw3.setTokenData([[1,2,3], [], [], [4,5,6]])
-
-        self.setCellWidget(0, 0, self.elw1)
-        self.setCellWidget(1, 0, self.elw2)
-        self.setCellWidget(2, 0, self.elw3)
-
-        self.setEdgeLabels(['Alpha', 'Beta', 'Gamma'])
-
-    def setEdgeLabels(self, labels):
-        self.setRowCount(len(labels))
-        self.setVerticalHeaderLabels(labels)
-
-    def setEdgeData(self, data):
-        # TODO: fix this
-        pass
-
-
-    def btnClicked(self):
-        if self.sender() == self.pbButton1:
-            self.pbButton1.setFixedWidth(100)
-            self.pbButton2.setFixedWidth(100)
-            self.pbButton3.setFixedWidth(100)
-        elif self.sender() == self.pbButton2:
-            self.pbButton1.setFixedWidth(200)
-            self.pbButton2.setFixedWidth(200)
-            self.pbButton3.setFixedWidth(200)
-        else:
-            self.pbButton1.setFixedWidth(300)
-            self.pbButton2.setFixedWidth(300)
-            self.pbButton3.setFixedWidth(300)
+    def updateSignal(self, signalname, signaldata):
+        self.refDict[signalname].setTokenData(signaldata)
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
-        
 
-class EdgeLogWidget(QWidget):
+    def addSignal(self, signalname, signaldata):
+        if signalname not in self.refDict.keys():
+            signalwidget = SignalLogWidget()
+            signalwidget.setTokenData(signaldata)
+            self.refDict[signalname] = signalwidget
+            self.setRowCount(len(self.refDict))
+            self.setVerticalHeaderLabels(self.refDict.keys())
+            self.setCellWidget(len(self.refDict) - 1, 0, signalwidget)
+            self.resizeColumnsToContents()
+            self.resizeRowsToContents()
+
+    def removeSignal(self, signalname):
+        if signalname in self.refDict.keys():
+            index = self._signalIndex(signalname)
+            signalwidget = self.refDict[signalname]
+            signalwidget.deleteLater()
+            del(self.refDict[signalname])
+            self.removeRow(index)
+            self.resizeColumnsToContents()
+            self.resizeRowsToContents()
+
+    def clearSignals(self):
+        """Remove all all signals"""
+        for signalwidget in self.refDict.values():
+            signalwidget.deleteLater()
+        self.refDict.clear()
+        self.setRowCount(0)
+        self.resizeColumnsToContents()
+        self.resizeRowsToContents()
+
+            
+class SignalLogWidget(QWidget):
 
     STATE_WIDTH = 100
     TRANSITION_WIDTH = 20
@@ -210,33 +110,24 @@ class EdgeLogWidget(QWidget):
 
         self.zoomFactor = 1.0
 
-    def _updateMinWidth(self):
+    def _updateSize(self):
 
-        self.setMinimumWidth(
+        self.setFixedWidth(
             (len(self.tokenData) - 1) *
             (self.STATE_WIDTH * self.zoomFactor + self.TRANSITION_WIDTH))
-        self.resize(8, 8)  # resize to minimum width and height
 
     def setTokenData(self, tokenData):
 
         self.tokenData = tokenData[:]
         # add empty list to make sure the the last transtion goes to empty
         self.tokenData.append([])
-        self._updateMinWidth()
-        self.update()
-
-    def appendTokenData(self, tokenData):
-
-        self.tokenData = self.tokenData[:-1] + tokenData
-        # add empty list to make sure the the last transtion goes to empty
-        self.tokenData.append([])
-        self._updateMinWidth()
+        self._updateSize()
         self.update()
 
     def setZoomFactor(self, zoomFactor):
 
         self.zoomFactor = zoomFactor
-        self._updateMinWidth()
+        self._updateSize()
         self.update()
 
     def mouseMoveEvent(self, event):
@@ -281,9 +172,9 @@ class EdgeLogWidget(QWidget):
     def _drawTransition(self, qp, xpos, width, ttype):
 
         # Set pen and brush style
-        pen = QPen(EdgeLogWidget.SIGNAL_COLOR)
+        pen = QPen(SignalLogWidget.SIGNAL_COLOR)
         pen.setWidth(2)
-        brush = QBrush(EdgeLogWidget.SIGNAL_COLOR)
+        brush = QBrush(SignalLogWidget.SIGNAL_COLOR)
         qp.setPen(pen)
         qp.setBrush(brush)
 
@@ -346,9 +237,9 @@ class EdgeLogWidget(QWidget):
     def _drawState(self, qp, xpos, width, data):
 
         # Set pen and brush style
-        pen = QPen(EdgeLogWidget.SIGNAL_COLOR)
+        pen = QPen(SignalLogWidget.SIGNAL_COLOR)
         pen.setWidth(2)
-        brush = QBrush(EdgeLogWidget.SIGNAL_COLOR)
+        brush = QBrush(SignalLogWidget.SIGNAL_COLOR)
         qp.setPen(pen)
         qp.setBrush(brush)
 
@@ -366,7 +257,7 @@ class EdgeLogWidget(QWidget):
             qp.drawLine(xpos, 3, xpos + width, 3)
             qp.drawLine(xpos, h - 3, xpos + width, h - 3)
 
-            pen.setColor(EdgeLogWidget.TEXT_COLOR)
+            pen.setColor(SignalLogWidget.TEXT_COLOR)
             qp.setPen(pen)
 
             rect = QRect(xpos + 3, 3, width - 3, h - 6)
