@@ -13,6 +13,7 @@ from PyQt5.QtCore import Qt, QRect, QPoint
 from PyQt5.QtGui import QPainter, QFont, QPen, QBrush, QPolygon, QColor
 import sys
 import random as rdm
+from math import floor
 from collections import OrderedDict
 
 class SignalTable(QTableWidget):
@@ -88,7 +89,6 @@ class SignalLogWidget(QWidget):
     SIGNAL_COLOR_HOVER = QColor(74, 73, 80)
     TEXT_COLOR = QColor(194, 194, 195)
 
-
     def __init__(self):
 
         super().__init__()
@@ -97,14 +97,12 @@ class SignalLogWidget(QWidget):
         p = self.palette()
         p.setColor(self.backgroundRole(), Qt.white)
         self.setPalette(p)
-
         self.setMouseTracking(True)
-
         self.setMinimumHeight(20)
 
         self.tokenData = [[1, 2, 3], [1, 2]]
-
         self.zoomFactor = 1.0
+        self.hoveringCycle = None
 
     def _updateSize(self):
 
@@ -127,8 +125,16 @@ class SignalLogWidget(QWidget):
         self.update()
 
     def mouseMoveEvent(self, event):
-        # TODO: put highlighting code here....
-        pass
+        
+        xpos = event.pos().x()
+        self.hoveringCycle = floor((xpos + self.TRANSITION_WIDTH / 2) / (self.STATE_WIDTH * self.zoomFactor + self.TRANSITION_WIDTH))
+        self.update()
+
+    def leaveEvent(self, event):
+
+        self.hoveringCycle = None
+        self.update()
+        super().leaveEvent(event)
 
     def paintEvent(self, e):
 
@@ -145,7 +151,7 @@ class SignalLogWidget(QWidget):
 
             beginCoor = i * (curStatewidth + self.TRANSITION_WIDTH)
 
-            self._drawState(qp, beginCoor, curStatewidth, tokenData)
+            self._drawState(qp, beginCoor, curStatewidth, tokenData, i == self.hoveringCycle)
 
             if tokenData == self.tokenData[i + 1]:
                 if tokenData == []:
@@ -230,12 +236,17 @@ class SignalLogWidget(QWidget):
             qp.setPen(pen)
             qp.drawLine(xpos, h / 2, xpos + width, h / 2)
 
-    def _drawState(self, qp, xpos, width, data):
+    def _drawState(self, qp, xpos, width, data, hovering=False):
 
         # Set pen and brush style
-        pen = QPen(SignalLogWidget.SIGNAL_COLOR)
+        if hovering:
+            color = SignalLogWidget.SIGNAL_COLOR_HOVER
+        else:
+            color = SignalLogWidget.SIGNAL_COLOR
+
+        pen = QPen(color)
         pen.setWidth(2)
-        brush = QBrush(SignalLogWidget.SIGNAL_COLOR)
+        brush = QBrush(color)
         qp.setPen(pen)
         qp.setBrush(brush)
 
@@ -266,10 +277,10 @@ if __name__ == '__main__':
     sw = SignalTable()
     sw.show()
 
-    for i in range(100):
+    for i in range(25):
         signalname = 'Signal-' + str(i)
         signaldata = []
-        for i in range(100):
+        for i in range(120):
             tokens = [1,2,3,4]
             rdm.shuffle(tokens)
             signaldata.append(tokens)
