@@ -41,14 +41,14 @@ class SignalTable(QTableWidget):
         return list(self.refDict.keys()).index(signalname)
 
     def updateSignal(self, signalname, signaldata):
-        self.refDict[signalname].setTokenData(signaldata)
+        self.refDict[signalname].setData(signaldata)
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
 
     def addSignal(self, signalname, signaldata):
         if signalname not in self.refDict.keys():
             signalwidget = SignalLogWidget()
-            signalwidget.setTokenData(signaldata)
+            signalwidget.setData(signaldata)
             self.refDict[signalname] = signalwidget
             self.setRowCount(len(self.refDict))
             self.setVerticalHeaderLabels(self.refDict.keys())
@@ -110,7 +110,7 @@ class SignalLogWidget(QWidget):
             (len(self.tokenData) - 1) *
             (self.STATE_WIDTH * self.zoomFactor + self.TRANSITION_WIDTH))
 
-    def setTokenData(self, tokenData):
+    def setData(self, tokenData):
 
         self.tokenData = tokenData[:]
         # add empty list to make sure the the last transtion goes to empty
@@ -240,6 +240,7 @@ class SignalLogWidget(QWidget):
             pen.setStyle(Qt.SolidLine)
             qp.setPen(pen)
             qp.drawLine(xpos, h / 2, xpos + width / 2, h / 2)
+
         elif ttype == 'data2empty':
             if hoverLeft:
                 brush.setColor(self.SIGNAL_COLOR_HOVER)
@@ -295,11 +296,7 @@ class SignalLogWidget(QWidget):
             qp.drawLine(xpos, h / 2, xpos + width, h / 2)
         else:
             qp.setPen(Qt.NoPen)
-            qp.drawRect(xpos, 3, width, h - 6)
-
-            qp.setPen(pen)
-            qp.drawLine(xpos, 3, xpos + width, 3)
-            qp.drawLine(xpos, h - 3, xpos + width, h - 3)
+            qp.drawRect(xpos, 2, width, h - 4)
 
             pen.setColor(SignalLogWidget.TEXT_COLOR)
             qp.setPen(pen)
