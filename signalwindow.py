@@ -107,10 +107,10 @@ class SignalLogWidget(QWidget):
         self.zoomFactor = 1.0
         self.hoveringCycle = None
 
-        self.signalype = SignalLogWidget.EDGE_DATA_SIGNAL
+        self.signaltype = SignalLogWidget.EDGE_DATA_SIGNAL
 
     def _updateSize(self):
-        if self.signalype == SignalLogWidget.NODE_ACTIVE_SIGNAL:
+        if self.signaltype == SignalLogWidget.NODE_ACTIVE_SIGNAL:
             sectioncount = len(self.signalData) + 1
         else:
             # EDGE_DATA_SIGNAL
@@ -118,10 +118,10 @@ class SignalLogWidget(QWidget):
         self.setFixedWidth(sectioncount * (self.STATE_WIDTH * self.zoomFactor + self.TRANSITION_WIDTH))
 
     def signalType(self):
-        return self.signalype
+        return self.signaltype
 
     def setData(self, signaltype, signaldata):
-        self.signalype = signaltype
+        self.signaltype = signaltype
         self.signalData = signaldata
         self._updateSize()
         self.update()
@@ -153,7 +153,7 @@ class SignalLogWidget(QWidget):
         font = QFont('Serif', 10, QFont.Bold)
         qp.setFont(font)
 
-        if self.signalype == SignalLogWidget.NODE_ACTIVE_SIGNAL:
+        if self.signaltype == SignalLogWidget.NODE_ACTIVE_SIGNAL:
             self._drawNodeActiveSignal(qp)
         else:
             self._drawEdgeSignal(qp)
@@ -352,7 +352,7 @@ if __name__ == '__main__':
     # for i in range(25):
     #     signalname = 'Signal-' + str(i)
     #     signaldata = []
-    #     for i in range(120):
+    #     for i in range(60):
     #         tokens = [1,2,3,4]
     #         rdm.shuffle(tokens)
     #         signaldata.append(tokens)
