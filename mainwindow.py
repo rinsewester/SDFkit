@@ -16,7 +16,7 @@ from PyQt5.QtGui import QIcon
 from csdfgraph import CSDFGraph, G0
 from runwindow import RunWindow
 from logwidget import LogWidget
-from signalwindow import SignalTable
+from signalwindow import SignalTable, SignalLogWidget
 from graphicsview import GraphWidget
 
 from codegen.clashcodegen import ClashCodeGen
@@ -130,7 +130,7 @@ class MainWindow(QMainWindow):
             self.signalWindow.clearSignals()    
             for (src, dst), signaldata in self.graph.edgestates.items():
                 signalname =  src + ' → ' + dst
-                self.signalWindow.addSignal(signalname, signaldata)
+                self.signalWindow.addSignal(signalname, SignalLogWidget.EDGE_DATA_SIGNAL, signaldata)
 
     def openActionTriggered(self):
 

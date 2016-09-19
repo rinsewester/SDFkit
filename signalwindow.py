@@ -41,14 +41,14 @@ class SignalTable(QTableWidget):
         return list(self.refDict.keys()).index(signalname)
 
     def updateSignal(self, signalname, signaldata):
-        self.refDict[signalname].setData(signaldata)
+        self.refDict[signalname].setData(self.refDict[signalname].signalType(), signaldata)
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
 
-    def addSignal(self, signalname, signaldata):
+    def addSignal(self, signalname, signaltype, signaldata):
         if signalname not in self.refDict.keys():
             signalwidget = SignalLogWidget()
-            signalwidget.setData(signaldata)
+            signalwidget.setData(signaltype, signaldata)
             self.refDict[signalname] = signalwidget
             self.setRowCount(len(self.refDict))
             self.setVerticalHeaderLabels(self.refDict.keys())
@@ -89,6 +89,9 @@ class SignalLogWidget(QWidget):
     SIGNAL_COLOR_HOVER = QColor(74, 73, 80)
     TEXT_COLOR = QColor(194, 194, 195)
 
+    EDGE_DATA_SIGNAL = 0
+    NODE_ACTIVE_SIGNAL = 1
+
     def __init__(self):
 
         super().__init__()
@@ -100,21 +103,26 @@ class SignalLogWidget(QWidget):
         self.setMouseTracking(True)
         self.setMinimumHeight(20)
 
-        self.tokenData = [[1, 2, 3], [1, 2]]
+        self.signalData = [[1, 2, 3], [1, 2]]
         self.zoomFactor = 1.0
         self.hoveringCycle = None
 
+        self.signalype = SignalLogWidget.EDGE_DATA_SIGNAL
+
     def _updateSize(self):
+        if self.signalype == SignalLogWidget.NODE_ACTIVE_SIGNAL:
+            sectioncount = len(self.signalData) + 1
+        else:
+            # EDGE_DATA_SIGNAL
+            sectioncount = len(self.signalData)
+        self.setFixedWidth(sectioncount * (self.STATE_WIDTH * self.zoomFactor + self.TRANSITION_WIDTH))
 
-        self.setFixedWidth(
-            (len(self.tokenData) - 1) *
-            (self.STATE_WIDTH * self.zoomFactor + self.TRANSITION_WIDTH))
+    def signalType(self):
+        return self.signalype
 
-    def setData(self, tokenData):
-
-        self.tokenData = tokenData[:]
-        # add empty list to make sure the the last transtion goes to empty
-        self.tokenData.append([])
+    def setData(self, signaltype, signaldata):
+        self.signalype = signaltype
+        self.signalData = signaldata
         self._updateSize()
         self.update()
 
@@ -138,8 +146,6 @@ class SignalLogWidget(QWidget):
 
     def paintEvent(self, e):
 
-        curStatewidth = self.STATE_WIDTH * self.zoomFactor
-
         qp = QPainter()
         qp.begin(self)
         qp.setRenderHint(QPainter.Antialiasing)
@@ -147,24 +153,57 @@ class SignalLogWidget(QWidget):
         font = QFont('Serif', 10, QFont.Bold)
         qp.setFont(font)
 
-        for i, tokenData in enumerate(self.tokenData[:-1]):
+        if self.signalype == SignalLogWidget.NODE_ACTIVE_SIGNAL:
+            self._drawNodeActiveSignal(qp)
+        else:
+            self._drawEdgeSignal(qp)
+
+        qp.end()
+
+    def _drawNodeActiveSignal(self, qp):
+        pen = QPen(self.SIGNAL_COLOR)
+        pen.setWidth(2)
+        brush = QBrush(self.SIGNAL_COLOR)
+        qp.setPen(pen)
+        qp.setBrush(brush)
+
+        h = self.size().height()
+
+        qp.drawLine(0, h / 2, self.width() - 2, h / 2)
+
+        qp.setPen(Qt.NoPen)
+        for i, val in enumerate(self.signalData):
+            xpos = (i + 1) * (self.zoomFactor * SignalLogWidget.STATE_WIDTH + SignalLogWidget.TRANSITION_WIDTH) - self.TRANSITION_WIDTH + 2
+            if val:
+                qp.drawRoundedRect(xpos, h / 2 - 4, 8, 8, 3, 3)
+
+    def _drawEdgeSignal(self, qp):
+
+        curStatewidth = self.STATE_WIDTH * self.zoomFactor
+
+        edgedata = self.signalData + [[]]
+
+        for i in range(len(edgedata) - 1):
+
+            beginCoor = i * (curStatewidth + self.TRANSITION_WIDTH)
 
             curhovering = i == self.hoveringCycle
             nxthovering = i + 1 == self.hoveringCycle
 
-            beginCoor = i * (curStatewidth + self.TRANSITION_WIDTH)
+            curedgedata = edgedata[i]
+            nxtedgedata = edgedata[i + 1]
 
-            self._drawState(qp, beginCoor, curStatewidth, tokenData, curhovering)
+            self._drawState(qp, beginCoor, curStatewidth, curedgedata, curhovering)
 
-            if tokenData == self.tokenData[i + 1]:
-                if tokenData == []:
+            if curedgedata == nxtedgedata:
+                if curedgedata == []:
                     transType = 'empty2empty'
                 else:
                     transType = 'sameData'
             else:
-                if tokenData != [] and self.tokenData[i + 1] != []:
+                if curedgedata != [] and nxtedgedata != []:
                     transType = 'dataChange'
-                elif tokenData == []:
+                elif curedgedata == []:
                     transType = 'empty2data'
                 else:
                     transType = 'data2empty'
@@ -172,17 +211,13 @@ class SignalLogWidget(QWidget):
             self._drawTransition(qp, beginCoor + curStatewidth,
                                  self.TRANSITION_WIDTH, transType, curhovering, nxthovering)
 
-        qp.end()
-
     def _drawTransition(self, qp, xpos, width, ttype, hoverLeft, hoverRight):
 
         # Set pen and brush style
         color = SignalLogWidget.SIGNAL_COLOR
-        pen = QPen(color)
-        pen.setWidth(2)
         brush = QBrush(color)
-        qp.setPen(pen)
         qp.setBrush(brush)
+        pen = QPen()
         pen.setStyle(Qt.NoPen)
         qp.setPen(pen)
 
@@ -234,12 +269,11 @@ class SignalLogWidget(QWidget):
             qp.drawPolygon(QPolygon(points))
 
             if hoverLeft:
-                pen.setColor(self.SIGNAL_COLOR_HOVER)
+                brush.setColor(self.SIGNAL_COLOR_HOVER)
             else:
-                pen.setColor(self.SIGNAL_COLOR)
-            pen.setStyle(Qt.SolidLine)
-            qp.setPen(pen)
-            qp.drawLine(xpos, h / 2, xpos + width / 2, h / 2)
+                brush.setColor(self.SIGNAL_COLOR)
+            qp.setBrush(brush)
+            qp.drawRect(xpos, h / 2 - 1, width / 2 + 1, 2)
 
         elif ttype == 'data2empty':
             if hoverLeft:
@@ -251,28 +285,26 @@ class SignalLogWidget(QWidget):
             qp.drawPolygon(QPolygon(points))
 
             if hoverRight:
-                pen.setColor(self.SIGNAL_COLOR_HOVER)
+                brush.setColor(self.SIGNAL_COLOR_HOVER)
             else:
-                pen.setColor(self.SIGNAL_COLOR)
-            pen.setStyle(Qt.SolidLine)
-            qp.setPen(pen)
-            qp.drawLine(xpos + width / 2, h / 2, xpos + width, h / 2)
+                brush.setColor(self.SIGNAL_COLOR)
+            qp.setBrush(brush)
+            qp.drawRect(xpos + width / 2 - 1, h / 2 - 1, width / 2, 2)
         else:
             # 'empty2empty' case
-            pen.setStyle(Qt.SolidLine)
             if hoverLeft:
-                pen.setColor(self.SIGNAL_COLOR_HOVER)
+                brush.setColor(self.SIGNAL_COLOR_HOVER)
             else: 
-                pen.setColor(self.SIGNAL_COLOR)
-            qp.setPen(pen)
-            qp.drawLine(xpos, h / 2, xpos + width / 2, h / 2)
+                brush.setColor(self.SIGNAL_COLOR)
+            qp.setBrush(brush)
+            qp.drawRect(xpos, h / 2 - 1, width / 2 + 1, 2)
 
             if hoverRight:
-                pen.setColor(self.SIGNAL_COLOR_HOVER)
+                brush.setColor(self.SIGNAL_COLOR_HOVER)
             else: 
-                pen.setColor(self.SIGNAL_COLOR)
-            qp.setPen(pen)
-            qp.drawLine(xpos + width / 2, h / 2, xpos + width, h / 2)
+                brush.setColor(self.SIGNAL_COLOR)
+            qp.setBrush(brush)
+            qp.drawRect(xpos + width / 2 - 1, h / 2 - 1, width / 2, 2)
 
     def _drawState(self, qp, xpos, width, data, hovering=False):
 
@@ -312,9 +344,10 @@ if __name__ == '__main__':
     sw.setGeometry(300, 300, 800, 400)
     sw.show()
 
-    sw.addSignal('Alpha', [[1],[2],[],[2]])
-    sw.addSignal('Beta', [[1],[1],[],[]])
-    sw.addSignal('Gama', [[],[2],[],[]])
+    sw.addSignal('Alpha', SignalLogWidget.EDGE_DATA_SIGNAL,  [[1],[2],[],[2]])
+    sw.addSignal('Beta', SignalLogWidget.EDGE_DATA_SIGNAL, [[1],[1],[],[]])
+    sw.addSignal('Gama', SignalLogWidget.EDGE_DATA_SIGNAL, [[],[2],[],[]])
+    sw.addSignal('Delta', SignalLogWidget.NODE_ACTIVE_SIGNAL, [False, True, True])
 
     # for i in range(25):
     #     signalname = 'Signal-' + str(i)
