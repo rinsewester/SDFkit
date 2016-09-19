@@ -40,6 +40,9 @@ class CSDFGraph(nx.DiGraph):
         self.edgestates = {}
         self.nodestates = {}
 
+        # store whether a node has fired
+        self.nodefirings = {}
+
         # counter to count number of clockcycles: accessable from node
         # functions
         self.clockcount = 0
@@ -67,6 +70,7 @@ class CSDFGraph(nx.DiGraph):
 
         self.node[n]['firecount'] = 0
         self.nodestates[n] = [0]
+        self.nodefirings[n] = [] # not fired yet
         
     def add_nodes_from(self, ns):
 
@@ -107,6 +111,7 @@ class CSDFGraph(nx.DiGraph):
         for n in self.nodes():
             self.node[n]['firecount'] = 0
             self.nodestates[n] = [0]
+            self.nodefirings[n] = []
         self.clockcount = 0
 
     def _storestate(self):
@@ -116,6 +121,7 @@ class CSDFGraph(nx.DiGraph):
 
         for n, states in self.nodestates.items():
             states.append(self.node[n]['firecount'])
+            # TODO add storing wether node has fired
 
     def stateCount(self):
 
