@@ -13,7 +13,7 @@ from PyQt5.QtCore import Qt, QRect, QPoint
 from PyQt5.QtGui import QPainter, QFont, QPen, QBrush, QPolygon, QColor
 import sys
 import random as rdm
-from math import floor
+from math import floor, ceil
 from collections import OrderedDict
 
 class SignalTable(QTableWidget):
@@ -140,8 +140,13 @@ class SignalLogWidget(QWidget):
 
     def leaveEvent(self, event):
 
-        self.hoveringCycle = None
-        self.update()
+        # Undo highlighting of cycle when leaving widget
+        if self.hoveringCycle is not None:
+            w = self.STATE_WIDTH * self.zoomFactor + self.TRANSITION_WIDTH
+            x = self.hoveringCycle * w - self.TRANSITION_WIDTH / 2
+            rect = QRect(x, 0, w, self.height())
+            self.hoveringCycle = None
+            self.update(rect)
         super().leaveEvent(event)
 
     def paintEvent(self, e):
@@ -153,14 +158,17 @@ class SignalLogWidget(QWidget):
         font = QFont('Serif', 10, QFont.Bold)
         qp.setFont(font)
 
+        rect = e.rect()
+
         if self.signaltype == SignalLogWidget.NODE_ACTIVE_SIGNAL:
-            self._drawNodeActiveSignal(qp)
+            self._drawNodeActiveSignal(qp, rect)
         else:
-            self._drawEdgeSignal(qp)
+            self._drawEdgeSignal(qp, rect)
 
         qp.end()
 
-    def _drawNodeActiveSignal(self, qp):
+    def _drawNodeActiveSignal(self, qp, rect):
+
         pen = QPen(self.SIGNAL_COLOR)
         pen.setWidth(2)
         brush = QBrush(self.SIGNAL_COLOR)
@@ -169,7 +177,7 @@ class SignalLogWidget(QWidget):
 
         h = self.size().height()
 
-        qp.drawLine(0, h / 2, self.width() - 2, h / 2)
+        qp.drawLine(rect.left(), h / 2, rect.right(), h / 2)
 
         qp.setPen(Qt.NoPen)
         for i, val in enumerate(self.signalData):
@@ -177,15 +185,20 @@ class SignalLogWidget(QWidget):
             if val:
                 qp.drawRoundedRect(xpos, h / 2 - 4, 8, 8, 3, 3)
 
-    def _drawEdgeSignal(self, qp):
+    def _drawEdgeSignal(self, qp, rect):
 
-        curStatewidth = self.STATE_WIDTH * self.zoomFactor
+        cyclewidth = self.STATE_WIDTH * self.zoomFactor
 
         edgedata = self.signalData + [[]]
 
-        for i in range(len(edgedata) - 1):
+        # determine which cycles have to be repainted based on the area that has to be repainted (rect)
+        startcycle = max(0, floor(rect.left() / (cyclewidth + self.TRANSITION_WIDTH)))
+        endcycle = max(len(edgedata) - 1, ceil(rect.right() / (cyclewidth + self.TRANSITION_WIDTH)))
 
-            beginCoor = i * (curStatewidth + self.TRANSITION_WIDTH)
+        # paint the all cycles
+        for i in range(startcycle, endcycle):
+
+            beginCoor = i * (cyclewidth + self.TRANSITION_WIDTH)
 
             curhovering = i == self.hoveringCycle
             nxthovering = i + 1 == self.hoveringCycle
@@ -193,7 +206,7 @@ class SignalLogWidget(QWidget):
             curedgedata = edgedata[i]
             nxtedgedata = edgedata[i + 1]
 
-            self._drawState(qp, beginCoor, curStatewidth, curedgedata, curhovering)
+            self._drawState(qp, beginCoor, cyclewidth, curedgedata, curhovering)
 
             if curedgedata == nxtedgedata:
                 if curedgedata == []:
@@ -208,7 +221,7 @@ class SignalLogWidget(QWidget):
                 else:
                     transType = 'data2empty'
 
-            self._drawTransition(qp, beginCoor + curStatewidth,
+            self._drawTransition(qp, beginCoor + cyclewidth,
                                  self.TRANSITION_WIDTH, transType, curhovering, nxthovering)
 
     def _drawTransition(self, qp, xpos, width, ttype, hoverLeft, hoverRight):
