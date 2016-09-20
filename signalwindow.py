@@ -193,7 +193,7 @@ class SignalLogWidget(QWidget):
 
         # determine which cycles have to be repainted based on the area that has to be repainted (rect)
         startcycle = max(0, floor(rect.left() / (cyclewidth + self.TRANSITION_WIDTH)))
-        endcycle = max(len(edgedata) - 1, ceil(rect.right() / (cyclewidth + self.TRANSITION_WIDTH)))
+        endcycle = min(len(edgedata) - 1, ceil(rect.right() / (cyclewidth + self.TRANSITION_WIDTH)))
 
         # paint the all cycles
         for i in range(startcycle, endcycle):
