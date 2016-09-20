@@ -128,6 +128,8 @@ class MainWindow(QMainWindow):
 
         if self.graph is not None:
             self.signalWindow.clearSignals()    
+            for n, data in self.graph.nodefirings.items():
+                self.signalWindow.addSignal(n, SignalLogWidget.NODE_ACTIVE_SIGNAL, data)
             for (src, dst), signaldata in self.graph.edgestates.items():
                 signalname =  src + ' → ' + dst
                 self.signalWindow.addSignal(signalname, SignalLogWidget.EDGE_DATA_SIGNAL, signaldata)

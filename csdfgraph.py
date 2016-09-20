@@ -69,6 +69,7 @@ class CSDFGraph(nx.DiGraph):
         self.node[n]['color'] = color
 
         self.node[n]['firecount'] = 0
+        self.node[n]['hasfired'] = False
         self.nodestates[n] = [0]
         self.nodefirings[n] = [] # not fired yet
         
@@ -121,7 +122,9 @@ class CSDFGraph(nx.DiGraph):
 
         for n, states in self.nodestates.items():
             states.append(self.node[n]['firecount'])
-            # TODO add storing wether node has fired
+            
+        for n in self.nodes():
+            self.nodefirings[n].append(self.node[n]['hasfired'])
 
     def stateCount(self):
 
@@ -137,6 +140,10 @@ class CSDFGraph(nx.DiGraph):
         for n, states in self.nodestates.items():
             self.node[n]['firecount'] = states[-2]
             states.pop()
+
+        for n in self.nodes():
+            self.node[n]['hasfired'] = self.nodefirings[n][-2]
+            self.nodefirings[n].pop()
 
     def step(self):
 
@@ -199,6 +206,9 @@ class CSDFGraph(nx.DiGraph):
 
                 # Firing of node complete
                 self.node[n]['firecount'] += 1
+
+            # Store whether the node has fired: for activity log of nodes
+            self.node[n]['hasfired'] = canfire
 
         # add all the intermediate buffers to buffers
         for src, dst in self.edges():
