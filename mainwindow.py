@@ -87,7 +87,7 @@ class MainWindow(QMainWindow):
         self.graph = G0
 
         self.graphWidget = GraphWidget()
-        self.graphWidget.setGraph(self.graph) #Comment this line to enable test scenes in graph.py
+        self.graphWidget.setGraph(self.graph)
 
         # connect the view menu actions to the graphwidget
         zoomInAction.triggered.connect(self.graphWidget.zoomIn)
@@ -172,24 +172,6 @@ class MainWindow(QMainWindow):
                 '<b>Error generating CLaSH code:</b> ' + str(e))
             # TODO: Remove the following line when clash codegen completed
             raise e
-
-    # def softcodegenActionTriggered(self):
-    #     try:
-    #         CCodeGen.generateCode(self.graph, './output/' + self.graph.name)
-    #     except Exception as e:
-    #         QMessageBox.critical(
-    #             self, 'Generate C code',
-    #             '<b>Error generating C code:</b> ' + str(e))        
-
-    # def gpucodegenActionTriggered(self):
-    #     try:
-    #         OpenCLCodeGen.generateCode(self.graph, './output/' + self.graph.name)
-    #     except Exception as e:
-    #         QMessageBox.critical(
-    #             self, 'Generate OpenCL code',
-    #             '<b>Error generating OpenCL code:</b> ' + str(e))
-        
-
 
 if __name__ == '__main__':
 
