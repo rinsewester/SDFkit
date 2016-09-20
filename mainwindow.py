@@ -127,12 +127,18 @@ class MainWindow(QMainWindow):
     def _updateSignalWindow(self):
 
         if self.graph is not None:
-            self.signalWindow.clearSignals()    
-            for n, data in self.graph.nodefirings.items():
+            self.signalWindow.clearSignals()
+
+            # put all node activity and edge data signals in aphabetical order in the signal widget
+            nodes = sorted(self.graph.nodes())
+            for n in nodes:
+                data = self.graph.nodefirings[n]
                 self.signalWindow.addSignal(n, SignalLogWidget.NODE_ACTIVE_SIGNAL, data)
-            for (src, dst), signaldata in self.graph.edgestates.items():
-                signalname =  src + ' → ' + dst
-                self.signalWindow.addSignal(signalname, SignalLogWidget.EDGE_DATA_SIGNAL, signaldata)
+                successors = sorted(self.graph.successors(n))
+                for s in successors:
+                    data = self.graph.edgestates[(n, s)]
+                    name =  n + ' → ' + s
+                    self.signalWindow.addSignal(name, SignalLogWidget.EDGE_DATA_SIGNAL, data)
 
     def openActionTriggered(self):
 

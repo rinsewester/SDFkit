@@ -110,10 +110,12 @@ class RunWindow(QWidget):
         # Display the new state of the graph in the GraphWidget
         self.graphWidget.updateTokensGraph()
 
-        # update the signal window such that all tokens of all states are shown
-        for (src, dst), signaldata in self.graph.edgestates.items():
-                signalname =  src + ' → ' + dst
-                self.swid.updateSignal(signalname, signaldata)
+        # update the signal window such that all tokens ad activiations are shown
+        for n, data in self.graph.nodefirings.items():
+            self.swid.updateSignal(n, data)
+        for (src, dst), data in self.graph.edgestates.items():
+                name =  src + ' → ' + dst
+                self.swid.updateSignal(name, data)
         
         # Nasty way to make sure the widget scrolls to the end
         # required because the max value of the scrollbar is not enought due
