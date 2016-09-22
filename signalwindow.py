@@ -13,7 +13,7 @@ from PyQt5.QtCore import Qt, QRect, QPoint
 from PyQt5.QtGui import QPainter, QFont, QPen, QBrush, QPolygon, QColor
 import sys
 import random as rdm
-from math import floor, ceil
+from math import floor, ceil, sqrt
 from collections import OrderedDict
 
 class SignalTable(QTableWidget):
@@ -37,8 +37,45 @@ class SignalTable(QTableWidget):
         # ordered dictionay to keeps refs to data and signal widget
         self.refDict = OrderedDict({})
 
+        self.zoomFactor = 1.0
+
     def _signalIndex(self, signalname):
         return list(self.refDict.keys()).index(signalname)
+
+    # def zoomIn(self):
+    #     if self.zoomFactor < 8:
+    #         self.zoomFactor *= sqrt(2)
+    #     else:
+    #         self.zoomFactor = 8
+    #     # todo: apply to all signals
+    #     for name, widget in self.refDict.items():
+    #         widget.setZoomFactor(self.zoomFactor)
+    #     print('zoomFactor:', self.zoomFactor)
+
+    # def zoomOut(self):
+    #     if self.zoomFactor > 0.25:
+    #         self.zoomFactor /= sqrt(2)
+    #     else:
+    #         self.zoomFactor = 0.25
+    #     # todo: apply to all signals
+    #     for name, widget in self.refDict.items():
+    #         widget.setZoomFactor(self.zoomFactor)
+    #     print('zoomFactor:', self.zoomFactor)
+
+    # def wheelEvent(self, event):
+    #     if event.modifiers() & Qt.ControlModifier:
+    #         self.horizontalScrollBar().setEnabled(False)
+    #         self.verticalScrollBar().setEnabled(False)
+    #         if not event.angleDelta().isNull():
+    #             if event.angleDelta().y() > 0:
+    #                 self.zoomIn()
+    #             else:
+    #                 self.zoomOut()
+    #         event.accept()
+    #     else:
+    #         self.horizontalScrollBar().setEnabled(True)
+    #         self.verticalScrollBar().setEnabled(True)
+    #     super().wheelEvent(event)
 
     def updateSignal(self, signalname, signaldata):
         self.refDict[signalname].setData(self.refDict[signalname].signalType(), signaldata)
