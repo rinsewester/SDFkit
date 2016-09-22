@@ -27,11 +27,11 @@ class GraphicsView(QGraphicsView):
     def wheelEvent(self, event):
         #Catch wheelEvent and zoom instead of scroll when Ctrl is pressed
         if event.modifiers() & Qt.ControlModifier:
-            if event.angleDelta().y() > 0:
-                self.widget.zoomIn()
-            else:
-                self.widget.zoomOut()
-
+            if not event.angleDelta().isNull():
+                if event.angleDelta().y() > 0:
+                    self.widget.zoomIn()
+                else:
+                    self.widget.zoomOut()
             event.accept()
         else:
             super().wheelEvent(event)
