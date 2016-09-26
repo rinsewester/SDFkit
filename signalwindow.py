@@ -119,7 +119,7 @@ class SignalTable(QTableWidget):
 
 class SignalLogWidget(QWidget):
 
-    STATE_WIDTH = 100
+    STATE_WIDTH = 96
     TRANSITION_WIDTH = 20
 
     SIGNAL_COLOR = QColor(50, 50, 54)
