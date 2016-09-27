@@ -1,44 +1,62 @@
 {
-    "name": "SimpleCsdfProducerConsumer",
+    "clashtypes": {
+        "Bytev2": "Vec 2 Byte",
+        "Bytev3": "Vec 3 Byte"
+    },
+    "edges": [
+        {
+            "argnr": 0,
+            "color": [
+                180,
+                180,
+                180
+            ],
+            "crates": [
+                1,
+                0,
+                3
+            ],
+            "dst": "Cr",
+            "prates": [
+                0,
+                2
+            ],
+            "resnr": 0,
+            "src": "Pr",
+            "tkns": [
+                13,
+                14
+            ]
+        }
+    ],
+    "name": "Simplecsdfproducerconsumer",
     "nodes": [
         {
+            "clashcode": "f_Pr :: Cntr -> Cntr -> Vec 2 Cntr\nf_Pr firecounter phase = res\n  where\n    res = if phase == 0\n                then 0 :> 0 :> Nil\n                else firecounter :> firecounter + 1 :> Nil\n",
+            "color": [
+                230,
+                230,
+                255
+            ],
+            "function": "lambda firecounter, phase: [] if (phase == 0) else [firecounter, firecounter + 1]",
             "name": "Pr",
             "pos": [
                 80,
                 100
-            ],
-            "function": "lambda firecounter, phase: [] if (phase == 0) else [firecounter, firecounter + 1, firecounter + 2]"
+            ]
         },
         {
+            "clashcode": "f_Cr :: Vec 3 Cntr -> Cntr -> Cntr -> ()\nf_Cr data_in firecounter phase = ()",
+            "color": [
+                230,
+                230,
+                255
+            ],
+            "function": "lambda xs, firecounter, phase: []",
             "name": "Cr",
             "pos": [
                 280,
                 100
-            ],
-            "function": "lambda xs, firecounter, phase: []"
-        }
-    ],
-    "clashtypes": {
-        "Bytev3": "Vec 3 Byte",
-        "Bytev2": "Vec 2 Byte"
-    },
-    "edges": [
-        {
-            "tkns": [
-                13,
-                14
-            ],
-            "src": "Pr",
-            "argnr": 0,
-            "crates": [
-                1,
-                2
-            ],
-            "dst": "Cr",
-            "resnr": 0,
-            "prates": [
-                0,
-                3
             ]
         }
     ]
