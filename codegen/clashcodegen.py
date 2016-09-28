@@ -21,6 +21,7 @@ class ClashCodeGen(object):
     def generateCode(graph, targetdir):
 
         edgeTypes = ClashCodeGen._getEdgeTypes(graph)
+        print('Edge types:', edgeTypes)
 
         # predefTypes = ClashCodeGen._generatePredfinedTypes(graph.clashtypes)
 
@@ -60,16 +61,23 @@ class ClashCodeGen(object):
 
     def _getEdgeTypes(graph):
         edgeTypes = {}
-        # for src, dst in graph.edges():
-        #     if len(graph.node[src]['clashcode'].splitlines()) < 2:
-        #         raise ValueError('Node ' + src + ' has not enough CLASH code: at least one line for type and one for implementation required')
-        #     _, nodeoutptypes = ClashCodeGen._getCLasHTypes(graph, src, graph.node[src]['clashcode'])
-        #     outpnumber = graph[src][dst]['res']
-        #     edgeTypes[(src, dst)] = nodeoutptypes[outpnumber]
+        for src, dst in graph.edges():
+            if len(graph.node[src]['clashcode'].splitlines()) < 2:
+                raise ValueError('Node ' + src + ' has not enough CLASH code: at least one line for type and one for implementation required')
+            _, sourcenodetypes = ClashCodeGen._getCLasHTypes(graph, src, graph.node[src]['clashcode'])
+            destnodetypes, _ = ClashCodeGen._getCLasHTypes(graph, dst, graph.node[dst]['clashcode'])
+            outpnumber = graph[src][dst]['res']
+            inpnumber = graph[src][dst]['arg']
 
-        for n in graph.nodes():
-            nodeinptypes, nodeoutptypes = ClashCodeGen._getCLasHTypes(graph, n, graph.node[n]['clashcode'])
-            print('types for node', n, 'are:', (nodeinptypes, nodeoutptypes))
+            srctype = sourcenodetypes[outpnumber][0]
+            dsttype = destnodetypes[inpnumber][0]
+            if srctype != dsttype:
+                raise ValueError('Input and output type of edge' + str(()) + 'are not equal: src = ' + srctype + ', dst = ' + dsttype)
+
+            srcmaxtokencount = sourcenodetypes[outpnumber][1]
+            dstmaxtokencount = destnodetypes[inpnumber][1]
+
+            edgeTypes[(src, dst)] = srctype, (srcmaxtokencount, dstmaxtokencount)
             
         return edgeTypes
 
@@ -89,7 +97,6 @@ class ClashCodeGen(object):
             'Byte' -> ('Byte', 1)
             'Vec 4 Nibble' -> ('Nibble', 4)
         """
-        print('convert type string: ', typestr)
         typeelements = typestr.split(' ')
         if len(typeelements) > 1:
             return typeelements[2], int(typeelements[1])
