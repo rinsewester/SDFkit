@@ -21,43 +21,42 @@ class ClashCodeGen(object):
     def generateCode(graph, targetdir):
 
         edgeTypes = ClashCodeGen._getEdgeTypes(graph)
-        print('Edge types:', edgeTypes)
 
-        # predefTypes = ClashCodeGen._generatePredfinedTypes(graph.clashtypes)
+        predefTypes = ClashCodeGen._generatePredfinedTypes(graph.clashtypes)
 
-        # nodeFuncDefs = ClashCodeGen._generateNodeFuncDefs(graph)
-        # nodeDefs = ClashCodeGen._generateNodeDefs(graph)
-        # if graph.isHSDF():
-        #     edgeDefs = ClashCodeGen._generateEdgeDefs(graph, edgeTypes)
-        # else:
-        #     edgeDefs = ClashCodeGen._generateCSDFEdgeDefs(graph, edgeTypes)
-        # graphType = ClashCodeGen._generateGraphType(graph, edgeTypes)
-        # nodeInstances = ClashCodeGen._generateNodeInstances(graph)
-        # edgeInstances = ClashCodeGen._generateEdgeInstances(graph)
-        # graphConnections = ClashCodeGen._generateGraphConnections(graph)
-        # graphOutputs = ClashCodeGen._generateGraphOutputs(graph)
+        nodeFuncDefs = ClashCodeGen._generateNodeFuncDefs(graph)
+        nodeDefs = ClashCodeGen._generateNodeDefs(graph)
+        if graph.isHSDF():
+            edgeDefs = ClashCodeGen._generateEdgeDefs(graph, edgeTypes)
+        else:
+            edgeDefs = ClashCodeGen._generateCSDFEdgeDefs(graph, edgeTypes)
+        graphType = ClashCodeGen._generateGraphType(graph, edgeTypes)
+        nodeInstances = ClashCodeGen._generateNodeInstances(graph)
+        edgeInstances = ClashCodeGen._generateEdgeInstances(graph)
+        graphConnections = ClashCodeGen._generateGraphConnections(graph)
+        graphOutputs = ClashCodeGen._generateGraphOutputs(graph)
 
-        # # Open the template file
-        # with open('codegen/clash_code/template.hs', 'r') as f:
-        #     templatestr = f.read()
+        # Open the template file
+        with open('codegen/clash_code/template.hs', 'r') as f:
+            templatestr = f.read()
 
-        # # Now replace the variables in the code template
-        # templatestr = templatestr.replace('<PREDEFINED_TYPES>', predefTypes)
-        # templatestr = templatestr.replace('<GRAPH_NAME>', graph.name)
-        # templatestr = templatestr.replace('<NODE_FUNC_DEFS>', nodeFuncDefs)
-        # templatestr = templatestr.replace('<NODE_DEFS>', nodeDefs)
-        # templatestr = templatestr.replace('<EDGE_DEFS>', edgeDefs)
-        # templatestr = templatestr.replace('<GRAPH_TYPE>', graphType)
-        # templatestr = templatestr.replace('<NODE_INSTANCES>', nodeInstances)
-        # templatestr = templatestr.replace('<EDGE_INSTANCES>', edgeInstances)
-        # templatestr = templatestr.replace('<GRAPH_CONNECTIONS>', graphConnections)
-        # templatestr = templatestr.replace('<GRAPH_OUTPUTS>', graphOutputs)
+        # Now replace the variables in the code template
+        templatestr = templatestr.replace('<PREDEFINED_TYPES>', predefTypes)
+        templatestr = templatestr.replace('<GRAPH_NAME>', graph.name)
+        templatestr = templatestr.replace('<NODE_FUNC_DEFS>', nodeFuncDefs)
+        templatestr = templatestr.replace('<NODE_DEFS>', nodeDefs)
+        templatestr = templatestr.replace('<EDGE_DEFS>', edgeDefs)
+        templatestr = templatestr.replace('<GRAPH_TYPE>', graphType)
+        templatestr = templatestr.replace('<NODE_INSTANCES>', nodeInstances)
+        templatestr = templatestr.replace('<EDGE_INSTANCES>', edgeInstances)
+        templatestr = templatestr.replace('<GRAPH_CONNECTIONS>', graphConnections)
+        templatestr = templatestr.replace('<GRAPH_OUTPUTS>', graphOutputs)
 
-        # # write the resulting CLaSH code in a file
-        # filename = graph.name.lower() + '.hs'
-        # with open('codegen/clash_code/' + filename, 'w') as f:
-        #     f.write(templatestr)
-        #     Log.addLogMessage( Log.INFO, 'CLaSH code generated in ' + filename)
+        # write the resulting CLaSH code in a file
+        filename = graph.name.lower() + '.hs'
+        with open('codegen/clash_code/' + filename, 'w') as f:
+            f.write(templatestr)
+            Log.addLogMessage( Log.INFO, 'CLaSH code generated in ' + filename)
 
     def _getEdgeTypes(graph):
         edgeTypes = {}
@@ -222,8 +221,7 @@ class ClashCodeGen(object):
         return edgeInstances
 
     def _generateCSDFEdgeDefs(graph, edgeTypes):
-        # get the paramters
-        print(edgetypes)
+        # TODO: implement this fuction
 
         return ''
 
@@ -346,7 +344,7 @@ class ClashCodeGen(object):
                 tokensstr += str(tkn)
                 tokensstr += ' :> '
             tokensstr += ' Nil'
-            tokentype = edgetypes[(src, dst)]
+            tokentype = edgetypes[(src, dst)][0]
             # TODO: Edge capacity now fixed to 8: should come from graph class
             edgedefs += 'e_' + src + '_' + dst +'L = mealy hsdfedge8 (' + tokensstr + ' :: Vec8 ' + tokentype + ', 0 :: RdPtr, ' + str(len(tokens)) + ' :: WrPtr)\n' 
 
@@ -420,7 +418,7 @@ class ClashCodeGen(object):
     def _generateGraphType(graph, edgetypes):
         outputtupletypes = []
         for src, dst in graph.edges():
-            edgetype = edgetypes[(src, dst)]
+            edgetype = edgetypes[(src, dst)][0]
             outputtupletypes.append('Bool')
             outputtupletypes.append(edgetype)
 
