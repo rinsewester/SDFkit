@@ -8,7 +8,7 @@ author: Rinse Wester
 
 """
 
-from fractions import gcd
+from math import gcd
 from functools import reduce
 
 
