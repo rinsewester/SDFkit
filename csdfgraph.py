@@ -371,38 +371,8 @@ class CSDFGraph(nx.DiGraph):
             tkns = self[src][dst]['tkns']
             print(src, ' --- ', tkns, ' --> ', dst)
 
-    def test(self):
-
-        if self.isHSDF():
-            gtype = 'HSDF'
-        elif self.isSDF():
-            gtype = 'SDF'
-        else:
-            gtype = 'CSDF'
-        print('Test ' + gtype + ' graph ', self.name)
-
-        # Check wether the edges state store and restore works properly
-        initEdgeState = deepcopy(self.edgestates)
-        self.step()
-        self.step()
-        self.reset()
-        print(
-            'Reset check correct: ', initEdgeState == self.edgestates)
-
-        # Check wether the node state store and restore works properly
-        self.step()
-        secondCntrState = deepcopy(self.nodestates)
-        self.step()
-        self.step()
-        self.back()
-        self.back()
-        print(
-            'Firecount check correct: ', secondCntrState == self.nodestates)
-        self.back()
-
 # The default SDF graph
 G0 = CSDFGraph()
 G0.loadFromFile('examples/SDF/simple graph.json')
 #G0.loadFromFile('examples/HSDF/nine counter.json')
 #G0.loadFromFile('examples/CSDF/sliding window.json')
-# G0.test()
