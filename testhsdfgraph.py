@@ -12,7 +12,7 @@ import unittest
 
 from csdfgraph import CSDFGraph
 
-class CSDFGraphTestCase(unittest.TestCase):
+class HSDFGraphTestCase(unittest.TestCase):
 
     def setUp(self):
         self.prod_cons_hsdf_graph = CSDFGraph()
@@ -74,7 +74,6 @@ class CSDFGraphTestCase(unittest.TestCase):
         self.prod_cons_hsdf_graph.edge['P']['C']['crates'] = [3, 11]
         self.assertTrue(self.prod_cons_hsdf_graph.isCSDF() 
             and not self.prod_cons_hsdf_graph.isSDF())
-
 
 
 if __name__ == '__main__':
