@@ -30,7 +30,7 @@ class CSDFGraphTestCase(unittest.TestCase):
 
         # connect the nodes in a chain structure
         self.cycle_cons_sdf_graph.add_edge('n0', 'n1', 0, 0, [1], [1])
-        self.cycle_cons_sdf_graph.add_edge('n1', 'n2', 0, 0, [1], [1])
+        self.cycle_cons_sdf_graph.add_edge('n1', 'n2', 0, 0, [2], [2])
         self.cycle_cons_sdf_graph.add_edge('n2', 'n3', 0, 0, [1], [1])
 
 
