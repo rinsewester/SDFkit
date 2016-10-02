@@ -24,7 +24,7 @@ class SDFGraphTestCase(unittest.TestCase):
         self.cycle_cons_sdf_graph.add_node('n0', f_n0, (0, 0))
         self.cycle_cons_sdf_graph.add_node('n1', f_n1, (100, 0))
 
-        # connect node P and C using an edge without initial tokens
+        # connect node n0 and n1 using two edges to form a cycle with an initial token
         self.cycle_cons_sdf_graph.add_edge('n0', 'n1', 0, 0, [2], [2])
         self.cycle_cons_sdf_graph.add_edge('n1', 'n0', 0, 0, [1], [1], tkns=[0])
 
