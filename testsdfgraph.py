@@ -30,34 +30,35 @@ class SDFGraphTestCase(unittest.TestCase):
 
 
     def test_data_from_two_firings(self):
-        # After one firing, .........
+        # After one firing, the token on the edge from n1 to n0 should be consumed
+        #  and two tokens should be produced
         self.cycle_cons_sdf_graph.step()
-        # self.assertEqual(self.cycle_cons_sdf_graph.edge['P']['C']['tkns'], [0])
+        self.assertEqual(self.cycle_cons_sdf_graph.edge['n1']['n0']['tkns'], [])
+        self.assertEqual(self.cycle_cons_sdf_graph.edge['n0']['n1']['tkns'], [0, 1])
 
         # do an other step: ...........
         self.cycle_cons_sdf_graph.step()
-        # self.assertEqual(self.cycle_cons_sdf_graph.edge['P']['C']['tkns'], [1])
-
-        # TODO: useless test
-        self.assertEqual(5, 5)
+        self.assertEqual(self.cycle_cons_sdf_graph.edge['n1']['n0']['tkns'], [1])
+        self.assertEqual(self.cycle_cons_sdf_graph.edge['n0']['n1']['tkns'], [])
 
 
     def test_node_firings_storing(self):
         # perform a few iterations to fill up the activation log for each node
-        for i in range(4):
+        for i in range(7):
             self.cycle_cons_sdf_graph.step()
 
-        # P should have firied all iterations while 
-        # self.assertEqual(self.cycle_cons_sdf_graph.nodefirings['P'], [True, True, True, True])
-        # self.assertEqual(self.cycle_cons_sdf_graph.nodefirings['C'], [False, True, True, True])
+        # firing pattern should be n0 n1 n0 n1 n0 n1
+        self.assertEqual(self.cycle_cons_sdf_graph.nodefirings['n0'], [True, False, True, False, True, False, True])
+        self.assertEqual(self.cycle_cons_sdf_graph.nodefirings['n1'], [False, True, False, True, False, True, False])
 
-        # TODO: useless test
-        self.assertEqual(5, 5)
 
     def test_graph_type_detection(self):
         # initial graph -> SDF
         self.assertTrue(self.cycle_cons_sdf_graph.isSDF())
 
 
-if __name__ == '__main__':
+def main():
     unittest.main()
+
+if __name__ == '__main__':
+    main()

@@ -75,6 +75,8 @@ class HSDFGraphTestCase(unittest.TestCase):
         self.assertTrue(self.prod_cons_hsdf_graph.isCSDF() 
             and not self.prod_cons_hsdf_graph.isSDF())
 
+def main():
+    unittest.main()
 
 if __name__ == '__main__':
-    unittest.main()
+    main()
