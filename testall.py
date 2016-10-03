@@ -10,8 +10,17 @@ author: Rinse Wester
 
 import unittest
 
-import testhsdfgraph
-import testsdfgraph
+from tests.testhsdfgraph import HSDFGraphTestCase
+from tests.testsdfgraph import SDFGraphTestCase
+from tests.testcsdfgraph import CSDFGraphTestCase
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(HSDFGraphTestCase))
+    suite.addTest(unittest.makeSuite(SDFGraphTestCase))
+    # suite.addTest(unittest.makeSuite(CSDFGraphTestCase))
+    return suite
 
 if __name__ == '__main__':
-    unittest.main()
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
