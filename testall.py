@@ -18,7 +18,7 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(HSDFGraphTestCase))
     suite.addTest(unittest.makeSuite(SDFGraphTestCase))
-    # suite.addTest(unittest.makeSuite(CSDFGraphTestCase))
+    suite.addTest(unittest.makeSuite(CSDFGraphTestCase))
     return suite
 
 if __name__ == '__main__':

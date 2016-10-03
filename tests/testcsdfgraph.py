@@ -20,8 +20,8 @@ class CSDFGraphTestCase(unittest.TestCase):
 
         # function for n0: accept single token and produce a pair with 0 and 1 added to it
         f_n0 = 'lambda     firecounter, phase: [firecounter]'
-        f_n1 = 'lambda xs, firecounter, phase: xs'
-        f_n2 = 'lambda xs, firecounter, phase: xs'
+        f_n1 = 'lambda xs, firecounter, phase: [xs[0]] if phase == 0 else [xs[0], xs[0]]'
+        f_n2 = 'lambda xs, firecounter, phase: [xs[0]] if phase == 0 else [xs[0] + xs[1]]'
         f_n3 = 'lambda xs, firecounter, phase: []'
         self.cycle_cons_sdf_graph.add_node('n0', f_n0, (0, 0))
         self.cycle_cons_sdf_graph.add_node('n1', f_n1, (100, 0))
@@ -30,7 +30,7 @@ class CSDFGraphTestCase(unittest.TestCase):
 
         # connect the nodes in a chain structure
         self.cycle_cons_sdf_graph.add_edge('n0', 'n1', 0, 0, [1], [1])
-        self.cycle_cons_sdf_graph.add_edge('n1', 'n2', 0, 0, [2], [2])
+        self.cycle_cons_sdf_graph.add_edge('n1', 'n2', 0, 0, [1, 2], [1, 2])
         self.cycle_cons_sdf_graph.add_edge('n2', 'n3', 0, 0, [1], [1])
 
 
