@@ -37,15 +37,42 @@ class CSDFGraphTestCase(unittest.TestCase):
     def test_data_from_two_firings(self):
         # After one firing, .........
         self.cycle_cons_sdf_graph.step()
-        self.assertEqual(self.cycle_cons_sdf_graph.edge['n0']['n1']['tkns'], [])
-        # self.assertEqual(self.cycle_cons_sdf_graph.edge['n1']['n2']['tkns'], [])
-        # self.assertEqual(self.cycle_cons_sdf_graph.edge['n2']['n3']['tkns'], [])
+        self.assertEqual(self.cycle_cons_sdf_graph.edge['n0']['n1']['tkns'], [0])
+        self.assertEqual(self.cycle_cons_sdf_graph.edge['n1']['n2']['tkns'], [])
+        self.assertEqual(self.cycle_cons_sdf_graph.edge['n2']['n3']['tkns'], [])
 
         # do an other step: ...........
         self.cycle_cons_sdf_graph.step()
-        # self.assertEqual(self.cycle_cons_sdf_graph.edge['n0']['n1']['tkns'], [])
-        # self.assertEqual(self.cycle_cons_sdf_graph.edge['n1']['n2']['tkns'], [])
-        # self.assertEqual(self.cycle_cons_sdf_graph.edge['n2']['n3']['tkns'], [])
+        self.assertEqual(self.cycle_cons_sdf_graph.edge['n0']['n1']['tkns'], [1])
+        self.assertEqual(self.cycle_cons_sdf_graph.edge['n1']['n2']['tkns'], [0])
+        self.assertEqual(self.cycle_cons_sdf_graph.edge['n2']['n3']['tkns'], [])
+
+    def test_data_with_phases(self):
+        # After four cycles n1 shoulde have prodcued two tokens in during the second phase
+        for i in range(4):
+            self.cycle_cons_sdf_graph.step()
+
+        # The first two cycles, no data is yet produced by n1.
+        # thereafter it produces a single value followed by a pair
+        self.assertEqual(self.cycle_cons_sdf_graph.edgestates[('n1', 'n2')], [[], [], [0], [1, 1], [2]])
+
+        # the last node, n3, is inactive first until it consumes a single value followed by a sum of two tokens
+        self.assertEqual(self.cycle_cons_sdf_graph.edgestates[('n2', 'n3')], [[], [], [], [0], [2]])
+
+
+    def test_expecting_exception_tokens_mismatch(self):
+        # When the function in the node produces a number of tokens that does not match 
+        #  the current production rate, we should expect an exception
+
+        incorrect_node_func = 'lambda xs, firecounter, phase: xs'
+        self.cycle_cons_sdf_graph.updateNodeFunction('n1', incorrect_node_func)
+
+        # for the first two cycles, all is okay but after the third cycle, n produces 
+        #  one token while two are expected based on the current production rate -> expect exception
+        for i in range(2):
+            self.cycle_cons_sdf_graph.step()
+        with self.assertRaises(ValueError):
+            self.cycle_cons_sdf_graph.step()
 
 
     def test_node_firings_storing(self):
