@@ -35,17 +35,18 @@ class CSDFGraphTestCase(unittest.TestCase):
 
 
     def test_data_from_two_firings(self):
-        # After one firing, .........
+        # After one firing
         self.cycle_cons_sdf_graph.step()
         self.assertEqual(self.cycle_cons_sdf_graph.edge['n0']['n1']['tkns'], [0])
         self.assertEqual(self.cycle_cons_sdf_graph.edge['n1']['n2']['tkns'], [])
         self.assertEqual(self.cycle_cons_sdf_graph.edge['n2']['n3']['tkns'], [])
 
-        # do an other step: ...........
+        # do an other step
         self.cycle_cons_sdf_graph.step()
         self.assertEqual(self.cycle_cons_sdf_graph.edge['n0']['n1']['tkns'], [1])
         self.assertEqual(self.cycle_cons_sdf_graph.edge['n1']['n2']['tkns'], [0])
         self.assertEqual(self.cycle_cons_sdf_graph.edge['n2']['n3']['tkns'], [])
+        
 
     def test_data_with_phases(self):
         # After four cycles n1 shoulde have prodcued two tokens in during the second phase

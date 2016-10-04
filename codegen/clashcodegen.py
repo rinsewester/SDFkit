@@ -10,9 +10,10 @@ author: Rinse Wester
 
 import re
 from log import Log
+from subprocess import run, PIPE
 
 class ClashCodeGen(object):
-    """docstring for ClashCodeGen"""
+    """Class that generates CLaSH code from a graph object"""
 
     def __init__(self, arg):
         super(ClashCodeGen, self).__init__()
@@ -424,4 +425,32 @@ class ClashCodeGen(object):
 
         outputtuplestr = '(' + (', '.join(outputtupletypes)) + ')'
         return 'graph :: Signal Bool -> Signal ' + outputtuplestr
+
+
+class CLaSHCompiler(object):
+    """Class for interaction with the CLaSH compiler to generate VHDL code."""
+
+    VERILOG = 0
+    VHDL = 1
+
+    def isavailable():
+        try:
+            retobj = run(['clash', '--version'], stdout=PIPE, stderr=PIPE)
+            return retobj.returncode == 0
+        except FileNotFoundError as e:
+            return False
+
+    def compile(filename, outputlang):
+        """compile the file filename to verilog or VHDL
+
+        outputlang is either CLaSHCompiler.VERILOG or CLaSHCompiler.VHDL"""
+        if CLaSHCompiler.isavailable():
+            if outputlang == CLaSHCompiler.VHDL:
+                lang = 'vhdl'
+            else:
+                lang = 'verilog'
+            retobj = run(['clash', '--' + lang, '-icodegen/clash_code', filename], stderr=PIPE, stdout=PIPE)
+            if retobj.returncode != 0:
+                raise Exception('An error occurred during ' + lang + ' code generation:\n\n' + str(retobj.stderr))
+
 
