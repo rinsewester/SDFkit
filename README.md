@@ -4,7 +4,7 @@ An interactive simulation and code generation platform for Synchronous Data Flow
 ## What is it?
 SDFkit contains two parts: a design/simulation environment and code generation.
 
-Cyclo Static Data Flow (CSDF) graphs are a popular model of computation for creating SDP applications.
+Cyclo Static Data Flow (CSDF) graphs are a popular model of computation for creating DSP applications.
 In the design/simulation environment, CSDF graphs can simulated and altered to optimize performance.
 The simulation is cycle accurate when modeling an application for an FPGA.
 
@@ -16,5 +16,4 @@ A picture is worth a thousand words:
 ![screenshot](https://raw.githubusercontent.com/rinsewester/SDFkit/master/images/screenshot.png)
 
 ## Setup
-
 Run pip to install requirements `pip install -r requirements.txt`
