@@ -82,9 +82,19 @@ class CSDFGraphTestCase(unittest.TestCase):
             self.cycle_cons_sdf_graph.step()
 
         # firing pattern should be .............
-        # self.assertEqual(self.cycle_cons_sdf_graph.nodefirings['n0'], [True, False, True, False, True, False, True])
-        # self.assertEqual(self.cycle_cons_sdf_graph.nodefirings['n1'], [False, True, False, True, False, True, False])
+        self.assertEqual(self.cycle_cons_sdf_graph.nodefirings['n0'], [True, True, True, True, True, True, True])
+        self.assertEqual(self.cycle_cons_sdf_graph.nodefirings['n3'], [False, False, False, True, True, True, True])
 
+
+    def test_test_firecount_state_storage(self):
+
+        # perform 5 cycles of simulation
+        for i in range(5):
+            self.cycle_cons_sdf_graph.step()
+
+        # first node is always active so firecount should increase every cycle:
+        self.assertEqual(self.cycle_cons_sdf_graph.nodestates['n0'], [0, 1, 2, 3, 4, 5])
+        self.assertEqual(self.cycle_cons_sdf_graph.nodestates['n3'], [0, 0, 0, 0, 1, 2])
 
     def test_graph_type_detection(self):
         # initial graph -> CSDF
