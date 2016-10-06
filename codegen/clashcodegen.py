@@ -11,7 +11,7 @@ author: Rinse Wester
 import re
 from log import Log
 from subprocess import run, PIPE
-from sdfmath import is_power2
+from sdfmath import is_power2, calc_pointerwidth
 
 class ClashCodeGen(object):
     """Class that generates CLaSH code from a graph object"""
@@ -224,6 +224,7 @@ class ClashCodeGen(object):
 
     def _generateCSDFEdgeDefs(graph, edgetypes):
         """Returns a string containing all definitions of the CSDF edges."""
+        edgedefs = ''
         for src, dst in graph.edges():
 
             # Gather the FIFO edge parameters
@@ -245,10 +246,30 @@ class ClashCodeGen(object):
             if not is_power2(edge_capacity):
                 raise ValueError('Capacity of edge ' + str((src, dst)) + ' must be a power of two.')
             edge_elements_type = 'Vec {} {}'.format(edge_capacity, edge_datatype)
+            edge_token_pointer_type = 'Unsigned {}'.format(calc_pointerwidth(edge_capacity) + 1)
+            maxrate = max(edge_prates + edge_crates)
+            edge_rate_type = 'Unsigned {}'.format(calc_pointerwidth(maxrate + 1))
+            productionrates_pointer_type = 'Unsigned {}'.format(calc_pointerwidth(len(edge_prates)))
+            consumptionrates_pointer_type = 'Unsigned {}'.format(calc_pointerwidth(len(edge_crates)))
 
-            print('Edge', (src, dst), 'elements type:', edge_elements_type)
+            # TODO: generate the actual code
 
-        return ''
+            print('Code for edge', (src, dst))
+            print('---------------------------')
+            print('  edge_datatype:', edge_datatype)
+            print('  edge_capacity:', edge_capacity)
+            print('  edge_prates:', edge_prates)
+            print('  edge_crates:', edge_crates)
+            print('  edge_tokens:', edge_tokens)
+            print('---------------------------')
+            print('  edge_elements_type:', edge_elements_type)
+            print('  edge_token_pointer_type:', edge_token_pointer_type)
+            print('  maxrate:', maxrate)
+            print('  edge_rate_type:', edge_rate_type)
+            print('  productionrates_pointer_type:', productionrates_pointer_type)
+            print('  consumptionrates_pointer_type:', consumptionrates_pointer_type)
+
+        return edgedefs
 
     def _generateNodeFuncDefs(graph):
 
