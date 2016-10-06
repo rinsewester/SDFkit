@@ -11,6 +11,7 @@ author: Rinse Wester
 import re
 from log import Log
 from subprocess import run, PIPE
+from sdfmath import is_power2
 
 class ClashCodeGen(object):
     """Class that generates CLaSH code from a graph object"""
@@ -72,7 +73,7 @@ class ClashCodeGen(object):
             srctype = sourcenodetypes[outpnumber][0]
             dsttype = destnodetypes[inpnumber][0]
             if srctype != dsttype:
-                raise ValueError('Input and output type of edge' + str(()) + 'are not equal: src = ' + srctype + ', dst = ' + dsttype)
+                raise ValueError('Input and output type of edge ' + str((src, dst)) + ' are not equal: src = ' + srctype + ', dst = ' + dsttype)
 
             srcmaxtokencount = sourcenodetypes[outpnumber][1]
             dstmaxtokencount = destnodetypes[inpnumber][1]
@@ -221,8 +222,31 @@ class ClashCodeGen(object):
             edgeInstances += "        ({0}_dataout, {0}_canrd, {0}_canwrt) = unbundle $ {0}L $ bundle ({0}_datain, {0}_rd, {0}_wrt)\n".format(ename)
         return edgeInstances
 
-    def _generateCSDFEdgeDefs(graph, edgeTypes):
-        # TODO: implement this fuction
+    def _generateCSDFEdgeDefs(graph, edgetypes):
+        """Returns a string containing all definitions of the CSDF edges."""
+        for src, dst in graph.edges():
+
+            # Gather the FIFO edge parameters
+            edge_datatype = edgetypes[(src, dst)][0]
+            edge_capacity = 8 # TODO: make FIFO capacity paramterizable
+            edge_prates = graph.edge[src][dst]['prates']
+            # A production rate must always be smaller than the capacity: cannot 
+            #  not write more elements in the fifo than its capacity.
+            if not all(map(lambda prate: prate <= edge_capacity, edge_prates)):
+                raise ValueError('Production rate of edge ' + str((src, dst)) + ' exceeds capacity of ' + edge_capacity + ' elements.')
+            edge_crates = graph.edge[src][dst]['crates']
+            # A consumption rate must always be smaller than the capacity: cannot 
+            #  not read more elements from the fifo than its capacity.
+            if not all(map(lambda crate: crate <= edge_capacity, edge_crates)):
+                raise ValueError('Production rate of edge ' + str((src, dst)) + ' exceeds capacity of ' + edge_capacity + ' elements.')
+            edge_tokens = graph.edge[src][dst]['tkns']
+
+            # Construct the types to be used in the generated code
+            if not is_power2(edge_capacity):
+                raise ValueError('Capacity of edge ' + str((src, dst)) + ' must be a power of two.')
+            edge_elements_type = 'Vec {} {}'.format(edge_capacity, edge_datatype)
+
+            print('Edge', (src, dst), 'elements type:', edge_elements_type)
 
         return ''
 
