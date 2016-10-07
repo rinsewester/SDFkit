@@ -247,13 +247,16 @@ class ClashCodeGen(object):
                 raise ValueError('Capacity of edge ' + str((src, dst)) + ' must be a power of two.')
             edge_elements_type = 'Vec {} {}'.format(edge_capacity, edge_datatype)
             edge_token_pointer_type = 'Unsigned {}'.format(calc_pointerwidth(edge_capacity) + 1)
-            maxrate = max(edge_prates + edge_crates)
+            edge_max_prate = max(edge_prates)
+            edge_max_crate = max(edge_crates)
+            maxrate = max(edge_max_crate, edge_max_prate)
+            edge_prates_max_index = len(edge_prates) - 1
+            edge_crates_max_index = len(edge_crates) - 1
             edge_rate_type = 'Unsigned {}'.format(calc_pointerwidth(maxrate + 1))
             productionrates_pointer_type = 'Unsigned {}'.format(calc_pointerwidth(len(edge_prates)))
             consumptionrates_pointer_type = 'Unsigned {}'.format(calc_pointerwidth(len(edge_crates)))
 
             # TODO: generate the actual code
-
             print('Code for edge', (src, dst))
             print('---------------------------')
             print('  edge_datatype:', edge_datatype)
@@ -268,6 +271,20 @@ class ClashCodeGen(object):
             print('  edge_rate_type:', edge_rate_type)
             print('  productionrates_pointer_type:', productionrates_pointer_type)
             print('  consumptionrates_pointer_type:', consumptionrates_pointer_type)
+
+            edge_name = 'csdfedge_{}_{}'.format(src, dst)
+
+
+            # Create the type definition of the current edge
+            edgetypedefstr  = "{} :: ({}, {}, {}, {}, {}, {}) ->\n".format(edge_name)
+            edgetypedefstr += "    (Vec 3 a, Bool, Bool) ->\n"
+            edgetypedefstr += "    ((Vec16 a, RdPtr16, WrtPtr16, TknCntr16, RatesPtr, RatesPtr), (Vec 2 a, Bool, Bool, Bool))\n"
+
+            edgefuncdefstr  = "csdfedge (elms, rptr, wptr, tkncntr, prateptr, crateptr)\n"
+            edgefuncdefstr += "    (datain, rd, wrt) = \n"
+            edgefuncdefstr += "    ((elms', rptr', wptr', tkncntr', prateptr', crateptr'), (dataout, canread, canwrite, err))\n"
+
+            # TODO: continue here with filling in the body of the edge
 
         return edgedefs
 
