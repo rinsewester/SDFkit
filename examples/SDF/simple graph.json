@@ -2,37 +2,24 @@
     "name": "Simplegraph",
     "nodes": [
         {
-            "name": "n0",
-            "pos": [
-                120,
-                200
-            ],
-            "color": [
-                230,
-                230,
-                255
-            ],
-            "function": "lambda xs, firecounter, phase: [xs[0], xs[0]]"
-        },
-        {
-            "name": "n3",
             "pos": [
                 320,
-                180
+                300
             ],
+            "name": "n2",
             "color": [
-                230,
-                230,
-                255
+                200,
+                100,
+                100
             ],
-            "function": "lambda x, y, firecounter, phase: [x[0] + y[0]]"
+            "function": "lambda xs, firecounter, phase: xs"
         },
         {
-            "name": "n1",
             "pos": [
                 120,
                 300
             ],
+            "name": "n1",
             "color": [
                 200,
                 100,
@@ -41,133 +28,146 @@
             "function": "lambda xs, y, firecounter, phase: [((xs[0] + xs[1]) * y[0]) % 27]"
         },
         {
-            "name": "n2",
             "pos": [
                 320,
-                300
+                180
             ],
+            "name": "n3",
             "color": [
-                200,
-                100,
-                100
+                230,
+                230,
+                255
             ],
-            "function": "lambda xs, firecounter, phase: xs"
+            "function": "lambda x, y, firecounter, phase: [x[0] + y[0]]"
+        },
+        {
+            "pos": [
+                120,
+                200
+            ],
+            "name": "n0",
+            "color": [
+                230,
+                230,
+                255
+            ],
+            "function": "lambda xs, firecounter, phase: [xs[0], xs[0]]"
         }
     ],
     "edges": [
         {
-            "resnr": 0,
-            "dst": "n1",
-            "argnr": 0,
-            "crates": [
-                2
-            ],
-            "tkns": [],
-            "src": "n0",
-            "color": [
-                180,
-                180,
-                180
-            ],
-            "prates": [
-                2
-            ]
-        },
-        {
-            "resnr": 0,
-            "dst": "n0",
-            "argnr": 0,
-            "crates": [
-                1
-            ],
             "tkns": [
                 1
             ],
-            "src": "n3",
-            "color": [
-                180,
-                180,
-                180
-            ],
-            "prates": [
-                1
-            ]
-        },
-        {
-            "resnr": 0,
-            "dst": "n3",
+            "src": "n2",
             "argnr": 1,
+            "color": [
+                100,
+                30,
+                30
+            ],
             "crates": [
                 1
             ],
-            "tkns": [
-                0
+            "resnr": 0,
+            "prates": [
+                1
             ],
-            "src": "n3",
+            "dst": "n1"
+        },
+        {
+            "tkns": [],
+            "src": "n2",
+            "argnr": 0,
             "color": [
                 180,
                 180,
                 180
             ],
-            "prates": [
-                1
-            ]
-        },
-        {
-            "resnr": 0,
-            "dst": "n2",
-            "argnr": 0,
             "crates": [
                 1
             ],
+            "resnr": 0,
+            "prates": [
+                1
+            ],
+            "dst": "n3"
+        },
+        {
             "tkns": [],
             "src": "n1",
-            "color": [
-                100,
-                30,
-                30
-            ],
-            "prates": [
-                1
-            ]
-        },
-        {
-            "resnr": 0,
-            "dst": "n1",
-            "argnr": 1,
-            "crates": [
-                1
-            ],
-            "tkns": [
-                1
-            ],
-            "src": "n2",
-            "color": [
-                100,
-                30,
-                30
-            ],
-            "prates": [
-                1
-            ]
-        },
-        {
-            "resnr": 0,
-            "dst": "n3",
             "argnr": 0,
+            "color": [
+                100,
+                30,
+                30
+            ],
             "crates": [
                 1
             ],
-            "tkns": [],
-            "src": "n2",
+            "resnr": 0,
+            "prates": [
+                1
+            ],
+            "dst": "n2"
+        },
+        {
+            "tkns": [
+                999
+            ],
+            "src": "n3",
+            "argnr": 1,
             "color": [
                 180,
                 180,
                 180
             ],
+            "crates": [
+                1
+            ],
+            "resnr": 0,
             "prates": [
                 1
-            ]
+            ],
+            "dst": "n3"
+        },
+        {
+            "tkns": [
+                1
+            ],
+            "src": "n3",
+            "argnr": 0,
+            "color": [
+                180,
+                180,
+                180
+            ],
+            "crates": [
+                1
+            ],
+            "resnr": 0,
+            "prates": [
+                1
+            ],
+            "dst": "n0"
+        },
+        {
+            "tkns": [],
+            "src": "n0",
+            "argnr": 0,
+            "color": [
+                180,
+                180,
+                180
+            ],
+            "crates": [
+                2
+            ],
+            "resnr": 0,
+            "prates": [
+                2
+            ],
+            "dst": "n1"
         }
     ]
 }

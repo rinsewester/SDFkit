@@ -14,6 +14,7 @@ import string
 import sdfmath
 from log import Log
 from copy import deepcopy
+from collections import OrderedDict
 
 # TODO: add support for change tracking: weather file has changed -> to enable/disable save button in GUI
 
@@ -299,7 +300,7 @@ class CSDFGraph(nx.DiGraph):
             fname = filename
 
         # Put all info into a temporary dictionary which will be transformed into a json string
-        graphDict = {}
+        graphDict = OrderedDict({})
 
         # First save graph properties/attributes: name and predefined CLaSH types
         graphDict['name'] = self.name
@@ -340,7 +341,7 @@ class CSDFGraph(nx.DiGraph):
 
         # Last but not leat, write the graph to the file
         with open(fname, 'w') as outfile:
-            json.dump(graphDict, outfile, sort_keys=True, indent=4)
+            json.dump(graphDict, outfile, indent=4)
             Log.addLogMessage(Log.INFO, 'Saved graph ' + fname)
 
     def updateNodeFunction(self, nodename, funcstr):
