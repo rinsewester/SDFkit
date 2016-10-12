@@ -310,7 +310,7 @@ class CSDFGraph(nx.DiGraph):
         # Store all the nodes of the graph in the temporary dictionary
         nodesList = []
         for nname in self.nodes():
-            nodedict = {}
+            nodedict = OrderedDict({})
             nodedict['name'] = nname
             nodedict['function'] = self.node[nname]['funcstr']
             if self.node[nname]['clashcode'] != '':
@@ -325,7 +325,7 @@ class CSDFGraph(nx.DiGraph):
         # Store all the edges of the graph in the temporary dictionary
         edgesList = []
         for srcname, dstname in self.edges():
-            edgedict = {}
+            edgedict = OrderedDict({})
             edgedict['src'] = srcname
             edgedict['dst'] = dstname
             edgedict['resnr'] = self.edge[srcname][dstname]['res']
