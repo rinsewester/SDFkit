@@ -241,11 +241,37 @@ class CSDFGraph(nx.DiGraph):
                 res.append(elm)
         return res
 
+    def validateGraph(self):
+        """Validates the graph.
+
+        This methods checks if the incoming edges match the function in the node.
+        An exception is raised when there is a mismatch between incoming edge argument 
+        numbers and the the of arguments of the node fucntion."""
+        for n in self.nodes():
+            nodefunc = self.node[n]['func']
+            nodefuncstr = self.node[n]['funcstr']
+
+            # node must have a lmabda expression as its functionality
+            if not nodefuncstr.startswith('lambda'):
+                raise ValueError('Node ' + n + ' does not have a valid lambda function.')
+
+            nodefuncargcount = nodefunc.__code__.co_argcount
+            srccount = len(self.predecessors(n))
+
+            # for every data argument of the node function, there should be an incoming edge
+            if (nodefuncargcount - 2) != srccount:
+                raise ValueError('Node ' + n + ' has a function with ' + str(nodefuncargcount - 2) + 'data arguments but has ' + str(srccount) + 'sources')
+
+            argnrs = []
+            for p in self.predecessors(n):
+                argnrs.append(self.edge[p][n]['arg'])
+
+            if set(argnrs) != set(range(nodefuncargcount - 2)):
+                raise ValueError('Every argument should have a corresponding unique source, this is not hte case for node ' + n)
+
+
     def loadFromFile(self, filename):
-        # TODO add some proper validation here:
-        #  at least two nodes and one edge, proper connections
-        #  and check wether all edges are connected consistenly
-        #  to nodearguments and results
+        """Load a graph from a JSON file."""
         Log.addLogMessage(Log.INFO, 'Opened grap ' + filename)
         self.filename = filename
         with open(filename, 'r') as f:
@@ -291,6 +317,9 @@ class CSDFGraph(nx.DiGraph):
             self.add_edge(
                     edgeSource, edgeDestination, edgeResNumber, edgeArgNumber,
                     edgePRates, edgeCRates, edgeTokens, color=edgeColor)
+
+        # Now that the graph is construcuted, validate it:  
+        self.validateGraph()
             
     def storeToFile(self, filename=''):
         if filename == '':
