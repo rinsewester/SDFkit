@@ -1,62 +1,62 @@
 {
+    "name": "Simplecsdfproducerconsumer",
     "clashtypes": {
         "Bytev2": "Vec 2 Byte",
         "Bytev3": "Vec 3 Byte"
     },
+    "nodes": [
+        {
+            "name": "Pr",
+            "function": "lambda firecounter, phase: [] if (phase == 0) else [firecounter, firecounter + 1]",
+            "clashcode": "f_Pr :: Cntr -> Cntr -> Vec 2 Cntr\nf_Pr firecounter phase = res\n  where\n    res = if phase == 0\n                then 0 :> 0 :> Nil\n                else firecounter :> firecounter + 1 :> Nil\n",
+            "pos": [
+                80,
+                100
+            ],
+            "color": [
+                230,
+                230,
+                255
+            ]
+        },
+        {
+            "name": "Cr",
+            "function": "lambda xs, firecounter, phase: []",
+            "clashcode": "f_Cr :: Vec 3 Cntr -> Cntr -> Cntr -> ()\nf_Cr data_in firecounter phase = ()",
+            "pos": [
+                280,
+                100
+            ],
+            "color": [
+                230,
+                230,
+                255
+            ]
+        }
+    ],
     "edges": [
         {
+            "src": "Pr",
+            "dst": "Cr",
+            "resnr": 0,
             "argnr": 0,
-            "color": [
-                180,
-                180,
-                180
+            "prates": [
+                0,
+                2
             ],
             "crates": [
                 1,
                 0,
                 3
             ],
-            "dst": "Cr",
-            "prates": [
-                0,
-                2
-            ],
-            "resnr": 0,
-            "src": "Pr",
             "tkns": [
                 13,
                 14
-            ]
-        }
-    ],
-    "name": "Simplecsdfproducerconsumer",
-    "nodes": [
-        {
-            "clashcode": "f_Pr :: Cntr -> Cntr -> Vec 2 Cntr\nf_Pr firecounter phase = res\n  where\n    res = if phase == 0\n                then 0 :> 0 :> Nil\n                else firecounter :> firecounter + 1 :> Nil\n",
-            "color": [
-                230,
-                230,
-                255
             ],
-            "function": "lambda firecounter, phase: [] if (phase == 0) else [firecounter, firecounter + 1]",
-            "name": "Pr",
-            "pos": [
-                80,
-                100
-            ]
-        },
-        {
-            "clashcode": "f_Cr :: Vec 3 Cntr -> Cntr -> Cntr -> ()\nf_Cr data_in firecounter phase = ()",
             "color": [
-                230,
-                230,
-                255
-            ],
-            "function": "lambda xs, firecounter, phase: []",
-            "name": "Cr",
-            "pos": [
-                280,
-                100
+                180,
+                180,
+                180
             ]
         }
     ]

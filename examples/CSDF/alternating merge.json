@@ -1,86 +1,121 @@
 {
-    "name": "AlternatingMerge",
+    "name": "Alternatingmerge",
     "nodes": [
         {
-            "name": "P1",
+            "name": "F",
+            "function": "lambda xs, ys, firecounter, phase: xs if (phase == 0) else ys",
             "pos": [
-                80,
-                100
+                280,
+                180
             ],
-            "function": "lambda firecounter, phase: [firecounter] if (phase == 1) else []"
-        },
-        {
-            "name": "C",
-            "pos": [
-                480,
-                200
-            ],
-            "function": "lambda xs, firecounter, phase: []"
+            "color": [
+                230,
+                230,
+                255
+            ]
         },
         {
             "name": "P2",
+            "function": "lambda firecounter, phase: [firecounter] if (phase == 0) else []",
             "pos": [
                 80,
-                300
+                140
             ],
-            "function": "lambda firecounter, phase: [firecounter] if (phase == 0) else []"
+            "color": [
+                230,
+                230,
+                255
+            ]
         },
         {
-            "name": "F",
+            "name": "P1",
+            "function": "lambda firecounter, phase: [firecounter] if (phase == 1) else []",
             "pos": [
-                280,
-                200
+                80,
+                240
             ],
-            "function": "lambda xs, ys, firecounter, phase: xs if (phase == 0) else ys"
+            "color": [
+                230,
+                230,
+                255
+            ]
+        },
+        {
+            "name": "C",
+            "function": "lambda xs, firecounter, phase: []",
+            "pos": [
+                480,
+                180
+            ],
+            "color": [
+                230,
+                230,
+                255
+            ]
         }
     ],
     "edges": [
         {
-            "tkns": [],
-            "src": "P1",
-            "argnr": 0,
-            "crates": [
-                1,
-                0
-            ],
-            "dst": "F",
+            "src": "F",
+            "dst": "C",
             "resnr": 0,
+            "argnr": 0,
             "prates": [
-                0,
                 1
+            ],
+            "crates": [
+                1
+            ],
+            "tkns": [
+                15
+            ],
+            "color": [
+                180,
+                180,
+                180
             ]
         },
         {
+            "src": "P2",
+            "dst": "F",
+            "resnr": 0,
+            "argnr": 1,
+            "prates": [
+                1,
+                0
+            ],
+            "crates": [
+                0,
+                1
+            ],
             "tkns": [
                 16,
                 14
             ],
-            "src": "P2",
-            "argnr": 1,
-            "crates": [
-                0,
-                1
-            ],
-            "dst": "F",
-            "resnr": 0,
-            "prates": [
-                1,
-                0
+            "color": [
+                180,
+                180,
+                180
             ]
         },
         {
-            "tkns": [
-                15
-            ],
-            "src": "F",
-            "argnr": 0,
-            "crates": [
-                1
-            ],
-            "dst": "C",
+            "src": "P1",
+            "dst": "F",
             "resnr": 0,
+            "argnr": 0,
             "prates": [
+                0,
                 1
+            ],
+            "crates": [
+                1,
+                0
+            ],
+            "tkns": [],
+            "color": [
+                180,
+                180,
+                180
             ]
         }
     ]

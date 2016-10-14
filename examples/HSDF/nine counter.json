@@ -1,104 +1,104 @@
 {
-    "edges": [
-        {
-            "argnr": 0,
-            "color": [
-                180,
-                180,
-                180
-            ],
-            "crates": [
-                1
-            ],
-            "dst": "Cnt",
-            "prates": [
-                1
-            ],
-            "resnr": 0,
-            "src": "Pr",
-            "tkns": []
-        },
-        {
-            "argnr": 0,
-            "color": [
-                180,
-                180,
-                180
-            ],
-            "crates": [
-                1
-            ],
-            "dst": "Cr",
-            "prates": [
-                1
-            ],
-            "resnr": 0,
-            "src": "Cnt",
-            "tkns": []
-        },
-        {
-            "argnr": 1,
-            "color": [
-                180,
-                180,
-                180
-            ],
-            "crates": [
-                1
-            ],
-            "dst": "Cnt",
-            "prates": [
-                1
-            ],
-            "resnr": 1,
-            "src": "Cnt",
-            "tkns": [
-                0
-            ]
-        }
-    ],
     "name": "Ninecounter",
     "nodes": [
         {
-            "clashcode": "f_Pr :: Cntr -> Cntr -> Nibble\nf_Pr firecounter phase = res\n  where\n    res = resize firecounter",
-            "color": [
-                230,
-                230,
-                255
-            ],
-            "function": "lambda firecounter, phase: [firecounter % 16]",
             "name": "Pr",
+            "function": "lambda firecounter, phase: [firecounter % 16]",
+            "clashcode": "f_Pr :: Cntr -> Cntr -> Nibble\nf_Pr firecounter phase = res\n  where\n    res = resize firecounter",
             "pos": [
                 80,
                 100
-            ]
-        },
-        {
-            "clashcode": "f_Cr :: Cntr -> Cntr -> Cntr -> ()\nf_Cr cnt_in firecounter phase = res\n  where\n    res = ()",
+            ],
             "color": [
                 230,
                 230,
                 255
-            ],
-            "function": "lambda cnt_in, firecounter, phase: []",
+            ]
+        },
+        {
             "name": "Cr",
+            "function": "lambda cnt_in, firecounter, phase: []",
+            "clashcode": "f_Cr :: Cntr -> Cntr -> Cntr -> ()\nf_Cr cnt_in firecounter phase = res\n  where\n    res = ()",
             "pos": [
                 480,
                 100
-            ]
-        },
-        {
-            "clashcode": "f_Cnt :: Nibble -> Cntr -> Cntr -> Cntr -> (Cntr, Cntr)\nf_Cnt num_in cur_cnt firecounter phase = (res, res)\n  where\n    res = if num_in == 9 then cur_cnt + 1 else cur_cnt\n",
+            ],
             "color": [
                 230,
                 230,
                 255
-            ],
-            "function": "lambda num_in, cur_cnt, firecounter, phase: ([cur_cnt[0] + 1] if num_in[0] == 9 else [cur_cnt[0]], [cur_cnt[0] + 1] if num_in[0] == 9 else [cur_cnt[0]])",
+            ]
+        },
+        {
             "name": "Cnt",
+            "function": "lambda num_in, cur_cnt, firecounter, phase: ([cur_cnt[0] + 1] if num_in[0] == 9 else [cur_cnt[0]], [cur_cnt[0] + 1] if num_in[0] == 9 else [cur_cnt[0]])",
+            "clashcode": "f_Cnt :: Nibble -> Cntr -> Cntr -> Cntr -> (Cntr, Cntr)\nf_Cnt num_in cur_cnt firecounter phase = (res, res)\n  where\n    res = if num_in == 9 then cur_cnt + 1 else cur_cnt\n",
             "pos": [
                 280,
                 80
+            ],
+            "color": [
+                230,
+                230,
+                255
+            ]
+        }
+    ],
+    "edges": [
+        {
+            "src": "Pr",
+            "dst": "Cnt",
+            "resnr": 0,
+            "argnr": 0,
+            "prates": [
+                1
+            ],
+            "crates": [
+                1
+            ],
+            "tkns": [],
+            "color": [
+                180,
+                180,
+                180
+            ]
+        },
+        {
+            "src": "Cnt",
+            "dst": "Cr",
+            "resnr": 0,
+            "argnr": 0,
+            "prates": [
+                1
+            ],
+            "crates": [
+                1
+            ],
+            "tkns": [],
+            "color": [
+                180,
+                180,
+                180
+            ]
+        },
+        {
+            "src": "Cnt",
+            "dst": "Cnt",
+            "resnr": 1,
+            "argnr": 1,
+            "prates": [
+                1
+            ],
+            "crates": [
+                1
+            ],
+            "tkns": [
+                0
+            ],
+            "color": [
+                180,
+                180,
+                180
             ]
         }
     ]

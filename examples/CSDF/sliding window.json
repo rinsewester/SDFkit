@@ -1,101 +1,155 @@
 {
-    "name": "SlidingWindow",
+    "name": "Slidingwindow",
     "nodes": [
         {
-            "name": "Spl",
-            "pos": [
-                280,
-                80
-            ],
-            "function": "lambda xs, state, firecounter, phase: (xs[0][:3] if phase == 0 else state[0][phase:phase + 3], xs if phase == 0 else state if phase == 1 else [])"
-        },
-        {
             "name": "Pr",
+            "function": "lambda firecounter, phase: [list(range(firecounter, firecounter + 5))] if phase == 0 else []",
             "pos": [
                 80,
                 100
             ],
-            "function": "lambda firecounter, phase: [list(range(firecounter, firecounter + 5))] if phase == 0 else []"
+            "color": [
+                230,
+                230,
+                255
+            ]
         },
         {
             "name": "Cr",
+            "function": "lambda x, firecounter, phase: []",
             "pos": [
                 680,
                 100
             ],
-            "function": "lambda x, firecounter, phase: []"
+            "color": [
+                230,
+                230,
+                255
+            ]
         },
         {
             "name": "Op",
+            "function": "lambda xs, firecounter, phase: [sum(xs) / 3]",
             "pos": [
                 480,
                 100
             ],
-            "function": "lambda xs, firecounter, phase: [sum(xs) / 3]"
+            "color": [
+                230,
+                230,
+                255
+            ]
+        },
+        {
+            "name": "Spl",
+            "function": "lambda xs, state, firecounter, phase: (xs[0][:3] if phase == 0 else state[0][phase:phase + 3], xs if phase == 0 else state if phase == 1 else [])",
+            "pos": [
+                280,
+                80
+            ],
+            "color": [
+                230,
+                230,
+                255
+            ]
         }
     ],
     "edges": [
         {
-            "tkns": [],
-            "src": "Spl",
-            "argnr": 1,
-            "crates": [
-                0,
-                1,
-                1
-            ],
-            "dst": "Spl",
-            "resnr": 1,
-            "prates": [
-                1,
-                1,
-                0
-            ]
-        },
-        {
-            "tkns": [],
-            "src": "Spl",
-            "argnr": 0,
-            "crates": [
-                3
-            ],
-            "dst": "Op",
-            "resnr": 0,
-            "prates": [
-                3,
-                3,
-                3
-            ]
-        },
-        {
-            "tkns": [],
             "src": "Pr",
-            "argnr": 0,
-            "crates": [
-                1,
-                0,
-                0
-            ],
             "dst": "Spl",
             "resnr": 0,
+            "argnr": 0,
             "prates": [
                 1,
                 0,
                 0,
                 0
+            ],
+            "crates": [
+                1,
+                0,
+                0
+            ],
+            "tkns": [],
+            "color": [
+                180,
+                180,
+                180
             ]
         },
         {
-            "tkns": [],
             "src": "Op",
-            "argnr": 0,
-            "crates": [
-                1
-            ],
             "dst": "Cr",
             "resnr": 0,
+            "argnr": 0,
             "prates": [
                 1
+            ],
+            "crates": [
+                1
+            ],
+            "tkns": [
+                25.0
+            ],
+            "color": [
+                180,
+                180,
+                180
+            ]
+        },
+        {
+            "src": "Spl",
+            "dst": "Op",
+            "resnr": 0,
+            "argnr": 0,
+            "prates": [
+                3,
+                3,
+                3
+            ],
+            "crates": [
+                3
+            ],
+            "tkns": [
+                25,
+                26,
+                27
+            ],
+            "color": [
+                180,
+                180,
+                180
+            ]
+        },
+        {
+            "src": "Spl",
+            "dst": "Spl",
+            "resnr": 1,
+            "argnr": 1,
+            "prates": [
+                1,
+                1,
+                0
+            ],
+            "crates": [
+                0,
+                1,
+                1
+            ],
+            "tkns": [
+                [
+                    24,
+                    25,
+                    26,
+                    27,
+                    28
+                ]
+            ],
+            "color": [
+                180,
+                180,
+                180
             ]
         }
     ]

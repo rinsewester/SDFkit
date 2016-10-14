@@ -1,148 +1,156 @@
 {
-    "edges": [
-        {
-            "argnr": 0,
-            "color": [
-                180,
-                180,
-                180
-            ],
-            "crates": [
-                1
-            ],
-            "dst": "C2",
-            "prates": [
-                1
-            ],
-            "resnr": 1,
-            "src": "Op",
-            "tkns": []
-        },
-        {
-            "argnr": 0,
-            "color": [
-                180,
-                180,
-                180
-            ],
-            "crates": [
-                1
-            ],
-            "dst": "C1",
-            "prates": [
-                1
-            ],
-            "resnr": 0,
-            "src": "Op",
-            "tkns": []
-        },
-        {
-            "argnr": 0,
-            "color": [
-                180,
-                180,
-                180
-            ],
-            "crates": [
-                1
-            ],
-            "dst": "Op",
-            "prates": [
-                1
-            ],
-            "resnr": 0,
-            "src": "P1",
-            "tkns": []
-        },
-        {
-            "argnr": 1,
-            "color": [
-                180,
-                180,
-                180
-            ],
-            "crates": [
-                1
-            ],
-            "dst": "Op",
-            "prates": [
-                1
-            ],
-            "resnr": 0,
-            "src": "P2",
-            "tkns": []
-        }
-    ],
     "name": "Distinctoutputs",
     "nodes": [
         {
-            "clashcode": "f_C2 :: Cntr -> Cntr -> Cntr -> ()\nf_C2 cnt_in firecounter phase = res\n  where\n    res = ()",
-            "color": [
-                230,
-                230,
-                255
-            ],
-            "function": "lambda xs, firecounter, phase: []",
             "name": "C2",
+            "function": "lambda xs, firecounter, phase: []",
+            "clashcode": "f_C2 :: Cntr -> Cntr -> Cntr -> ()\nf_C2 cnt_in firecounter phase = res\n  where\n    res = ()",
             "pos": [
                 480,
                 240
-            ]
-        },
-        {
-            "clashcode": "f_Op :: Cntr -> Cntr -> Cntr -> Cntr -> (Cntr, Cntr)\nf_Op x y firecounter phase = (res0, res1)\n  where\n    res0 = x + 3\n    res1 = y + 5\n",
+            ],
             "color": [
                 230,
                 230,
                 255
+            ]
+        },
+        {
+            "name": "P2",
+            "function": "lambda firecounter, phase: [firecounter * 2]",
+            "clashcode": "f_P2 :: Cntr -> Cntr -> Cntr\nf_P2 firecounter phase = res\n  where\n    res = firecounter * 2",
+            "pos": [
+                80,
+                240
             ],
-            "function": "lambda xs, ys, firecounter, phase: ([xs[0] + 3], [ys[0] + 5])",
+            "color": [
+                230,
+                230,
+                255
+            ]
+        },
+        {
             "name": "Op",
+            "function": "lambda xs, ys, firecounter, phase: ([xs[0] + 3], [ys[0] + 5])",
+            "clashcode": "f_Op :: Cntr -> Cntr -> Cntr -> Cntr -> (Cntr, Cntr)\nf_Op x y firecounter phase = (res0, res1)\n  where\n    res0 = x + 3\n    res1 = y + 5\n",
             "pos": [
                 280,
                 160
-            ]
-        },
-        {
-            "clashcode": "f_P1 :: Cntr -> Cntr -> Cntr\nf_P1 firecounter phase = res\n  where\n    res = firecounter",
+            ],
             "color": [
                 230,
                 230,
                 255
-            ],
-            "function": "lambda firecounter, phase: [firecounter]",
+            ]
+        },
+        {
             "name": "P1",
+            "function": "lambda firecounter, phase: [firecounter]",
+            "clashcode": "f_P1 :: Cntr -> Cntr -> Cntr\nf_P1 firecounter phase = res\n  where\n    res = firecounter",
             "pos": [
                 80,
                 100
-            ]
-        },
-        {
-            "clashcode": "f_C1 :: Cntr -> Cntr -> Cntr -> ()\nf_C1 cnt_in firecounter phase = res\n  where\n    res = ()",
+            ],
             "color": [
                 230,
                 230,
                 255
-            ],
-            "function": "lambda xs, firecounter, phase: []",
+            ]
+        },
+        {
             "name": "C1",
+            "function": "lambda xs, firecounter, phase: []",
+            "clashcode": "f_C1 :: Cntr -> Cntr -> Cntr -> ()\nf_C1 cnt_in firecounter phase = res\n  where\n    res = ()",
             "pos": [
                 480,
                 100
-            ]
-        },
-        {
-            "clashcode": "f_P2 :: Cntr -> Cntr -> Cntr\nf_P2 firecounter phase = res\n  where\n    res = firecounter * 2",
+            ],
             "color": [
                 230,
                 230,
                 255
+            ]
+        }
+    ],
+    "edges": [
+        {
+            "src": "P2",
+            "dst": "Op",
+            "resnr": 0,
+            "argnr": 1,
+            "prates": [
+                1
             ],
-            "function": "lambda firecounter, phase: [firecounter * 2]",
-            "name": "P2",
-            "pos": [
-                80,
-                240
+            "crates": [
+                1
+            ],
+            "tkns": [
+                72
+            ],
+            "color": [
+                180,
+                180,
+                180
+            ]
+        },
+        {
+            "src": "Op",
+            "dst": "C2",
+            "resnr": 1,
+            "argnr": 0,
+            "prates": [
+                1
+            ],
+            "crates": [
+                1
+            ],
+            "tkns": [
+                75
+            ],
+            "color": [
+                180,
+                180,
+                180
+            ]
+        },
+        {
+            "src": "Op",
+            "dst": "C1",
+            "resnr": 0,
+            "argnr": 0,
+            "prates": [
+                1
+            ],
+            "crates": [
+                1
+            ],
+            "tkns": [
+                38
+            ],
+            "color": [
+                180,
+                180,
+                180
+            ]
+        },
+        {
+            "src": "P1",
+            "dst": "Op",
+            "resnr": 0,
+            "argnr": 0,
+            "prates": [
+                1
+            ],
+            "crates": [
+                1
+            ],
+            "tkns": [
+                36
+            ],
+            "color": [
+                180,
+                180,
+                180
             ]
         }
     ]
