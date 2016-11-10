@@ -265,12 +265,19 @@ class CSDFGraph(nx.DiGraph):
             self.nodefirings[n].append(self.node[n]['hasfired'])
 
     def stateCount(self):
+        """
+        Returns the number of states that are stored during sumilation.
 
+        The number of states are the one for the initial state and the 
+        number of times the graph has prgressed using the step() method.
+        """
         e0 = list(self.edgestates.keys())[0]
         return len(self.edgestates[e0])
 
     def back(self):
-
+        """
+        Go back one simulation step.
+        """
         for (src, dst), states in self.edgestates.items():
             self[src][dst]['tkns'] = states[-2]
             states.pop()
@@ -284,8 +291,15 @@ class CSDFGraph(nx.DiGraph):
             self.nodefirings[n].pop()
 
     def step(self):
+        """
+        Perform one iteration of the graph.
 
-        # perform single iteration of DF graph
+        During a single iteration step, for all nodes the
+        firing codtion is checked. After that all nodes that
+        can fire consume the tokens on the inputs and produce
+        the results in the form of a list of output tokens 
+        which are put on the edges.
+        """
         for n in self.nodes():
             canfire = True
             source_nodes = []
@@ -360,12 +374,14 @@ class CSDFGraph(nx.DiGraph):
         # increase clock for the global clock
         self.clockcount += 1
 
-
-    # This function converts a list of production/consumption
-    # rates to the flat variant: [1, "2*4", 3, "3*2"] becomes:
-    # [1, 4, 4, 3, 2, 2, 2]
     def _flattenRateList(lst):
+        """
+        Returns the a flattened list of rates.
 
+        This function converts a list of production/consumption
+        rates to the flat variant: [1, "2*4", 3, "3*2"] becomes:
+        [1, 4, 4, 3, 2, 2, 2]
+        """
         res = []
         for elm in lst:
             if type(elm) is str:
@@ -382,8 +398,13 @@ class CSDFGraph(nx.DiGraph):
         """Validates the graph.
 
         This methods checks if the incoming edges match the function in the node.
-        An exception is raised when there is a mismatch between incoming edge argument 
-        numbers and the the of arguments of the node fucntion."""
+
+        Raises
+        ------
+        ValueError
+            When there is a mismatch between incoming edge argument numbers and the
+            number of arguments of the node fucntion.
+        """
         for n in self.nodes():
             nodefunc = self.node[n]['func']
             nodefuncstr = self.node[n]['funcstr']
@@ -397,7 +418,7 @@ class CSDFGraph(nx.DiGraph):
 
             # for every data argument of the node function, there should be an incoming edge
             if (nodefuncargcount - 2) != srccount:
-                raise ValueError('Node ' + n + ' has a function with ' + str(nodefuncargcount - 2) + 'data arguments but has ' + str(srccount) + 'sources')
+                raise ValueError('Node ' + n + ' has a function with ' + str(nodefuncargcount - 2) + ' data arguments but has ' + str(srccount) + ' sources')
 
             argnrs = []
             for p in self.predecessors(n):
@@ -408,7 +429,18 @@ class CSDFGraph(nx.DiGraph):
 
 
     def loadFromFile(self, filename):
-        """Load a graph from a JSON file."""
+        """
+        Loads a graph from a JSON file.
+
+        Parameters
+        ----------
+        filename : string with file path
+
+        Raises
+        ------
+        ValueError
+            When the graph is inconsistent as detected by the validateGraph() method.
+        """
         Log.addLogMessage(Log.INFO, 'Opened grap ' + filename)
         self.filename = filename
         with open(filename, 'r') as f:
@@ -459,6 +491,16 @@ class CSDFGraph(nx.DiGraph):
         self.validateGraph()
             
     def storeToFile(self, filename=''):
+        """
+        Stores the current graph in a JSON file.
+
+        Parameters
+        ----------
+        filename : string with filepath
+            filename is an optional argument containing the file in which graph is stored.
+            When this argument is not used, the graph is stored in the file from  which it
+            was initially read.
+        """
         if filename == '':
             # no file name given so use file from which this graph is made
             fname = self.filename
@@ -511,23 +553,43 @@ class CSDFGraph(nx.DiGraph):
             Log.addLogMessage(Log.INFO, 'Saved graph ' + fname)
 
     def updateNodeFunction(self, nodename, funcstr):
+        """
+        Updates the function in the node.
+
+        Parameters
+        ----------
+        nodename : string containing node name
+        funcstr : string with lambda
+        """
         self.node[nodename]['funcstr'] = funcstr
         self.node[nodename]['func'] = eval(funcstr)
 
     def updateClashCode(self, nodename, clashcode):
+        """
+        Changes the CLaSH code of a node.
+        """
         self.node[nodename]['clashcode'] = clashcode
 
     def updateTokens(self, edge, tokenstr):
+        """
+        Changes the tokens on a particular edge.
+        """
         src, dst = edge
         newtokens = eval(tokenstr)
         self[src][dst]['tkns'] = newtokens       
 
     def updatePRates(self, edge, pratesstr):
+        """
+        Changes the the list of production rates.
+        """
         src, dst = edge
         newprates = eval(pratesstr)
         self[src][dst]['prates'] = newprates
 
     def updateCRates(self, edge, cratesstr):
+        """
+        Changes the the list of consumption rates.
+        """
         src, dst = edge
         newcrates = eval(cratesstr)
         self[src][dst]['crates'] = newcrates
