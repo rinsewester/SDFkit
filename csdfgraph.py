@@ -594,12 +594,6 @@ class CSDFGraph(nx.DiGraph):
         newcrates = eval(cratesstr)
         self[src][dst]['crates'] = newcrates
 
-    def print_state(self):
-
-        for src, dst in self.edges():
-            tkns = self[src][dst]['tkns']
-            print(src, ' --- ', tkns, ' --> ', dst)
-
 # The default SDF graph
 G0 = CSDFGraph()
 G0.loadFromFile('examples/SDF/simple graph.json')
