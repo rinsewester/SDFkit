@@ -77,7 +77,14 @@ class CSDFGraph(nx.DiGraph):
     DEFAULT_EDGE_COLOR = (180, 180, 180)
 
     def __init__(self, name=''):
+        """
+        Create an empty CSDF graph.
 
+        Parameters
+        ----------
+        name : graph name
+            The name of the garph is only used for code generation.
+        """
         super().__init__()
 
         # name of the CSDFGraph
@@ -102,7 +109,29 @@ class CSDFGraph(nx.DiGraph):
         self.clockcount = 0
 
     def add_edge(self, src, dst, resnr, argnr, prates, crates, tkns=[], color=DEFAULT_EDGE_COLOR):
+        """
+        Add an edge to the graph.
 
+        To prevent inconsistencies later on, first add nodes to the graph before
+        adding edges.
+
+        Parameters
+        ----------
+        src : source node
+        dst : destination node
+        resnr : result number
+            When a node has multiple outputs, the function that is executed in
+            the node returns a tuple. In order to distinguish between outputs,
+            resnr is used. For example, when resnr equals 1, the second result
+            in the output tuple will be sent using the current edge.
+        argnr : argument number
+            Similar to resnr, this number indicates to which argument of the
+            node function the tokens on the current edge will be sent.
+        prates : list of production rates
+        crates : list of consumption rates
+        tkns : list of initial tokens on the edge
+        color: tuple formatted as (r, g, b)
+        """
         super(CSDFGraph, self).add_edge(src, dst)
         self.edge[src][dst]['res'] = resnr
         self.edge[src][dst]['arg'] = argnr
@@ -115,7 +144,20 @@ class CSDFGraph(nx.DiGraph):
         self.edgestates[(src, dst)] = [tkns]
 
     def add_node(self, n, f, pos, clashcode='', color=DEFAULT_NODE_COLOR):
+        """
+        Add a node to the graph.
 
+        When constructing a graph, first add nodes using this method before
+        adding edges.
+
+        Parameters
+        ----------
+        n : name of node
+        f : node function
+        pos : position in shape of (x,y) tuple
+        clashcode : string containing the clash codefor code generation.
+        color: tuple formatted as (r, g, b)
+        """
         super(CSDFGraph, self).add_node(n)
         self.updateNodeFunction(n, f)
         self.node[n]['pos'] = pos
@@ -128,16 +170,39 @@ class CSDFGraph(nx.DiGraph):
         self.nodefirings[n] = [] # not fired yet
         
     def add_nodes_from(self, ns):
+        """
+        Add a list of nodes to the graph.
 
+        Parameters
+        ----------
+        ns : list of nodes
+            A list of nodes where each element is a (n,f,p) tuple
+            where n is the name, f is the node function and p is the
+            position respectively.
+        """
         for n, f, p in ns:
             self.add_node(n, f, p)
 
     def add_edges_from(self, es):
+        """
+        Add a list of edges to the graph.
 
+        Parameters
+        ----------
+        es : list of edges
+            A list of edges where each element is a (src, dst, resnr,
+            argnr, prates, crates, tkns) tuple.
+        """
         for src, dst, resnr, argnr, prates, crates, tkns in es:
             self.add_edge(src, dst, resnr, argnr, prates, crates, tkns)
 
     def isHSDF(self):
+        """
+        Returns True when the graph is an HSDF graph.
+
+        A graph is an HSDF graph only when all edges
+        have a production and consumption rate of 1.
+        """
         rates = []
         for src, dst in self.edges():
             rates.append(self[src][dst]['prates'])
@@ -146,6 +211,12 @@ class CSDFGraph(nx.DiGraph):
         return all(map(lambda rts: rts == [1], rates))
 
     def isSDF(self):
+        """
+        Returns True when the graph is an SDF graph.
+
+        A graph is an SDF graph only when all edges
+        have only one production and consumption rate.
+        """
         rates = []
         for src, dst in self.edges():
             rates.append(self[src][dst]['prates'])
@@ -154,10 +225,23 @@ class CSDFGraph(nx.DiGraph):
         return all(map(lambda rts: len(rts) == 1, rates))
 
     def isCSDF(self):
+        """
+        Returns True when the graph is an CSDF graph.
+
+        Any graph that is not an HSDF or SDF graph in
+        SDFkit is a CSDF graph, i.e., production and
+        consumption rates can be a list of rates.
+        """
         return not self.isSDF()
 
     def reset(self):
+        """
+        Reset the graph to initial state.
 
+        Undo all simulation steps by retoring the state
+        (firecopunters and tokens on edges) back to the
+        initial state of the graph.
+        """
         for (src, dst), states in self.edgestates.items():
             self[src][dst]['tkns'] = states[0]
             del self.edgestates[(src, dst)][1:]
