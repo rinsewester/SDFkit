@@ -1,5 +1,8 @@
-**********************
+======================
 Introdcution to SDFkit
-**********************
+======================
 
-introduce sdfkit: what is it, show screenshot
+SDFkit is a simulator and FPGA code generator for synchronous data flow (SDF) graphs.
+
+
+
