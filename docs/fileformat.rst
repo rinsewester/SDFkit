@@ -44,12 +44,70 @@ can be used:
 
 Node
 -----
-nodes options
+A node is a JSON object with the following attributes:
+
+**name**:
+   Name of the node.
+
+   *string* : required
+
+   Not only is the name of the node used for creating edges, it is
+   also used  for naming the CLaSH code functions and a lot of
+   signals in the generated code.
+
+**pos**:
+   Position of the node
+
+   *list of int* : required
+
+   The position of the node is a list of an x and y position: [x,y]
+   All nodes are placed in a grid. The vertical resolution is 20 
+   units while the horizontal resolution is 50. In SDFkit nodes can
+   be moved by dragging and saving the graph.
+
+**function**:
+   Function executed in the node.
+
+   *string* : required
+
+   The functionality of a node is implemented as lambda expression. This
+   expression is given as a string and is intepreted using the eval() 
+   function in python. The format of these lambda function can be found
+   in TODO.
+
+**clashcode**:
+   CLaSh code of the node.
+
+   *string* : optional
+
+   The python code is not translated autmatically to CLaSh code. Therefore,
+   this has to be given as well. This field is optional since the graph can
+   be simulated without CLaSh code. The format of the CLaSh can be found
+   in TODO.
+
+**color**:
+   Color of the node.
+
+   *list of int* : optional
+
+   In order to highlight certain parts of the graph, nodes can be colored.
+   The color is given as an rgb list [r,g,b]. Red is expressed as [255, 0, 0].
 
 
 Edge
 -----
-edge options
+Edges are JSON objects connected two nodes and has the following attributes:
+
+src
+dst
+resnr
+argnr
+prates
+crates
+tkns
+color optional
+
+
 
 
 Small example

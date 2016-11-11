@@ -2,25 +2,11 @@
     "name": "Producerconsumer",
     "nodes": [
         {
-            "name": "Cr",
-            "function": "lambda x, firecounter, phase: []",
-            "clashcode": "f_Cr :: Cntr -> Cntr -> Cntr -> ()\nf_Cr x firecounter phase = res\n  where\n    res = ()",
-            "pos": [
-                480,
-                100
-            ],
-            "color": [
-                230,
-                230,
-                255
-            ]
-        },
-        {
             "name": "Pr",
             "function": "lambda firecounter, phase: [firecounter]",
             "clashcode": "f_Pr :: Cntr -> Cntr -> Cntr\nf_Pr firecounter phase = res\n  where\n    res = firecounter",
             "pos": [
-                80,
+                0,
                 100
             ],
             "color": [
@@ -34,7 +20,21 @@
             "function": "lambda x, y, firecounter, phase: ([x[0] + y[0]], [x[0] + y[0]])",
             "clashcode": "f_Int :: Cntr -> Cntr -> Cntr -> Cntr -> (Cntr, Cntr)\nf_Int x y firecounter phase = (res, res)\n  where\n    res = x + y",
             "pos": [
-                280,
+                160,
+                80
+            ],
+            "color": [
+                230,
+                230,
+                255
+            ]
+        },
+        {
+            "name": "Cr",
+            "function": "lambda x, firecounter, phase: []",
+            "clashcode": "f_Cr :: Cntr -> Cntr -> Cntr -> ()\nf_Cr x firecounter phase = res\n  where\n    res = ()",
+            "pos": [
+                320,
                 80
             ],
             "color": [
@@ -65,24 +65,6 @@
         },
         {
             "src": "Int",
-            "dst": "Cr",
-            "resnr": 0,
-            "argnr": 0,
-            "prates": [
-                1
-            ],
-            "crates": [
-                1
-            ],
-            "tkns": [],
-            "color": [
-                180,
-                180,
-                180
-            ]
-        },
-        {
-            "src": "Int",
             "dst": "Int",
             "resnr": 1,
             "argnr": 1,
@@ -95,6 +77,24 @@
             "tkns": [
                 0
             ],
+            "color": [
+                180,
+                180,
+                180
+            ]
+        },
+        {
+            "src": "Int",
+            "dst": "Cr",
+            "resnr": 0,
+            "argnr": 0,
+            "prates": [
+                1
+            ],
+            "crates": [
+                1
+            ],
+            "tkns": [],
             "color": [
                 180,
                 180,
