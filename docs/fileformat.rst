@@ -129,15 +129,39 @@ Edges are JSON objects connected two nodes and has the following attributes:
    an edge is connected. For example, when argnr equals 1 the edge is
    connected to the second input (the second argument of the node function).
 
+**prates**:
+   Production rates.
 
-prates
-crates
-tkns
-color optional
+   *list of int* : required
 
+   The production rates of the edge indicates how many tokens are put on
+   the edge during a single firing. The production is a list of integers
+   but repeating numbers can be expressed more using the following syntax:
+   [1, "2*4", 3, "3*2"] becomes: [1, 4, 4, 3, 2, 2, 2]
 
+**crates**:
+   Consumption rates.
 
+   *list of int* : required
 
-Small example
--------------
-nodes options
+   The consumption rates of the edge indicates how many tokens are removed from
+   the edge during a single firing. The syntax is the same as is used for the 
+   production rates.
+
+**tkns**:
+   Tokens on the edge.
+
+   *list of anyt type* : required
+
+   The initial set of tokens on the edge before any simulation has been performed.
+   An edge without any tokens is indicated using an empty list: [].
+
+**color**:
+   Color of the edge.
+
+   *list of int* : optional
+
+   In order to highlight certain parts of the graph, edges can be colored in
+   the same way as nodes. The color is given as an rgb list [r,g,b]. Green is 
+   therefore expressed as [0, 255, 0].
+
