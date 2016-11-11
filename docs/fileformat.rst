@@ -98,10 +98,38 @@ Edge
 -----
 Edges are JSON objects connected two nodes and has the following attributes:
 
-src
-dst
-resnr
-argnr
+**src**:
+   Source node.
+
+   *string* : required
+
+**dst**:
+   Destination node.
+
+   *string* : required
+
+**resnr**:
+   Results number.
+
+   *int* : required
+
+   When a node has several outputs, the node function produces a tuple 
+   with several sets of tokens, i.e., a set for every output. In order to
+   construct an edge, not only is a node required but also the the output
+   number to which the edge is connected. For example, when resnr equals 1
+   the edge is connected to the second output (the second element in the
+   result tuple).
+
+**argnr**:
+   Argument number.
+
+   *int* : required
+
+   Similar to the result number but this number indicates to which input
+   an edge is connected. For example, when argnr equals 1 the edge is
+   connected to the second input (the second argument of the node function).
+
+
 prates
 crates
 tkns
