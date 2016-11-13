@@ -1,3 +1,5 @@
+.. _sect-graph-file-format:
+
 =================
 Graph file format
 =================

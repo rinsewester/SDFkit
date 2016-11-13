@@ -1,3 +1,5 @@
+.. _sect-csdfgraph-class:
+
 ===============
 CSDFgraph class
 ===============

@@ -1,3 +1,5 @@
+.. _sect-using-sdfkit:
+
 ************
 Using SDFkit
 ************
