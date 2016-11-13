@@ -11,3 +11,4 @@ Welcome to the SDFkit documentation!
 
    usage
    fileformat
+   csdflib

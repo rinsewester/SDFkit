@@ -30,8 +30,6 @@ class CSDFGraph(nx.DiGraph):
     perfoems the computations of the application.
     The edges are only used to store data in the form of tokens.
 
-    Usage
-    -----
     A graph can be constructed by instantiating a CSDF graph object followed 
     by adding nodes and edges. Consider the following simple producer-consumer
     HSDF graph: 
