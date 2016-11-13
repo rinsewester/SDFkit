@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QDockWidget, QApplication, QMainWindow, QAction, QFi
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
-from csdfgraph import CSDFGraph, G0
+from csdfgraph import CSDFGraph
 from runwindow import RunWindow
 from logwidget import LogWidget
 from signalwindow import SignalTable, SignalLogWidget
@@ -23,6 +23,8 @@ from codegen.clashcodegen import ClashCodeGen
 
 
 class MainWindow(QMainWindow):
+
+    DEFAULT_GRAPH = 'examples/SDF/simple graph.json'
 
     def __init__(self):
         super().__init__()
@@ -84,7 +86,8 @@ class MainWindow(QMainWindow):
 
         self.setUnifiedTitleAndToolBarOnMac(True)
 
-        self.graph = G0
+        self.graph = CSDFGraph()
+        self.graph.loadFromFile(MainWindow.DEFAULT_GRAPH)
 
         self.graphWidget = GraphWidget()
         self.graphWidget.setGraph(self.graph)

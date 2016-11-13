@@ -593,9 +593,3 @@ class CSDFGraph(nx.DiGraph):
         src, dst = edge
         newcrates = eval(cratesstr)
         self[src][dst]['crates'] = newcrates
-
-# The default SDF graph
-G0 = CSDFGraph()
-G0.loadFromFile('examples/SDF/simple graph.json')
-#G0.loadFromFile('examples/HSDF/nine counter.json')
-#G0.loadFromFile('examples/CSDF/sliding window.json')
