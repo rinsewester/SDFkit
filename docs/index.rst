@@ -1,6 +1,6 @@
-============
-Introduction
-============
+======
+SDFkit
+======
 
 Welcome to the SDFkit documentation!
 
