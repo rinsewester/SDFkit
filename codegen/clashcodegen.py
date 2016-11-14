@@ -21,6 +21,8 @@ class ClashCodeGen(object):
         self.arg = arg
 
     def generateCode(graph, targetdir):
+        if not graph.isHSDF():
+            raise NotImplementedError('Code generation is only supported for HSDF graphs at the moment.')
 
         edgeTypes = ClashCodeGen._getEdgeTypes(graph)
 
@@ -31,6 +33,7 @@ class ClashCodeGen(object):
         if graph.isHSDF():
             edgeDefs = ClashCodeGen._generateEdgeDefs(graph, edgeTypes)
         else:
+            # working on this but first if statement will prevent code from ever reaching this in the online version
             edgeDefs = ClashCodeGen._generateCSDFEdgeDefs(graph, edgeTypes)
         graphType = ClashCodeGen._generateGraphType(graph, edgeTypes)
         nodeInstances = ClashCodeGen._generateNodeInstances(graph)
