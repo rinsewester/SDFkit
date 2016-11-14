@@ -4,26 +4,25 @@
 Using SDFkit
 ************
 
-Installing
+Getting and running
 ----------
-Installing SDFkit is easy using pip:
+SDFkit is written in python 3 and only requires networkx and PyQt5.
+The source can be found on github::
 
-::
-   
-   pip install sdfkit
+   git clone https://github.com/rinsewester/SDFkit.git
+   cd SDFkit/
 
+Using pip we can install the dependencies for SDFkit::
 
-Running
--------
-SDFkit can be started easily from the terminal (TODO make a package):
+   pip3 install -r requirements.txt
 
-::
+After installing the dependencies, SDFkit can be started using::
 
-   python3 -m sdfkit
+   python3 mainwindow.py
 
-sdfkit is shown with an example graph already opened:
-
-TODO: addpicture here.
+Simulating graphs
+-----------------
+TODO: explain how to simulate graphs, edit tokens, rates and code.
 
 Examples
 --------
