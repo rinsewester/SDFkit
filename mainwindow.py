@@ -173,8 +173,6 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(
                 self, 'Generate CLaSH code',
                 '<b>Error generating CLaSH code:</b> ' + str(e))
-            # TODO: Remove the following line when clash codegen completed
-            raise e
 
 if __name__ == '__main__':
 
