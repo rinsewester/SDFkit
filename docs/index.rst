@@ -4,12 +4,13 @@ SDFkit
 
 Welcome to the SDFkit documentation!
 
-SDFkit is dataflow graph simulator and code generator.
+SDFkit is dataflow graph simulator and code generator developed at the University of Twente.
 Using SDFkit, dataflow graphs can be simulated in an interactive environment.
 Additionally, FPGA code can be generated to run graph in hardware.
 Let's have a look:
 
-
+.. figure::  images/screenshot.png
+   :align:   center
 
 To get started with SDFkit, information regarding installation and using the program can be found in :ref:`sect-using-sdfkit`.
 
