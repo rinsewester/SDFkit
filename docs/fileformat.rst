@@ -211,6 +211,19 @@ defined as:
 
 Node CLaSH code
 ---------------
-TODO: explain that the clash code adheres to a pattern as well.
-small note: types are one word -> types are used to generated FIFOs.
+During hardware generation, the CLaSH code of the nodes is instantiated
+and connected using FIFOs. This CLaSH code must adhere to a pettern to
+match the number of in and outputs on the node. The following code shows
+a producer node that simply forwards its firecounter:
+
+.. code-block:: haskell
+   
+   f_Pr :: Cntr -> Cntr -> Cntr
+   f_Pr firecounter phase = res
+     where
+       res = firecounter
+
+
+
+.. small note: types are one word -> types are used to generated FIFOs.
 
