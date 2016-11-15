@@ -75,7 +75,7 @@ A node is a JSON object with the following attributes:
    The functionality of a node is implemented as lambda expression. This
    expression is given as a string and is intepreted using the eval() 
    function in python. The format of these lambda function can be found
-   in TODO.
+   in `Python node functions`_.
 
 **clashcode**:
    CLaSh code of the node.
@@ -85,7 +85,7 @@ A node is a JSON object with the following attributes:
    The python code is not translated autmatically to CLaSh code. Therefore,
    this has to be given as well. This field is optional since the graph can
    be simulated without CLaSh code. The format of the CLaSh can be found
-   in TODO.
+   in `Node CLaSH code`_.
 
 **color**:
    Color of the node.
@@ -176,7 +176,6 @@ using python's *eval* function. Node fundtions are expressed in the following
 pattern:
 
 .. code-block:: python
-   :linenos:
 
    lambda inputs firecounter, phase: results
 
@@ -199,7 +198,6 @@ The following line shows a function for a node that produces data on two
 outputs and has no inputs:
 
 .. code-block:: python
-   :linenos:
 
    lambda firecounter, phase: ([firecounter], [firecounter + 1])
 
@@ -207,7 +205,6 @@ Nodes that function as sink have an input and no outputs as is therefore
 defined as:
 
 .. code-block:: python
-   :linenos:
 
    lambda d_in, firecounter, phase: []
 
