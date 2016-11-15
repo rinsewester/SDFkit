@@ -223,7 +223,12 @@ a producer node that simply forwards its firecounter:
      where
        res = firecounter
 
+The name CLaSH function in the node must contain the name of the node
+and is formatted as *f_NODENAME*. Also a type definition is needed. In
+this example, the firecounter is put on the output. Therefore all types
+are of type *Cntr*. Other types that can be  used are *Byte*, *UInt8*,
+*UInt16*, *UInt32*, *UInt64*, *Int8*, *Int16*, *Int32* and *Int64*.
+Note that every type must be one word as these are used for generating
+the FIFOs as well.
 
-
-.. small note: types are one word -> types are used to generated FIFOs.
-
+Further details can be found in the examples included with SDFkit.
