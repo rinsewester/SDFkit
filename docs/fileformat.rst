@@ -186,14 +186,31 @@ and *phase*. *firecounter* indicates how many times the node has fired and
 only used in CSDF graphs, in all other graphs *phase* remains 0.
 
 For every input of the node, an argument is added before *firecounter*.
-When the node has no inputs, only *firecounter* and *phase* are used as arguments.
+When the node has no inputs, only *firecounter* and *phase* are used
+as arguments.
 
-TODO: explain output:
-- single is list with tokens
-- multiple is tuple
-- no output is empty list []
+The reults of the lambda expressed depends on the number of outputs. The
+results are therefore represented as a single list or a tuple with lists.
+When a node has zero or one outputs, the lambda returns a list of tokens
+or an empty list respectively. For nodes having multiple outputs, every
+list of tokens becomes an element in the result tuple.
 
-TODO: give a few examples
+The following line shows a function for a node that produces data on two
+outputs and has no inputs:
+
+.. code-block:: python
+   :linenos:
+
+   lambda firecounter, phase: ([firecounter], [firecounter + 1])
+
+Nodes that function as sink have an input and no outputs as is therefore
+defined as:
+
+.. code-block:: python
+   :linenos:
+
+   lambda d_in, firecounter, phase: []
+
 
 Node CLaSH code
 ---------------
