@@ -167,3 +167,36 @@ Edges are JSON objects connected two nodes and has the following attributes:
    the same way as nodes. The color is given as an rgb list [r,g,b]. Green is 
    therefore expressed as [0, 255, 0].
 
+
+Python node functions
+---------------------
+The functions executed in nodes are a python lambda expression with special
+structure and naming. Every node function is a string which is interpreted
+using python's *eval* function. Node fundtions are expressed in the following
+pattern:
+
+.. code-block:: python
+   :linenos:
+
+   lambda inputs firecounter, phase: results
+
+Every node function always receives at least two arguemnts, *firecounter* 
+and *phase*. *firecounter* indicates how many times the node has fired and
+*phase* is a counter to track the phase of the node. Note that *phase* is
+only used in CSDF graphs, in all other graphs *phase* remains 0.
+
+For every input of the node, an argument is added before *firecounter*.
+When the node has no inputs, only *firecounter* and *phase* are used as arguments.
+
+TODO: explain output:
+- single is list with tokens
+- multiple is tuple
+- no output is empty list []
+
+TODO: give a few examples
+
+Node CLaSH code
+---------------
+TODO: explain that the clash code adheres to a pattern as well.
+small note: types are one word -> types are used to generated FIFOs.
+

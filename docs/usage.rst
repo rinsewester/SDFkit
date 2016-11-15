@@ -5,7 +5,7 @@ Using SDFkit
 ************
 
 Getting and running
-----------
+-------------------
 SDFkit is written in python 3 and only requires networkx and PyQt5.
 The source can be found on github::
 
