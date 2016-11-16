@@ -10,7 +10,7 @@ author: Rinse Wester
 
 import re
 from log import Log
-from subprocess import run, PIPE
+# from subprocess import run, PIPE
 from sdfmath import is_power2, calc_pointerwidth
 
 class ClashCodeGen(object):
@@ -492,30 +492,30 @@ class ClashCodeGen(object):
         return 'graph :: Signal Bool -> Signal ' + outputtuplestr
 
 
-class CLaSHCompiler(object):
-    """Class for interaction with the CLaSH compiler to generate VHDL code."""
+# class CLaSHCompiler(object):
+#     """Class for interaction with the CLaSH compiler to generate VHDL code."""
 
-    VERILOG = 0
-    VHDL = 1
+#     VERILOG = 0
+#     VHDL = 1
 
-    def isavailable():
-        try:
-            retobj = run(['clash', '--version'], stdout=PIPE, stderr=PIPE)
-            return retobj.returncode == 0
-        except FileNotFoundError as e:
-            return False
+#     def isavailable():
+#         try:
+#             retobj = run(['clash', '--version'], stdout=PIPE, stderr=PIPE)
+#             return retobj.returncode == 0
+#         except FileNotFoundError as e:
+#             return False
 
-    def compile(filename, outputlang):
-        """compile the file filename to verilog or VHDL
+#     def compile(filename, outputlang):
+#         """compile the file filename to verilog or VHDL
 
-        outputlang is either CLaSHCompiler.VERILOG or CLaSHCompiler.VHDL"""
-        if CLaSHCompiler.isavailable():
-            if outputlang == CLaSHCompiler.VHDL:
-                lang = 'vhdl'
-            else:
-                lang = 'verilog'
-            retobj = run(['clash', '--' + lang, '-icodegen/clash_code', filename], stderr=PIPE, stdout=PIPE)
-            if retobj.returncode != 0:
-                raise Exception('An error occurred during ' + lang + ' code generation:\n\n' + str(retobj.stderr))
+#         outputlang is either CLaSHCompiler.VERILOG or CLaSHCompiler.VHDL"""
+#         if CLaSHCompiler.isavailable():
+#             if outputlang == CLaSHCompiler.VHDL:
+#                 lang = 'vhdl'
+#             else:
+#                 lang = 'verilog'
+#             retobj = run(['clash', '--' + lang, '-icodegen/clash_code', filename], stderr=PIPE, stdout=PIPE)
+#             if retobj.returncode != 0:
+#                 raise Exception('An error occurred during ' + lang + ' code generation:\n\n' + str(retobj.stderr))
 
 
