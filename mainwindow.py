@@ -85,8 +85,8 @@ class MainWindow(QMainWindow):
         self.toolbar.addAction(clashcodegenAction)
 
         # Use mac unitfied toolbar when running on mac
-        # if sys.platform == 'darwin':
-        #     self.setUnifiedTitleAndToolBarOnMac(True)
+        if sys.platform == 'darwin':
+            self.setUnifiedTitleAndToolBarOnMac(True)
 
         self.graph = CSDFGraph()
         self.graph.loadFromFile(MainWindow.DEFAULT_GRAPH)
