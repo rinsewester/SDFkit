@@ -417,7 +417,7 @@ class CSDFGraph(nx.DiGraph):
                 argnrs.append(self.edge[p][n]['arg'])
 
             if set(argnrs) != set(range(nodefuncargcount - 2)):
-                raise ValueError('Every argument should have a corresponding unique source, this is not hte case for node ' + n)
+                raise ValueError('Every argument should have a corresponding unique source, this is not the case for node ' + n)
 
 
     def loadFromFile(self, filename):
@@ -469,9 +469,9 @@ class CSDFGraph(nx.DiGraph):
             edgeDestination = jsedge['dst']
             edgeResNumber = jsedge['resnr']
             edgeArgNumber = jsedge['argnr']
-            edgePRates = CSDFGraph._flattenRateList(jsedge['prates'])
-            edgeCRates = CSDFGraph._flattenRateList(jsedge['crates'])
-            edgeTokens = jsedge['tkns']
+            edgePRates = CSDFGraph._flattenRateList(jsedge.get('prates', [1]))
+            edgeCRates = CSDFGraph._flattenRateList(jsedge.get('crates', [1]))
+            edgeTokens = jsedge.get('tkns', [])
             edgeColor = self.DEFAULT_EDGE_COLOR
             if 'color' in jsedge.keys():
                 edgeColor = jsedge['color']
