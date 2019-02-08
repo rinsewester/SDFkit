@@ -140,6 +140,8 @@ class RunWindow(QWidget):
                 self.cmbEdges.addItem(src + ' → ' + dst)
 
         self.setEnabled(self.graph is not None)
+        self.btnBack.setEnabled(False)
+        self.lblStateNr.setText('State: ' + str(self.graph.stateCount() - 1))
 
 
 if __name__ == '__main__':

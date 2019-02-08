@@ -125,14 +125,14 @@ class CSDFGraph(nx.DiGraph):
         color: tuple formatted as (r, g, b)
         """
         super(CSDFGraph, self).add_edge(src, dst)
-        self.edge[src][dst]['res'] = resnr
-        self.edge[src][dst]['arg'] = argnr
-        self.edge[src][dst]['prates'] = prates
-        self.edge[src][dst]['crates'] = crates
-        self.edge[src][dst]['tkns'] = tkns
-        self.edge[src][dst]['color'] = color
+        self[src][dst]['res'] = resnr
+        self[src][dst]['arg'] = argnr
+        self[src][dst]['prates'] = prates
+        self[src][dst]['crates'] = crates
+        self[src][dst]['tkns'] = tkns
+        self[src][dst]['color'] = color
 
-        self.edge[src][dst]['itkns'] = []
+        self[src][dst]['itkns'] = []
         self.edgestates[(src, dst)] = [tkns]
 
     def add_node(self, n, f, pos, clashcode='', color=DEFAULT_NODE_COLOR):
@@ -406,7 +406,7 @@ class CSDFGraph(nx.DiGraph):
                 raise ValueError('Node ' + n + ' does not have a valid lambda function.')
 
             nodefuncargcount = nodefunc.__code__.co_argcount
-            srccount = len(self.predecessors(n))
+            srccount = len(list(self.predecessors(n)))
 
             # for every data argument of the node function, there should be an incoming edge
             if (nodefuncargcount - 2) != srccount:
@@ -414,7 +414,7 @@ class CSDFGraph(nx.DiGraph):
 
             argnrs = []
             for p in self.predecessors(n):
-                argnrs.append(self.edge[p][n]['arg'])
+                argnrs.append(self[p][n]['arg'])
 
             if set(argnrs) != set(range(nodefuncargcount - 2)):
                 raise ValueError('Every argument should have a corresponding unique source, this is not the case for node ' + n)
@@ -528,12 +528,12 @@ class CSDFGraph(nx.DiGraph):
             edgedict = OrderedDict({})
             edgedict['src'] = srcname
             edgedict['dst'] = dstname
-            edgedict['resnr'] = self.edge[srcname][dstname]['res']
-            edgedict['argnr'] = self.edge[srcname][dstname]['arg']
-            edgedict['prates'] = self.edge[srcname][dstname]['prates']
-            edgedict['crates'] = self.edge[srcname][dstname]['crates']
-            edgedict['tkns'] = self.edge[srcname][dstname]['tkns']
-            edgedict['color'] = self.edge[srcname][dstname]['color']
+            edgedict['resnr'] = self[srcname][dstname]['res']
+            edgedict['argnr'] = self[srcname][dstname]['arg']
+            edgedict['prates'] = self[srcname][dstname]['prates']
+            edgedict['crates'] = self[srcname][dstname]['crates']
+            edgedict['tkns'] = self[srcname][dstname]['tkns']
+            edgedict['color'] = self[srcname][dstname]['color']
             edgesList.append(edgedict)
 
         # add all edges to temporary dict in form of a list
